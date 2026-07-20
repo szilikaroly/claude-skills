@@ -12,20 +12,26 @@ futtatható szkriptek és a hivatkozott dokumentáció.
 
 ## Telepítés
 
-A repo **privát**, ezért a klónozás hitelesítést igényel — a legegyszerűbb a
-[GitHub CLI](https://cli.github.com):
+Egy sor — klónoz és telepít. Előbb `--check`-kel érdemes megnézni, mi hiányzik:
 
 ```bash
-gh auth login                              # egyszer, böngészőben
-gh repo clone <owner>/<repo> ~/.claude/skills
-~/.claude/skills/install.sh
+curl -fsSL https://raw.githubusercontent.com/szilikaroly/claude-skills/main/install.sh | bash -s -- --check
+curl -fsSL https://raw.githubusercontent.com/szilikaroly/claude-skills/main/install.sh | bash
 ```
 
-Ha már van `~/.claude/skills` mappád, klónozz máshova és állítsd a `SKILLS_DIR`-t:
+Alapértelmezett cél a `~/.claude/skills`. Ha az már foglalt, add meg máshova —
+a változót a `bash`-re kell állítani, nem a `curl`-re:
 
 ```bash
-gh repo clone <owner>/<repo> ~/claude-skills
-SKILLS_DIR=~/claude-skills ~/claude-skills/install.sh
+curl -fsSL .../install.sh | SKILLS_DIR=~/claude-skills bash
+```
+
+Vagy kézzel, ha jobban szereted látni, mit futtatsz:
+
+```bash
+git clone https://github.com/szilikaroly/claude-skills.git ~/.claude/skills
+~/.claude/skills/install.sh --check
+~/.claude/skills/install.sh
 ```
 
 A skillek a következő Claude Code indításnál betöltődnek.
