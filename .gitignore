@@ -1,0 +1,26 @@
+# --- titkok: SOHA ne kerüljön be ---
+.env
+.env.local
+*.key
+*.pem
+.oauth-tokens/
+
+# --- futásidejű adat, gyorsítótár ---
+.memo/
+*.duckdb
+*.duckdb.wal
+duckdb_extensions/
+logs/
+runs/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# --- macOS / szerkesztők ---
+.DS_Store
+*.swp
+.idea/
+.vscode/

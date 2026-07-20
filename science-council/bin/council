@@ -1,0 +1,232 @@
+#!/usr/bin/env Rscript
+## council — command line entry point for the science-council skill.
+## Usage: bin/council <command> [options]
+
+suppressPackageStartupMessages({ library(cli) })
+
+SKILL <- Sys.getenv("SCICOUNCIL_DIR", "")
+if (!nzchar(SKILL)) {
+  a <- commandArgs(trailingOnly = FALSE)
+  f <- sub("^--file=", "", a[grep("^--file=", a)])
+  SKILL <- normalizePath(file.path(dirname(if (length(f)) f[1] else "."), ".."), mustWork = FALSE)
+  Sys.setenv(SCICOUNCIL_DIR = SKILL)
+}
+src <- function(f) source(file.path(SKILL, "R", f))
+
+args <- commandArgs(trailingOnly = TRUE)
+cmd  <- if (length(args)) args[1] else "help"
+opt <- function(name, default = NULL) {
+  i <- which(args == paste0("--", name))
+  if (length(i) && length(args) > i[1]) args[i[1] + 1] else default
+}
+flag <- function(name) paste0("--", name) %in% args
+
+usage <- function() cat('
+science-council — multi-model scientific deliberation with validated, indexed claims
+
+  council doctor                     probe every provider, report what is reachable
+  council run --question "..." [--context "..."] [--domain "..."]
+              [--rounds 2] [--panel claude,gemini,ollama] [--threshold 0.7]
+                                     run a full session
+  council search --query "..." [--status validated] [--limit 20]
+                                     full-text search the validated claim store
+  council show --qid q_xxx            re-print one session
+  council report --qid q_xxx [--out report.md]
+                                     write the full session report (markdown)
+  council stats-report --qid q_xxx [--out report.html] [--meta spec.json]
+                                     generate an R statistical report: ggplot2
+                                     charts + optional metafor meta-analysis (HTML)
+  council science                     Claude Science integration status (envs, connectors)
+  council stats                       store summary + panelist calibration
+  council bridge --status|--clear     inspect the Claude bridge queue
+
+Config lives in .env next to this script (chmod 600). See SKILL.md.
+')
+
+if (cmd == "help" || flag("help")) { usage(); quit(status = 0) }
+
+## ---------------------------------------------------------------- doctor
+if (cmd == "doctor") {
+  src("providers.R")
+  load_env()
+  cli_h1("science-council doctor")
+  cli_alert_info("Skill dir: {SKILL}")
+  cli_alert_info("Claude reachability mode: {claude_mode()}")
+  want <- trimws(strsplit(Sys.getenv("SCICOUNCIL_PANEL", "claude,openai,gemini,ollama"), ",")[[1]])
+  cli_h2("Live probe (each provider gets one real request)")
+  ok <- character()
+  for (p in want) {
+    if (p == "claude" && claude_mode() == "bridge" && !nzchar(Sys.getenv("SCICOUNCIL_BRIDGE_ACTIVE"))) {
+      cli_alert_warning("{.strong claude} — bridge mode: only works when a Claude Code session drives the run (set SCICOUNCIL_BRIDGE_ACTIVE=1)")
+      next
+    }
+    r <- call_provider(p, 'Return exactly this JSON: {"ok": true}', json = TRUE, timeout = 60)
+    if (isTRUE(r$ok)) {
+      cli_alert_success("{.strong {p}} ({r$model}) — {round(r$latency,1)}s")
+      ok <- c(ok, p)
+    } else {
+      cli_alert_danger("{.strong {p}} ({r$model}) — {substr(r$error, 1, 150)}")
+    }
+  }
+  cli_h2("Verdict")
+  if (length(ok) >= 2) cli_alert_success("{length(ok)} panelists reachable: {paste(ok, collapse=', ')} — council can convene")
+  else {
+    cli_alert_danger("Only {length(ok)} panelist(s) reachable ({paste(ok, collapse=', ')}) — need >= 2")
+    if ("ollama" %in% ok) {
+      models <- tryCatch({
+        b <- resp_body_json(req_perform(req_timeout(request(paste0(Sys.getenv("OLLAMA_HOST","http://localhost:11434"),"/api/tags")),5)))
+        vapply(b$models, function(m) m$name, character(1))
+      }, error = function(e) character())
+      if (length(models) >= 2) {
+        seats <- paste0("ollama/", models[1:2])
+        cli_alert_info("But you have {length(models)} local Ollama models — seat several as distinct panelists, e.g.")
+        cli_alert_info("  ./bin/council run --question \"...\" --panel \"{paste(seats, collapse=',')}\"")
+        cli_alert_info("  (all-local panels debate and check citations, but run NO R checks — no frontier seat to author them safely)")
+      }
+    }
+  }
+  ## deterministic layers
+  cli_h2("Deterministic layers")
+  src("evidence.R")
+  v <- verify_citation("10.1038/s41586-021-03819-2")
+  cli_alert(if (isTRUE(v$verified)) "Citation check: OK (Crossref/Europe PMC reachable)" else "Citation check: UNREACHABLE — {v$note}")
+  src("validate.R")
+  t <- run_r_check('result <- list(passed = (2+2)==4, detail = "arithmetic still works")')
+  cli_alert(if (isTRUE(t$passed)) "R sandbox: OK" else "R sandbox: {t$error}")
+  quit(status = 0)
+}
+
+## ---------------------------------------------------------------- run
+if (cmd == "run") {
+  q <- opt("question")
+  if (is.null(q)) { cli_alert_danger("--question is required"); quit(status = 1) }
+  src("council.R")
+  res <- council_run(
+    question  = q,
+    context   = opt("context", ""),
+    domain    = opt("domain", ""),
+    rounds    = if (!is.null(opt("rounds"))) as.integer(opt("rounds")) else NULL,
+    panel     = if (!is.null(opt("panel"))) trimws(strsplit(opt("panel"), ",")[[1]]) else NULL,
+    threshold = if (!is.null(opt("threshold"))) as.numeric(opt("threshold")) else NULL,
+    stats     = flag("stats"))
+  if (!is.null(opt("report"))) {
+    src("report.R"); con <- db_connect(read_only = TRUE)
+    report_question(con, res$qid, opt("report")); dbDisconnect(con, shutdown = TRUE)
+    cli_alert_success("Report: {opt('report')}")
+  }
+  quit(status = 0)
+}
+
+## ---------------------------------------------------------------- search
+if (cmd == "search") {
+  src("db.R")
+  qq <- opt("query"); if (is.null(qq)) { cli_alert_danger("--query is required"); quit(status = 1) }
+  con <- db_connect(); on.exit(dbDisconnect(con, shutdown = TRUE))
+  r <- db_search(con, qq, as.integer(opt("limit", "20")), opt("status"))
+  if (!nrow(r)) { cli_alert_info("No matching claims."); quit(status = 0) }
+  for (i in seq_len(nrow(r)))
+    cat(sprintf("[%s] %-10s %s\n  %s\n", r$id[i], toupper(r$status[i]),
+                ifelse(is.na(r$consensus_score[i]), "", sprintf("%+.2f", r$consensus_score[i])), r$claim[i]))
+  quit(status = 0)
+}
+
+## ---------------------------------------------------------------- show / report
+if (cmd %in% c("show", "report")) {
+  src("db.R"); src("report.R")
+  qid <- opt("qid")
+  con <- db_connect(); on.exit(dbDisconnect(con, shutdown = TRUE))
+  if (is.null(qid)) {
+    qs <- dbGetQuery(con, "SELECT id, question, created_at, panel FROM questions ORDER BY created_at DESC LIMIT 20")
+    if (!nrow(qs)) { cli_alert_info("No sessions yet."); quit(status = 0) }
+    cli_alert_info("Recent sessions (pass --qid):")
+    for (i in seq_len(nrow(qs))) cat(sprintf("  %s  %s  %s\n", qs$id[i], qs$created_at[i], substr(qs$question[i], 1, 70)))
+    quit(status = 0)
+  }
+  out <- opt("out")
+  txt <- report_question(con, qid, out)
+  if (is.null(out)) cat(txt, "\n") else cli_alert_success("Report written: {out}")
+  quit(status = 0)
+}
+
+## ---------------------------------------------------------------- stats-report
+if (cmd == "stats-report") {
+  src("council.R")
+  qid <- opt("qid")
+  if (is.null(qid)) { cli_alert_danger("--qid is required"); quit(status = 1) }
+  ## NB: never pass a dynamic string as a cli format template — an error message
+  ## containing JSON braces would be parsed as a glue expression. Interpolate.
+  out <- tryCatch(generate_stats_report(qid, outfile = opt("out"), meta_spec = opt("meta")),
+                  error = function(e) { msg <- conditionMessage(e)
+                                        cli_alert_danger("{msg}"); quit(status = 1) })
+  quit(status = 0)
+}
+
+## ---------------------------------------------------------------- science
+if (cmd == "science") {
+  src("science.R")
+  cli_h1("Claude Science integration")
+  if (!science_available()) {
+    cli_alert_warning("Claude for Life Sciences not found at ~/.claude-science — using system R, no connectors.")
+    quit(status = 0)
+  }
+  cli_alert_success("Install: {science_home()}")
+  d <- science_daemon()
+  cli_alert_info("Daemon: {if (isTRUE(d$running)) paste0('running (pid ', d$pid %||% '?', ', port ', d$port %||% '?', ')') else 'not running'}")
+  cli_h2("Specialist environments")
+  roles <- c(SCIENCE_ROLE_ENV, SCIENCE_PY_ROLE_ENV)
+  for (e in science_envs()) {
+    rs <- science_env_rscript(e); py <- science_env_python(e)
+    caps <- paste(c(if (!is.na(rs)) "R", if (!is.na(py)) "py"), collapse = "+")
+    used <- names(roles)[roles == e]
+    cat(sprintf("  %-24s %-6s %s\n", e, if (nzchar(caps)) caps else "-",
+        if (length(used)) paste0("roles: ", paste(used, collapse = ", "))
+        else if (!nzchar(caps)) "empty - no interpreter" else "unused"))
+  }
+  cli_alert_info("R checks & statistics: {SCIENCE_ROLE_ENV[['stats']]}")
+  cli_alert_info("Independent cross-check: {SCIENCE_PY_ROLE_ENV[['crosscheck']]} (statsmodels)")
+  cli_h2("Authorized connectors (reachable by Claude's bridge seat)")
+  cx <- science_connectors(TRUE)
+  if (is.null(cx) || !nrow(cx)) cli_alert_warning("  none authorized")
+  else for (i in seq_len(nrow(cx))) cli_text("  {cx$name[i]}")
+  quit(status = 0)
+}
+
+## ---------------------------------------------------------------- stats
+if (cmd == "stats") {
+  src("db.R")
+  con <- db_connect(); on.exit(dbDisconnect(con, shutdown = TRUE))
+  cli_h1("Claim store")
+  s <- dbGetQuery(con, "SELECT status, count(*) n, avg(consensus_score) avg_score FROM claims GROUP BY status ORDER BY n DESC")
+  if (!nrow(s)) { cli_alert_info("Store is empty."); quit(status = 0) }
+  for (i in seq_len(nrow(s))) cat(sprintf("  %-11s %4d   avg score %+.2f\n", s$status[i], s$n[i], s$avg_score[i]))
+  cat(sprintf("\n  sessions: %d | claims: %d | arguments: %d | verdicts: %d | R checks: %d | citations: %d\n",
+      dbGetQuery(con, "SELECT count(*) n FROM questions")$n,
+      dbGetQuery(con, "SELECT count(*) n FROM claims")$n,
+      dbGetQuery(con, "SELECT count(*) n FROM arguments")$n,
+      dbGetQuery(con, "SELECT count(*) n FROM verdicts")$n,
+      dbGetQuery(con, "SELECT count(*) n FROM r_checks")$n,
+      dbGetQuery(con, "SELECT count(*) n FROM evidence")$n))
+  ev <- dbGetQuery(con, "SELECT count(*) n, sum(CASE WHEN verified THEN 1 ELSE 0 END) v FROM evidence")
+  if (ev$n > 0) cat(sprintf("  citations verified: %d/%d (%.0f%% resolve)\n", ev$v, ev$n, 100 * ev$v / ev$n))
+  cal <- dbGetQuery(con, "SELECT * FROM calibration ORDER BY weight DESC")
+  if (nrow(cal)) {
+    cli_h2("Panelist calibration")
+    for (i in seq_len(nrow(cal)))
+      cat(sprintf("  %-9s %-24s votes %3d  matched %3.0f%%  weight %.2f\n", cal$panelist[i],
+                  cal$model[i], cal$n_votes[i], 100 * cal$n_correct[i] / max(cal$n_votes[i], 1), cal$weight[i]))
+  }
+  quit(status = 0)
+}
+
+## ---------------------------------------------------------------- bridge
+if (cmd == "bridge") {
+  src("providers.R")
+  d <- bridge_dir()
+  if (flag("clear")) { unlink(list.files(d, full.names = TRUE)); cli_alert_success("Bridge queue cleared."); quit(status = 0) }
+  reqs <- list.files(d, pattern = "^req_.*json$", full.names = TRUE)
+  if (!length(reqs)) { cli_alert_info("No pending bridge requests."); quit(status = 0) }
+  for (f in reqs) cat(f, "\n")
+  quit(status = 0)
+}
+
+cli_alert_danger("Unknown command: {cmd}"); usage(); quit(status = 1)

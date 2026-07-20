@@ -1,0 +1,138 @@
+#!/Users/szili/anaconda3/bin/python3
+"""xlstotext — dump spreadsheet contents as text, markdown, CSV or JSON.
+
+Reads .xlsx/.xlsm natively (openpyxl), legacy .xls via xlrd, and .ods through
+LibreOffice. By default prints computed values; --formulas shows the formulas
+instead, which is what you want when auditing a model rather than reading it.
+"""
+import csv
+import io
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _doccommon import base_parser, die, emit, resolve_input, soffice_convert  # noqa: E402
+
+
+def main():
+    p = base_parser(__doc__.splitlines()[0])
+    p.add_argument("-s", "--sheet", help="only this sheet (name or 1-based index)")
+    p.add_argument("--formulas", action="store_true", help="show formulas instead of values")
+    p.add_argument("--max-rows", type=int, help="stop after N rows per sheet")
+    p.add_argument("--csv", action="store_true", help="emit CSV (one block per sheet)")
+    args = p.parse_args()
+    path = resolve_input(args, ".xlsx")
+    ext = os.path.splitext(path)[1].lower()
+
+    if ext == ".ods":
+        path = soffice_convert(path, "xlsx")
+        ext = ".xlsx"
+
+    if ext in {".csv", ".tsv"}:
+        sheets = read_delimited(path, ext)
+    elif ext == ".xls":
+        sheets = read_xls(path)
+    elif ext in {".xlsx", ".xlsm", ".xltx"}:
+        sheets = read_xlsx(path, args.formulas)
+    else:
+        die(f"unsupported extension: {ext}")
+
+    sheets = select(sheets, args.sheet)
+    if args.max_rows:
+        sheets = [{**s, "rows": s["rows"][: args.max_rows]} for s in sheets]
+
+    if args.format == "json":
+        emit({"source": os.path.abspath(args.input), "sheets": sheets}, args.output)
+    elif args.csv:
+        emit(render_csv(sheets), args.output)
+    else:
+        emit(render_text(sheets, args.format), args.output)
+
+
+def read_xlsx(path, formulas):
+    import openpyxl
+
+    wb = openpyxl.load_workbook(path, data_only=not formulas, read_only=not formulas)
+    out = []
+    for ws in wb.worksheets:
+        rows = [[fmt(c) for c in row] for row in ws.iter_rows(values_only=True)]
+        out.append({"name": ws.title, "rows": trim(rows)})
+    wb.close()
+    return out
+
+
+def read_xls(path):
+    import xlrd
+
+    book = xlrd.open_workbook(path)
+    out = []
+    for ws in book.sheets():
+        rows = [[fmt(ws.cell_value(r, c)) for c in range(ws.ncols)] for r in range(ws.nrows)]
+        out.append({"name": ws.name, "rows": trim(rows)})
+    return out
+
+
+def read_delimited(path, ext):
+    delim = "\t" if ext == ".tsv" else ","
+    with open(path, newline="", encoding="utf-8-sig", errors="replace") as fh:
+        rows = [list(r) for r in csv.reader(fh, delimiter=delim)]
+    return [{"name": os.path.basename(path), "rows": trim(rows)}]
+
+
+def fmt(value):
+    if value is None:
+        return ""
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+    return str(value)
+
+
+def trim(rows):
+    """Drop trailing empty rows and columns — spreadsheets are full of them."""
+    while rows and not any(c.strip() for c in rows[-1]):
+        rows.pop()
+    width = max((max((i + 1 for i, c in enumerate(r) if c.strip()), default=0) for r in rows), default=0)
+    return [r[:width] for r in rows]
+
+
+def select(sheets, spec):
+    if not spec:
+        return sheets
+    if spec.isdigit():
+        idx = int(spec) - 1
+        if not 0 <= idx < len(sheets):
+            die(f"sheet index {spec} out of range (1..{len(sheets)})")
+        return [sheets[idx]]
+    match = [s for s in sheets if s["name"] == spec]
+    if not match:
+        die(f"no sheet named {spec!r}; have: {', '.join(s['name'] for s in sheets)}")
+    return match
+
+
+def render_csv(sheets):
+    buf = io.StringIO()
+    for i, sheet in enumerate(sheets):
+        if len(sheets) > 1:
+            buf.write(f"# {sheet['name']}\n")
+        csv.writer(buf).writerows(sheet["rows"])
+        if i < len(sheets) - 1:
+            buf.write("\n")
+    return buf.getvalue()
+
+
+def render_text(sheets, fmt_name):
+    parts = []
+    for sheet in sheets:
+        rows = sheet["rows"]
+        head = f"=== {sheet['name']} ({len(rows)} rows) ===" if len(sheets) > 1 else ""
+        if fmt_name == "md" and rows:
+            body = [" | ".join(rows[0]), " | ".join("---" for _ in rows[0])]
+            body += [" | ".join(r) for r in rows[1:]]
+        else:
+            body = ["\t".join(r) for r in rows]
+        parts.append("\n".join([p for p in [head] + body if p]))
+    return "\n\n".join(parts)
+
+
+if __name__ == "__main__":
+    main()

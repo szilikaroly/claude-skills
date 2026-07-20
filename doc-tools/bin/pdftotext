@@ -1,0 +1,92 @@
+#!/Users/szili/anaconda3/bin/python3
+"""pdftotext — extract text, layout and tables from PDF files.
+
+Primary engine is PyMuPDF (fast, good reading order). --layout preserves visual
+column positions; --tables pulls tables out with pdfplumber; --ocr falls back to
+Tesseract for scanned pages with no text layer.
+"""
+import os
+import shutil
+import subprocess
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _doccommon import base_parser, die, emit, parse_pages, resolve_input  # noqa: E402
+
+
+def main():
+    p = base_parser(__doc__.splitlines()[0])
+    p.add_argument("--pages", help="page range, 1-based, e.g. '1-5,8,11-'")
+    p.add_argument("--layout", action="store_true", help="preserve visual layout/columns")
+    p.add_argument("--tables", action="store_true", help="also extract tables (pdfplumber)")
+    p.add_argument("--ocr", action="store_true", help="OCR pages that have no text layer")
+    p.add_argument("--ocr-lang", default="eng+hun", help="Tesseract languages (default eng+hun)")
+    args = p.parse_args()
+    path = resolve_input(args, ".pdf")
+
+    import fitz
+
+    doc = fitz.open(path)
+    pages = parse_pages(args.pages, doc.page_count)
+    mode = "text" if not args.layout else "blocks"
+
+    records = []
+    for idx in pages:
+        page = doc[idx]
+        if mode == "blocks":
+            blocks = sorted(page.get_text("blocks"), key=lambda b: (round(b[1], 1), b[0]))
+            text = "\n".join(b[4].strip() for b in blocks if b[4].strip())
+        else:
+            text = page.get_text("text")
+        if args.ocr and not text.strip():
+            text = ocr_page(page, args.ocr_lang)
+        records.append({"page": idx + 1, "text": text.rstrip()})
+
+    if args.tables:
+        for rec, table in zip(records, extract_tables(path, pages)):
+            rec["tables"] = table
+
+    if args.format == "json":
+        emit({"source": os.path.abspath(path), "pages": records}, args.output)
+        return
+
+    chunks = []
+    for rec in records:
+        header = f"\n--- page {rec['page']} ---\n" if args.format == "md" or len(records) > 1 else ""
+        body = rec["text"]
+        for i, tbl in enumerate(rec.get("tables") or []):
+            body += f"\n\n[table {i + 1}]\n" + "\n".join(
+                " | ".join("" if c is None else str(c) for c in row) for row in tbl
+            )
+        chunks.append(header + body)
+    emit("\n".join(chunks).strip(), args.output)
+
+
+def extract_tables(path, pages):
+    import pdfplumber
+
+    out = []
+    with pdfplumber.open(path) as pdf:
+        for idx in pages:
+            try:
+                out.append(pdf.pages[idx].extract_tables() or [])
+            except Exception:
+                out.append([])
+    return out
+
+
+def ocr_page(page, lang):
+    if not shutil.which("tesseract"):
+        die("--ocr needs Tesseract: install it (e.g. `brew install tesseract tesseract-lang`)")
+    pix = page.get_pixmap(dpi=300)
+    proc = subprocess.run(
+        ["tesseract", "stdin", "stdout", "-l", lang],
+        input=pix.tobytes("png"),
+        capture_output=True,
+        timeout=300,
+    )
+    return proc.stdout.decode("utf-8", "replace")
+
+
+if __name__ == "__main__":
+    main()

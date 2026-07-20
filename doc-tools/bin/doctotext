@@ -1,0 +1,158 @@
+#!/Users/szili/anaconda3/bin/python3
+"""doctotext — extract text from word-processor and presentation documents.
+
+Handles .docx/.pptx natively, .rtf via striprtf, and legacy .doc/.ppt/.odt/.odp by
+routing through LibreOffice. Keeps headings, lists, tables and (optionally) the
+comments and tracked changes that plain conversion throws away.
+"""
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _doccommon import (  # noqa: E402
+    base_parser,
+    die,
+    emit,
+    pandoc,
+    resolve_input,
+    soffice_convert,
+)
+
+LEGACY = {".doc", ".odt", ".ppt", ".odp", ".pages", ".wpd"}
+
+
+def main():
+    p = base_parser(__doc__.splitlines()[0])
+    p.add_argument("--tables", action="store_true", help="include table contents")
+    p.add_argument("--comments", action="store_true", help="append comments (.docx only)")
+    p.add_argument("--notes", action="store_true", help="include speaker notes (.pptx only)")
+    args = p.parse_args()
+    path = resolve_input(args, ".docx")
+    ext = os.path.splitext(path)[1].lower()
+
+    if ext in LEGACY:
+        target = "pptx" if ext in {".ppt", ".odp"} else "docx"
+        path = soffice_convert(path, target)
+        ext = f".{target}"
+
+    if ext == ".rtf":
+        result = rtf_to_text(path)
+    elif ext == ".docx":
+        result = docx_to_records(path, args)
+    elif ext == ".pptx":
+        result = pptx_to_records(path, args)
+    elif ext in {".md", ".txt", ".html", ".htm"}:
+        result = {"blocks": [{"kind": "para", "text": pandoc(path, "plain") or open(path).read()}]}
+    else:
+        die(f"unsupported extension: {ext}")
+
+    if args.format == "json":
+        emit({"source": os.path.abspath(args.input), **result}, args.output)
+    else:
+        emit(render(result, args.format), args.output)
+
+
+def rtf_to_text(path):
+    from striprtf.striprtf import rtf_to_text as strip
+
+    with open(path, encoding="utf-8", errors="replace") as fh:
+        return {"blocks": [{"kind": "para", "text": strip(fh.read())}]}
+
+
+def docx_to_records(path, args):
+    import docx
+
+    doc = docx.Document(path)
+    blocks = []
+    for para in doc.paragraphs:
+        text = para.text.strip()
+        if not text:
+            continue
+        style = (para.style.name or "").lower()
+        if style.startswith("heading"):
+            level = int(style.split()[-1]) if style.split()[-1].isdigit() else 1
+            blocks.append({"kind": "heading", "level": level, "text": text})
+        elif "list" in style:
+            blocks.append({"kind": "list", "text": text})
+        else:
+            blocks.append({"kind": "para", "text": text})
+
+    if args.tables:
+        for table in doc.tables:
+            rows = [[cell.text.strip() for cell in row.cells] for row in table.rows]
+            blocks.append({"kind": "table", "rows": rows})
+
+    out = {"blocks": blocks}
+    if args.comments:
+        out["comments"] = docx_comments(path)
+    return out
+
+
+def docx_comments(path):
+    """Read word/comments.xml directly — python-docx has no comment API."""
+    import zipfile
+    from xml.etree import ElementTree
+
+    ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+    with zipfile.ZipFile(path) as zf:
+        if "word/comments.xml" not in zf.namelist():
+            return []
+        root = ElementTree.fromstring(zf.read("word/comments.xml"))
+    out = []
+    for node in root.findall("w:comment", ns):
+        text = "".join(t.text or "" for t in node.iter(f"{{{ns['w']}}}t"))
+        out.append(
+            {
+                "author": node.get(f"{{{ns['w']}}}author", ""),
+                "date": node.get(f"{{{ns['w']}}}date", ""),
+                "text": text.strip(),
+            }
+        )
+    return out
+
+
+def pptx_to_records(path, args):
+    from pptx import Presentation
+
+    prs = Presentation(path)
+    slides = []
+    for i, slide in enumerate(prs.slides, 1):
+        texts = [
+            shape.text_frame.text.strip()
+            for shape in slide.shapes
+            if shape.has_text_frame and shape.text_frame.text.strip()
+        ]
+        rec = {"slide": i, "text": "\n".join(texts)}
+        if args.notes and slide.has_notes_slide:
+            rec["notes"] = slide.notes_slide.notes_text_frame.text.strip()
+        slides.append(rec)
+    return {"slides": slides}
+
+
+def render(result, fmt):
+    if "slides" in result:
+        parts = []
+        for rec in result["slides"]:
+            parts.append(f"--- slide {rec['slide']} ---\n{rec['text']}")
+            if rec.get("notes"):
+                parts.append(f"[notes] {rec['notes']}")
+        return "\n\n".join(parts)
+
+    lines = []
+    for block in result["blocks"]:
+        if block["kind"] == "heading":
+            lines.append(("#" * block["level"] + " " if fmt == "md" else "") + block["text"])
+        elif block["kind"] == "list":
+            lines.append(("- " if fmt == "md" else "") + block["text"])
+        elif block["kind"] == "table":
+            lines.append("\n".join(" | ".join(r) for r in block["rows"]))
+        else:
+            lines.append(block["text"])
+    text = "\n\n".join(lines)
+    for c in result.get("comments") or []:
+        text += f"\n\n[comment by {c['author']}] {c['text']}"
+    return text
+
+
+if __name__ == "__main__":
+    main()

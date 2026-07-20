@@ -1,0 +1,94 @@
+#!/Users/szili/anaconda3/bin/python3
+"""latextotext — turn a .tex source into readable plain text or markdown.
+
+pylatexenc expands macros and unicode-ifies math by default, which is what you
+want for reading. --pandoc routes through pandoc instead (better at citations and
+cross-references), and --bodyonly strips the preamble so you get just the prose.
+"""
+import os
+import re
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _doccommon import base_parser, die, emit, pandoc, resolve_input  # noqa: E402
+
+
+def main():
+    p = base_parser(__doc__.splitlines()[0])
+    p.add_argument("--pandoc", action="store_true", help="convert via pandoc instead of pylatexenc")
+    p.add_argument("--bodyonly", action="store_true", help="drop everything before \\begin{document}")
+    p.add_argument("--keep-math", action="store_true", help="leave math verbatim instead of unicode-ifying")
+    p.add_argument("--sections", action="store_true", help="list the section structure only")
+    args = p.parse_args()
+    path = resolve_input(args, ".tex")
+
+    with open(path, encoding="utf-8", errors="replace") as fh:
+        source = fh.read()
+
+    if args.sections:
+        emit(render_sections(source, args.format), args.output)
+        return
+
+    if args.bodyonly:
+        source = strip_preamble(source)
+
+    if args.pandoc:
+        text = pandoc(path, "markdown" if args.format == "md" else "plain", ["--wrap=none"])
+        if text is None:
+            die("pandoc conversion failed or pandoc is not installed")
+    else:
+        text = pylatexenc_convert(source, args.keep_math)
+
+    if args.format == "json":
+        emit({"source": os.path.abspath(path), "text": text}, args.output)
+    else:
+        emit(re.sub(r"\n{3,}", "\n\n", text).strip(), args.output)
+
+
+TITLE_RE = re.compile(r"\\title\{(.+?)\}", re.S)
+
+
+def strip_preamble(source):
+    """Drop the preamble, but carry \\title over as a plain heading.
+
+    Without this, \\maketitle survives into a body that no longer defines
+    \\title and pylatexenc renders a '[NO \\title GIVEN]' placeholder.
+    """
+    match = re.search(r"\\begin\{document\}", source)
+    if not match:
+        return source
+    title = TITLE_RE.search(source[: match.start()])
+    body = re.sub(r"\\maketitle\b", "", source[match.end():])
+    return (f"\\section*{{{title.group(1)}}}\n" if title else "") + body
+
+
+def pylatexenc_convert(source, keep_math):
+    from pylatexenc.latex2text import LatexNodes2Text
+
+    return LatexNodes2Text(
+        math_mode="verbatim" if keep_math else "text",
+        keep_comments=False,
+        strict_latex_spaces=False,
+    ).latex_to_text(source)
+
+
+SECTION_RE = re.compile(r"\\(part|chapter|section|subsection|subsubsection)\*?\{(.+?)\}", re.S)
+LEVELS = {"part": 0, "chapter": 1, "section": 2, "subsection": 3, "subsubsection": 4}
+
+
+def render_sections(source, fmt):
+    from pylatexenc.latex2text import LatexNodes2Text
+
+    plain = LatexNodes2Text()
+    found = [
+        {"level": LEVELS[m.group(1)], "kind": m.group(1), "title": plain.latex_to_text(m.group(2)).strip()}
+        for m in SECTION_RE.finditer(source)
+    ]
+    if fmt == "json":
+        return found
+    base = min((s["level"] for s in found), default=0)
+    return "\n".join("  " * (s["level"] - base) + s["title"] for s in found)
+
+
+if __name__ == "__main__":
+    main()
