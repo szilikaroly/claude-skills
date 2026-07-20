@@ -12,37 +12,76 @@ futtatható szkriptek és a hivatkozott dokumentáció.
 
 ## Telepítés
 
-```bash
-git clone <repo-url> ~/.claude/skills
-```
-
-Vagy ha már van `~/.claude/skills` mappád, egyesével:
+A repo **privát**, ezért a klónozás hitelesítést igényel — a legegyszerűbb a
+[GitHub CLI](https://cli.github.com):
 
 ```bash
-git clone <repo-url> /tmp/claude-skills
-cp -r /tmp/claude-skills/science-council ~/.claude/skills/
+gh auth login                              # egyszer, böngészőben
+gh repo clone <owner>/<repo> ~/.claude/skills
+~/.claude/skills/install.sh
 ```
 
-A skillek a következő Claude Code indításnál automatikusan betöltődnek.
+Ha már van `~/.claude/skills` mappád, klónozz máshova és állítsd a `SKILLS_DIR`-t:
+
+```bash
+gh repo clone <owner>/<repo> ~/claude-skills
+SKILLS_DIR=~/claude-skills ~/claude-skills/install.sh
+```
+
+A skillek a következő Claude Code indításnál betöltődnek.
+
+### Mit csinál az `install.sh`
+
+Kideríti, mi hiányzik, és **csak azt** tölti le. Idempotens: újrafuttatható.
+
+```bash
+./install.sh --check      # csak jelentés, semmit nem telepít  ← ezzel kezdd
+./install.sh              # alap: pip csomagok, R csomagok, .env, shebangek
+./install.sh --all        # a nagy opcionálisakra is rákérdez (Ollama, TinyTeX)
+./install.sh --all --yes  # kérdés nélkül, mindent
+./install.sh --skill doc-tools
+```
+
+| Mit intéz | Honnan |
+|---|---|
+| doc-tools Python könyvtárak (`pymupdf`, `python-docx`, `openpyxl`, `pdfplumber`, `python-pptx`, …) | PyPI |
+| Az értelmező kiválasztása és a **shebangek átírása** | helyben |
+| science-council R csomagok (`duckdb`, `httr2`, `DBI`, `ggplot2`, `metafor`, …) | CRAN |
+| `.env` létrehozása a sablonból, `chmod 600` | helyben |
+| *opcionális:* Ollama + `qwen2.5-coder:7b`, `llama3.1:8b` (~9,4 GB) | ollama.com |
+| *opcionális:* TinyTeX LaTeX toolchain (~200 MB) | tug.org |
+
+A nagy letöltéseket soha nem indítja el magától — vagy `--all` + megerősítés,
+vagy `--yes`. A `--check` semmit nem tölt le.
+
+**A shebang-probléma megoldva:** a `doc-tools/bin/*` shebangje ezen a gépen egy
+konkrét Anaconda-értelmezőre mutat. A telepítő megnézi, él-e az az útvonal és
+megvannak-e benne a könyvtárak; ha nem, csinál egy `.venv`-et a repo mellé, oda
+telepít, és átírja a shebangeket. Saját értelmezőt a `--python /path/to/python3`
+kapcsolóval erőltethetsz.
 
 ## Konfiguráció
 
 A `science-council` API-kulcsokat vár. A `.env` **nincs** verziókövetve; a
-sablonból indulj:
+telepítő létrehozza a sablonból, a kulcsokat neked kell beleírni:
 
 ```bash
-cd ~/.claude/skills/science-council
-cp .env.example .env
-chmod 600 .env
-# töltsd ki a kulcsokat
+$EDITOR ~/.claude/skills/science-council/.env
 ```
 
-A `memo-index` és a `doc-tools` külső függőségeiről a saját `SKILL.md`-jük ír.
+Kulcs nélkül is működik a lokális Ollama panelistával és a Claude-üléssel
+(bridge mód, a te előfizetéseden — nem kell API-kulcs).
 
-> **Ha más gépre klónozod:** a `doc-tools/bin/*` szkriptek shebangje egy konkrét
-> Anaconda-értelmezőre van rögzítve (`#!/Users/szili/anaconda3/bin/python3`),
-> mert a bejelentkezési shell `python3`-ja más környezet. Klónozás után írd át a
-> saját értelmeződre, pl. `#!/usr/bin/env python3`.
+### Két R kell, más-más szerepben
+
+- **chair R** (a PATH-on lévő): a protokollt, a DuckDB-t és a HTTP-hívásokat futtatja
+- **check runner**: a statisztikai ellenőrzéseket futtatja. Ha a Claude for Life
+  Sciences telepítve van, ez automatikusan az `r-stats-methodologist` conda env
+  lesz — abban van a `metafor`/`metadat`, tehát valódi publikált meta-analitikus
+  adatokon futhat ellenőrzés. Felülírható: `SCICOUNCIL_RSCRIPT`.
+
+A telepítő mindkettőt külön nézi. A conda env-be **nem** telepít — azt a Claude
+Science kezeli, CRAN-ról írni bele töri.
 
 ## Mi nincs a repóban
 
