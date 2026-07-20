@@ -13,8 +13,18 @@
 
 set -uo pipefail
 
-SKILLS_DIR="${SKILLS_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+REPO_URL="${REPO_URL:-https://github.com/szilikaroly/claude-skills.git}"
 ALL_SKILLS=(doc-tools memo-index science-council)
+
+# Honnan fut? Ha a repóból, a saját mappája a cél. Ha curl-lel csövezve
+# (`curl ... | bash`), akkor nincs $BASH_SOURCE útvonal — ilyenkor előbb
+# klónozunk, aztán újraindítjuk magunkat a klónból.
+_self="${BASH_SOURCE[0]:-}"
+if [ -n "$_self" ] && [ -f "$_self" ]; then
+  SKILLS_DIR="${SKILLS_DIR:-$(cd "$(dirname "$_self")" && pwd)}"
+else
+  SKILLS_DIR="${SKILLS_DIR:-$HOME/.claude/skills}"
+fi
 
 MODE=install          # install | check
 ASSUME_YES=0
@@ -46,6 +56,8 @@ usage() {
   sed -n '2,20p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
   exit "${1:-0}"
 }
+
+ORIG_ARGS=("$@")   # a bootstrap újraindításhoz, mielőtt a ciklus felemészti
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -273,9 +285,30 @@ install_science_council() {
 }
 
 # ===========================================================================
+# Nincs meg a repo tartalma a célban? Akkor ez egy bootstrap futás: klónozunk,
+# és a klónbeli install.sh veszi át — így a `curl | bash` egysoros is működik.
+bootstrap() {
+  hdr "bootstrap"
+  have git || { bad "git nincs telepítve"; exit 1; }
+
+  if [ -e "$SKILLS_DIR" ] && [ -n "$(ls -A "$SKILLS_DIR" 2>/dev/null)" ]; then
+    bad "a célmappa létezik és nem üres: $SKILLS_DIR"
+    info "add meg máshova: SKILLS_DIR=~/claude-skills  ...  vagy klónozz kézzel"
+    exit 1
+  fi
+
+  info "klónozás: $REPO_URL → $SKILLS_DIR"
+  git clone --quiet "$REPO_URL" "$SKILLS_DIR" || { bad "a klónozás sikertelen"; exit 1; }
+  ok "klónozva"
+
+  chmod +x "$SKILLS_DIR/install.sh"
+  exec "$SKILLS_DIR/install.sh" "${ORIG_ARGS[@]}"
+}
+
 main() {
   printf '%sClaude Code skillek — telepítő%s\n' "$B" "$N"
   info "cél: $SKILLS_DIR"
+  [ -d "$SKILLS_DIR/doc-tools" ] || bootstrap
   [ "$MODE" = check ] && info "MÓD: csak ellenőrzés, semmi nem települ"
   [ "$MODE" = install ] && [ "$WANT_OPTIONAL" = 0 ] && \
     info "alap mód — a nagy letöltésekhez (Ollama, TinyTeX) add meg: --all"
