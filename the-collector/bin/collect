@@ -1,0 +1,756 @@
+#!/Users/szili/anaconda3/bin/python3
+# -*- coding: utf-8 -*-
+"""
+PubMed narratív review kereső és Open Access PDF letöltő.
+
+Az eredeti Colab notebook (untitled0.py) javított, önállóan futtatható változata.
+Nem igényel Colabot és Google Drive-ot: minden helyi mappába dolgozik.
+
+Függőségek:
+    pip install biopython pandas requests
+
+Használat:
+    export NCBI_API_KEY="..."          # ajánlott (10 kérés/mp a 3 helyett)
+    export NCBI_EMAIL="te@pelda.hu"    # az NCBI kéri az azonosításhoz
+
+    python3 pubmed_narrative_reviews.py --outdir ~/Documents/PubMed_Downloads
+    python3 pubmed_narrative_reviews.py --topic belgyogyaszat --retmax 100 --no-pdf
+    python3 pubmed_narrative_reviews.py --query '"gut microbiome" AND "narrative review"'
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+import os
+import re
+import sys
+import time
+from dataclasses import dataclass, asdict, field
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Iterable, Iterator, Sequence
+
+try:
+    from Bio import Entrez
+except ImportError:  # pragma: no cover
+    sys.exit("Hiányzó függőség: biopython. Telepítés: pip install biopython")
+
+try:
+    import requests
+except ImportError:  # pragma: no cover
+    sys.exit("Hiányzó függőség: requests. Telepítés: pip install requests")
+
+try:
+    import pandas as pd
+except ImportError:  # pragma: no cover
+    pd = None  # a CSV-írás a beépített csv modullal is megy
+
+
+# --------------------------------------------------------------------------
+# Konfiguráció
+# --------------------------------------------------------------------------
+
+#: Alapértelmezett témák -> PubMed keresőkifejezés.
+TOPICS: dict[str, str] = {
+    "belgyogyaszat": '"internal medicine"[tiab] OR "internal medicine"[mh]',
+    "mikrobiom": '"microbiome"[tiab] OR "microbiota"[mh]',
+    "szuleszet_nogyogyaszat": '"obstetrics"[mh] OR "gynecology"[mh] OR "obstetrics"[tiab] OR "gynecology"[tiab]',
+    "AI_in_medicine": '("artificial intelligence"[mh] OR "machine learning"[tiab]) AND ("medicine"[tiab] OR "clinical"[tiab])',
+    "obezitologia": '"obesity"[mh] OR "obesity"[tiab]',
+    "diabetologia": '"diabetes mellitus"[mh] OR "diabetes"[tiab]',
+    "egeszseg_gazdasag": '"health economics"[tiab] OR "economics, medical"[mh]',
+}
+
+#: Narratív review-ra szűkítő rész. A PubMednek nincs "narrative review"
+#: publikációtípusa, ezért a Review[pt] típust kombináljuk a szöveges kifejezéssel.
+NARRATIVE_FILTER = (
+    '("narrative review"[tiab] OR "narrative overview"[tiab] OR "narrative synthesis"[tiab])'
+)
+NARRATIVE_FILTER_LOOSE = f'({NARRATIVE_FILTER} OR "review"[pt])'
+
+#: Kizárt publikációtípusok. Figyelem: "research article" NEM létező PubMed
+#: publikációtípus, az eredeti kódban ez a rész némán hatástalan volt.
+EXCLUDE_FILTER = (
+    '("systematic review"[pt] OR "meta-analysis"[pt] OR "guideline"[pt] '
+    'OR "practice guideline"[pt] OR "randomized controlled trial"[pt] '
+    'OR "clinical trial"[pt] OR "systematic review"[ti] OR "meta-analysis"[ti])'
+)
+
+EUROPEPMC_PDF = "https://europepmc.org/articles/{pmcid}?pdf=render"
+EUROPEPMC_XML = "https://www.ebi.ac.uk/europepmc/webservices/rest/{pmcid}/fullTextXML"
+PMC_OA_SERVICE = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi"
+
+USER_AGENT = "pubmed-narrative-reviews/1.0 (mailto:{email})"
+
+#: Fájlnévben nem engedélyezett karakterek.
+_UNSAFE = re.compile(r"[^A-Za-z0-9._-]+")
+
+#: Opcionális hitelesítési fájl, ha a környezeti változók nincsenek beállítva.
+CREDENTIALS_FILE = Path.home() / ".config" / "ncbi" / "env"
+
+_ENV_LINE = re.compile(r"""^\s*(?:export\s+)?([A-Z_][A-Z0-9_]*)\s*=\s*(.*?)\s*$""")
+
+
+def load_credentials_file(path: Path = CREDENTIALS_FILE) -> dict[str, str]:
+    """NCBI_EMAIL / NCBI_API_KEY beolvasása a ~/.config/ncbi/env fájlból.
+
+    Így a kulcs nem kerül bele sem a scriptbe, sem a shell előzményekbe.
+    A fájl jogosultsága legyen 600:  chmod 600 ~/.config/ncbi/env
+    """
+    values: dict[str, str] = {}
+    try:
+        text = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return values
+
+    for line in text.splitlines():
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        match = _ENV_LINE.match(line)
+        if not match:
+            continue
+        name, value = match.group(1), match.group(2)
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+            value = value[1:-1]
+        if name in ("NCBI_EMAIL", "NCBI_API_KEY"):
+            values[name] = value
+    return values
+
+
+# --------------------------------------------------------------------------
+# Segédfüggvények
+# --------------------------------------------------------------------------
+
+
+class RateLimiter:
+    """Egyszerű kérés/másodperc korlátozó az NCBI szabályaihoz."""
+
+    def __init__(self, per_second: float) -> None:
+        self.min_interval = 1.0 / per_second if per_second > 0 else 0.0
+        self._last = 0.0
+
+    def wait(self) -> None:
+        if not self.min_interval:
+            return
+        elapsed = time.monotonic() - self._last
+        if elapsed < self.min_interval:
+            time.sleep(self.min_interval - elapsed)
+        self._last = time.monotonic()
+
+
+def flatten_text(node: Any) -> str:
+    """Entrez XML csomópont -> sima szöveg.
+
+    A cím és a kivonat tartalmazhat beágyazott elemeket (<i>, <sup>, <b>),
+    ezeket a Bio.Entrez listaként adja vissza; a puszta str() ilyenkor csúnya.
+    """
+    if node is None:
+        return ""
+    if isinstance(node, str):
+        return str(node)
+    if isinstance(node, (list, tuple)):
+        return "".join(flatten_text(item) for item in node)
+    return str(node)
+
+
+def get_abstract(article: dict) -> str:
+    """Kivonat kinyerése, strukturált kivonat esetén a címkékkel együtt."""
+    try:
+        parts = article["MedlineCitation"]["Article"]["Abstract"]["AbstractText"]
+    except (KeyError, TypeError):
+        return ""
+
+    if isinstance(parts, str):
+        return flatten_text(parts).strip()
+
+    chunks: list[str] = []
+    for part in parts:
+        text = flatten_text(part).strip()
+        if not text:
+            continue
+        label = ""
+        attributes = getattr(part, "attributes", None)
+        if attributes:
+            label = str(attributes.get("Label", "")).strip()
+        chunks.append(f"{label}: {text}" if label else text)
+    return " ".join(chunks)
+
+
+def get_pub_date(article: dict) -> str:
+    """Publikációs dátum. Kezeli a MedlineDate formát is (pl. '2023 Jan-Feb')."""
+    try:
+        pub_date = article["MedlineCitation"]["Article"]["Journal"]["JournalIssue"]["PubDate"]
+    except (KeyError, TypeError):
+        return ""
+    if "MedlineDate" in pub_date:
+        return str(pub_date["MedlineDate"])
+    return "-".join(str(pub_date[key]) for key in ("Year", "Month", "Day") if key in pub_date)
+
+
+def get_article_ids(article: dict) -> dict[str, str]:
+    """A PubmedData/ArticleIdList kigyűjtése IdType -> érték szótárba."""
+    ids: dict[str, str] = {}
+    id_list = article.get("PubmedData", {}).get("ArticleIdList", [])
+    for id_obj in id_list:
+        attributes = getattr(id_obj, "attributes", None) or {}
+        id_type = str(attributes.get("IdType", "")).lower()
+        if id_type:
+            ids[id_type] = str(id_obj).strip()
+    return ids
+
+
+def normalize_pmcid(pmcid: str | None) -> str:
+    """A PMC azonosító mindig 'PMC' előtaggal használandó."""
+    if not pmcid:
+        return ""
+    pmcid = pmcid.strip()
+    return pmcid if pmcid.upper().startswith("PMC") else f"PMC{pmcid}"
+
+
+def safe_filename(name: str) -> str:
+    return _UNSAFE.sub("_", name).strip("_") or "unnamed"
+
+
+def chunked(items: Sequence[str], size: int) -> Iterator[Sequence[str]]:
+    for start in range(0, len(items), size):
+        yield items[start : start + size]
+
+
+# --------------------------------------------------------------------------
+# Adatmodell
+# --------------------------------------------------------------------------
+
+
+@dataclass
+class Article:
+    tema: str
+    pmid: str
+    cim: str
+    folyoirat: str
+    publikacio_datuma: str
+    doi: str
+    pmc_id: str
+    pubmed_url: str
+    absztrakt: str
+    statusz: str = "Csak metaadat"
+    licenc: str = ""
+    fajl: str = ""
+    publikacio_tipusok: str = field(default="")
+
+
+# --------------------------------------------------------------------------
+# PubMed lekérdezés
+# --------------------------------------------------------------------------
+
+
+def build_query(search_term: str, strict: bool, extra: str = "", all_types: bool = False) -> str:
+    if all_types:
+        # Minden cikktípus (eredeti kutatás is), a review-szűrő kihagyásával.
+        # A kizáró szűrő (systematic review / meta-analysis / guideline / trial)
+        # megmarad, hogy ne csússzanak be a szándékosan kihagyott típusok.
+        query = f"({search_term}) NOT {EXCLUDE_FILTER}"
+    else:
+        narrative = NARRATIVE_FILTER if strict else NARRATIVE_FILTER_LOOSE
+        query = f"({search_term}) AND {narrative} NOT {EXCLUDE_FILTER}"
+    if extra:
+        query = f"({query}) AND ({extra})"
+    return query
+
+
+#: Az esearch retstart+retmax összege nem léphet 10000 fölé history nélkül.
+ESEARCH_HARD_LIMIT = 9999
+
+
+def search_pubmed(query: str, retmax: int, limiter: RateLimiter) -> tuple[list[str], int]:
+    """PMID-k lekérése, szükség esetén lapozva."""
+    if retmax > ESEARCH_HARD_LIMIT:
+        print(
+            f"  ! A találatszám {ESEARCH_HARD_LIMIT}-re korlátozva "
+            "(az esearch ennél többet history nélkül nem ad vissza)."
+        )
+        retmax = ESEARCH_HARD_LIMIT
+
+    pmids: list[str] = []
+    retstart = 0
+    page = min(retmax, 1000)
+    total = 0
+
+    while len(pmids) < retmax:
+        limiter.wait()
+        with Entrez.esearch(
+            db="pubmed",
+            term=query,
+            retmax=min(page, retmax - len(pmids)),
+            retstart=retstart,
+            sort="relevance",
+        ) as handle:
+            record = Entrez.read(handle)
+
+        batch = list(record.get("IdList", []))
+        pmids.extend(batch)
+        total = int(record.get("Count", total))
+        retstart += len(batch)
+        if not batch or retstart >= total:
+            break
+
+    return pmids[:retmax], total
+
+
+def fetch_details(
+    pmids: Sequence[str], limiter: RateLimiter, batch_size: int = 200
+) -> Iterator[dict]:
+    """Rekordok lekérése adagokban.
+
+    Fontos: a PMID-t magából a rekordból olvassuk ki, nem a kért lista
+    indexéből. Az eredeti kód `current_batch_ids[j]` alapján párosított,
+    ami elcsúszik, ha az efetch kevesebb (vagy más sorrendű) rekordot ad
+    vissza -- így rossz PMID kerülhetett a címhez.
+    """
+    for batch in chunked(list(pmids), batch_size):
+        limiter.wait()
+        try:
+            with Entrez.efetch(
+                db="pubmed", id=",".join(batch), retmode="xml"
+            ) as handle:
+                records = Entrez.read(handle)
+        except Exception as exc:  # hálózati vagy XML hiba
+            print(f"  ! efetch hiba ({len(batch)} rekord): {exc}", file=sys.stderr)
+            continue
+
+        for article in records.get("PubmedArticle", []):
+            yield article
+
+        skipped = len(records.get("PubmedBookArticle", []))
+        if skipped:
+            print(f"  i {skipped} könyvfejezet-rekord kihagyva.")
+
+
+def to_article(article: dict, tema: str) -> Article | None:
+    citation = article.get("MedlineCitation", {})
+    pmid = str(citation.get("PMID", "")).strip()
+    if not pmid:
+        return None
+
+    art = citation.get("Article", {})
+    ids = get_article_ids(article)
+    pub_types = ", ".join(flatten_text(pt) for pt in art.get("PublicationTypeList", []))
+
+    return Article(
+        tema=tema,
+        pmid=pmid,
+        cim=flatten_text(art.get("ArticleTitle")).strip(),
+        folyoirat=flatten_text(art.get("Journal", {}).get("Title")).strip(),
+        publikacio_datuma=get_pub_date(article),
+        doi=ids.get("doi", ""),
+        pmc_id=normalize_pmcid(ids.get("pmc")),
+        pubmed_url=f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/",
+        absztrakt=get_abstract(article),
+        publikacio_tipusok=pub_types,
+    )
+
+
+# --------------------------------------------------------------------------
+# Open Access PDF letöltés
+# --------------------------------------------------------------------------
+
+
+@dataclass
+class OAInfo:
+    """A PMC OA Web Service válasza egy cikkről."""
+
+    open_access: bool
+    license: str = ""
+    pdf_url: str = ""
+
+
+def check_open_access(pmcid: str, session: requests.Session, limiter: RateLimiter) -> OAInfo:
+    """A PMC OA Web Service megmondja, hogy a cikk az Open Access készletben van-e.
+
+    Csak az OA készlet tölthető le programozottan; a PMC weboldalának
+    tömeges letöltése (amit az eredeti kód csinált) az NCBI szabályzata
+    szerint tiltott, és a szerver HTML hibaoldallal vagy blokkolással válaszol.
+    """
+    limiter.wait()
+    try:
+        response = session.get(PMC_OA_SERVICE, params={"id": pmcid}, timeout=30)
+        response.raise_for_status()
+    except requests.RequestException:
+        return OAInfo(open_access=False)
+
+    body = response.text
+    if "idIsNotOpenAccess" in body or "idDoesNotExist" in body or "<record" not in body:
+        return OAInfo(open_access=False)
+
+    license_match = re.search(r'license="([^"]*)"', body)
+    # Néhány rekordhoz közvetlen PDF link is tartozik, máshoz csak .tar.gz csomag.
+    pdf_match = re.search(r'<link[^>]*format="pdf"[^>]*href="([^"]+)"', body)
+    pdf_url = pdf_match.group(1) if pdf_match else ""
+    # A requests nem tud ftp:// címet kezelni, az NCBI ugyanezt HTTPS-en is kiszolgálja.
+    if pdf_url.startswith("ftp://ftp.ncbi.nlm.nih.gov/"):
+        pdf_url = pdf_url.replace("ftp://ftp.ncbi.nlm.nih.gov/", "https://ftp.ncbi.nlm.nih.gov/", 1)
+
+    return OAInfo(
+        open_access=True,
+        license=license_match.group(1) if license_match else "",
+        pdf_url=pdf_url,
+    )
+
+
+def _download_to_file(
+    url: str,
+    target: Path,
+    session: requests.Session,
+    limiter: RateLimiter,
+    expect: str,
+    magic: bytes | None,
+    retries: int = 3,
+) -> bool:
+    """Letöltés ideiglenes fájlba, tartalomtípus- és fejlécellenőrzéssel."""
+    for attempt in range(1, retries + 1):
+        limiter.wait()
+        try:
+            response = session.get(url, timeout=90, allow_redirects=True, stream=True)
+        except requests.RequestException as exc:
+            if attempt == retries:
+                print(f"    hálózati hiba: {exc}", file=sys.stderr)
+                return False
+            time.sleep(2 * attempt)
+            continue
+
+        if response.status_code in (429, 500, 502, 503, 504) and attempt < retries:
+            time.sleep(2 * attempt)
+            continue
+        if response.status_code != 200:
+            return False
+        if expect not in response.headers.get("Content-Type", "").lower():
+            return False
+
+        tmp = target.with_name(target.name + ".part")
+        try:
+            with tmp.open("wb") as fh:
+                for chunk in response.iter_content(chunk_size=65536):
+                    if chunk:
+                        fh.write(chunk)
+            # Ellenőrizzük, hogy tényleg a várt fájlt kaptuk, nem hibaoldalt.
+            if magic:
+                with tmp.open("rb") as fh:
+                    if fh.read(len(magic)) != magic:
+                        tmp.unlink(missing_ok=True)
+                        return False
+            target.parent.mkdir(parents=True, exist_ok=True)
+            tmp.replace(target)
+            return True
+        except OSError as exc:
+            tmp.unlink(missing_ok=True)
+            print(f"    írási hiba: {exc}", file=sys.stderr)
+            return False
+    return False
+
+
+def download_pdf(
+    pmcid: str,
+    oa: OAInfo,
+    target: Path,
+    session: requests.Session,
+    limiter: RateLimiter,
+) -> bool:
+    """OA PDF letöltése: előbb a PMC OA link, aztán az Europe PMC renderelt PDF."""
+    candidates = [url for url in (oa.pdf_url, EUROPEPMC_PDF.format(pmcid=pmcid)) if url]
+    for url in candidates:
+        if _download_to_file(url, target, session, limiter, expect="pdf", magic=b"%PDF-"):
+            return True
+    return False
+
+
+def download_fulltext_xml(
+    pmcid: str, target: Path, session: requests.Session, limiter: RateLimiter
+) -> bool:
+    """Teljes szöveg JATS XML-ben, ha PDF nem érhető el (szövegbányászathoz)."""
+    return _download_to_file(
+        EUROPEPMC_XML.format(pmcid=pmcid), target, session, limiter, expect="xml", magic=b"<"
+    )
+
+
+# --------------------------------------------------------------------------
+# CSV kiírás
+# --------------------------------------------------------------------------
+
+
+def write_csv(rows: Iterable[Article], path: Path) -> int:
+    records = [asdict(row) for row in rows]
+    if not records:
+        print("Nincs kiírandó adat.")
+        return 0
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if pd is not None:
+        pd.DataFrame(records).to_csv(path, index=False, encoding="utf-8-sig")
+    else:
+        with path.open("w", newline="", encoding="utf-8-sig") as fh:
+            writer = csv.DictWriter(fh, fieldnames=list(records[0].keys()))
+            writer.writeheader()
+            writer.writerows(records)
+    return len(records)
+
+
+def print_summary(rows: Sequence[Article]) -> None:
+    if not rows:
+        return
+    print("\nTémánkénti bontás:")
+    if pd is not None:
+        frame = pd.DataFrame(asdict(row) for row in rows)
+        table = frame.groupby(["tema", "statusz"]).size().unstack(fill_value=0)
+        print(table.to_string())
+        return
+    counts: dict[tuple[str, str], int] = {}
+    for row in rows:
+        counts[(row.tema, row.statusz)] = counts.get((row.tema, row.statusz), 0) + 1
+    for (tema, statusz), count in sorted(counts.items()):
+        print(f"  {tema:<26} {statusz:<20} {count}")
+
+
+# --------------------------------------------------------------------------
+# Fő folyamat
+# --------------------------------------------------------------------------
+
+
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="PubMed narratív review kereső és OA PDF letöltő.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "--outdir",
+        type=Path,
+        default=Path.home() / "Documents" / "PubMed_Downloads",
+        help="Kimeneti mappa.",
+    )
+    parser.add_argument(
+        "--topic",
+        action="append",
+        choices=sorted(TOPICS),
+        help="Csak ez(eke)t a témá(ka)t dolgozza fel (többször megadható).",
+    )
+    parser.add_argument(
+        "--query",
+        help="Saját PubMed kifejezés a beépített témák helyett.",
+    )
+    parser.add_argument(
+        "--query-name",
+        default="egyedi",
+        help="A --query-hez tartozó mappanév.",
+    )
+    parser.add_argument("--retmax", type=int, default=50, help="Találatok száma témánként.")
+    parser.add_argument(
+        "--years",
+        type=int,
+        help="Csak az elmúlt N év publikációi.",
+    )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help='Csak azok a cikkek, amelyekben a "narrative review" kifejezés szerepel a címben/kivonatban.',
+    )
+    parser.add_argument(
+        "--all-types",
+        action="store_true",
+        help="Minden cikktípus (eredeti kutatás is); a review-szűrő kihagyása, a kizáró szűrő megmarad.",
+    )
+    parser.add_argument(
+        "--no-pdf", action="store_true", help="Csak metaadat gyűjtése, PDF letöltés nélkül."
+    )
+    parser.add_argument(
+        "--xml-fallback",
+        action="store_true",
+        help="Ha nincs PDF, a teljes szöveg JATS XML-ben mentése (szövegbányászathoz).",
+    )
+    parser.add_argument(
+        "--email",
+        default="",
+        help=f"NCBI kapcsolattartó e-mail. Enélkül: NCBI_EMAIL, majd {CREDENTIALS_FILE}.",
+    )
+    parser.add_argument(
+        "--api-key",
+        default="",
+        help=f"NCBI API kulcs. Enélkül: NCBI_API_KEY, majd {CREDENTIALS_FILE}.",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    args = parse_args(argv)
+
+    # Sorrend: parancssori kapcsoló > környezeti változó > ~/.config/ncbi/env
+    from_file = load_credentials_file()
+    args.email = args.email or os.environ.get("NCBI_EMAIL", "") or from_file.get("NCBI_EMAIL", "")
+    args.api_key = (
+        args.api_key or os.environ.get("NCBI_API_KEY", "") or from_file.get("NCBI_API_KEY", "")
+    )
+
+    if not args.email:
+        return _fail(
+            "Hiányzik az e-mail cím. Az NCBI kötelezővé teszi az azonosítást.\n"
+            '  export NCBI_EMAIL="te@pelda.hu"   vagy   --email te@pelda.hu\n'
+            f"  vagy írd be ide: {CREDENTIALS_FILE}"
+        )
+
+    Entrez.email = args.email
+    Entrez.tool = "pubmed-narrative-reviews"
+    if args.api_key:
+        Entrez.api_key = args.api_key
+        print(f"NCBI API kulcs betöltve (…{args.api_key[-4:]}), sebességkorlát: 10 kérés/mp.")
+    else:
+        print(
+            "Figyelem: nincs NCBI API kulcs, ezért a sebességkorlát 3 kérés/mp.\n"
+            '  Kulcs igénylése: https://www.ncbi.nlm.nih.gov/account/  ->  export NCBI_API_KEY="..."'
+        )
+
+    # NCBI: API kulccsal 10, anélkül 3 kérés/mp. Kicsit alatta maradunk.
+    ncbi_limiter = RateLimiter(8.0 if args.api_key else 2.5)
+    # Europe PMC / PMC OA: udvarias, lassabb ütem.
+    pdf_limiter = RateLimiter(1.0)
+
+    if args.query:
+        topics = {safe_filename(args.query_name): args.query}
+    elif args.topic:
+        topics = {name: TOPICS[name] for name in args.topic}
+    else:
+        topics = dict(TOPICS)
+
+    extra = f'"last {args.years} years"[dp]' if args.years else ""
+
+    outdir: Path = args.outdir.expanduser()
+    outdir.mkdir(parents=True, exist_ok=True)
+
+    session = requests.Session()
+    session.headers["User-Agent"] = USER_AGENT.format(email=args.email)
+
+    all_rows: list[Article] = []
+    seen_pmids: set[str] = set()
+
+    # Keresési napló (PRISMA "identification"): minden lekérdezés rögzül a
+    # dátummal, a teljes PubMed találatszámmal és a ténylegesen behozott
+    # rekordszámmal. Ez adja a reprodukálható keresési stratégiát, amit a
+    # bírálók számonkérnek. A prisma modul ezt a naplót olvassa be.
+    run_ts = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    run_id = f"collect-{run_ts}"
+    filters = "; ".join(
+        f for f in (
+            "strict" if args.strict else "loose-review-filter",
+            "all-types" if args.all_types else "",
+            f"last-{args.years}-years" if args.years else "",
+        ) if f
+    )
+    search_log: list[dict] = []
+
+    for topic_name, search_term in topics.items():
+        query = build_query(search_term, strict=args.strict, extra=extra, all_types=args.all_types)
+        print(f"\n=== {topic_name} ===")
+        print(f"  Kifejezés: {query}")
+
+        try:
+            pmids, total_hits = search_pubmed(query, args.retmax, ncbi_limiter)
+        except Exception as exc:
+            print(f"  ! Keresési hiba: {exc}", file=sys.stderr)
+            continue
+
+        search_log.append({
+            "run_id": run_id,
+            "timestamp": run_ts,
+            "database": "PubMed",
+            "topic": topic_name,
+            "query": query,
+            "count_total": total_hits,
+            "retrieved": len(pmids),
+            "retmax": args.retmax,
+            "years": args.years,
+            "filters": filters,
+        })
+
+        print(f"  Találatok (PubMed Count): {total_hits}   behozva: {len(pmids)}")
+        if not pmids:
+            continue
+
+        topic_dir = outdir / safe_filename(topic_name)
+        rows: list[Article] = []
+
+        for record in fetch_details(pmids, ncbi_limiter):
+            row = to_article(record, topic_name)
+            if row is None or row.pmid in seen_pmids:
+                continue
+            seen_pmids.add(row.pmid)
+            rows.append(row)
+
+        print(f"  Feldolgozott rekordok: {len(rows)}")
+
+        if not args.no_pdf:
+            topic_dir.mkdir(parents=True, exist_ok=True)
+            downloaded = 0
+            for row in rows:
+                if not row.pmc_id:
+                    row.statusz = "Nincs PMC azonosító"
+                    continue
+
+                target = topic_dir / f"{row.pmid}.pdf"
+                xml_target = topic_dir / f"{row.pmid}.xml"
+                if target.exists():
+                    row.statusz = "Letöltve (PDF)"
+                    row.fajl = str(target)
+                    continue
+                if args.xml_fallback and xml_target.exists():
+                    row.statusz = "Letöltve (XML)"
+                    row.fajl = str(xml_target)
+                    continue
+
+                oa = check_open_access(row.pmc_id, session, pdf_limiter)
+                row.licenc = oa.license
+                if not oa.open_access:
+                    row.statusz = "Nem Open Access"
+                    continue
+
+                print(f"  -> {row.pmid} ({row.pmc_id}) ...", end=" ", flush=True)
+                if download_pdf(row.pmc_id, oa, target, session, pdf_limiter):
+                    row.statusz = "Letöltve (PDF)"
+                    row.fajl = str(target)
+                    downloaded += 1
+                    print("OK")
+                elif args.xml_fallback and download_fulltext_xml(
+                    row.pmc_id, xml_target, session, pdf_limiter
+                ):
+                    row.statusz = "Letöltve (XML)"
+                    row.fajl = str(xml_target)
+                    downloaded += 1
+                    print("OK (XML)")
+                else:
+                    row.statusz = "PDF nem érhető el"
+                    print("sikertelen")
+            print(f"  Letöltött teljes szöveg: {downloaded}")
+
+        all_rows.extend(rows)
+
+    csv_path = outdir / "osszesitett_lista.csv"
+    count = write_csv(all_rows, csv_path)
+    if count:
+        print(f"\nKész. {count} cikk metaadata mentve: {csv_path}")
+
+    if search_log:
+        log_path = outdir / "kereses_naplo.jsonl"
+        with log_path.open("a", encoding="utf-8") as fh:
+            for entry in search_log:
+                fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        print(f"Keresési napló bővítve ({len(search_log)} lekérdezés): {log_path}")
+        print("  PRISMA folyamatábra / keresési stratégia:  bin/prisma ingest --outdir "
+              f"{outdir}")
+
+    print_summary(all_rows)
+    return 0
+
+
+def _fail(message: str) -> int:
+    print(message, file=sys.stderr)
+    return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
