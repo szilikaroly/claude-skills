@@ -9,6 +9,11 @@ futtatható szkriptek és a hivatkozott dokumentáció.
 | [`science-council`](science-council/) | Több modellből (Claude, ChatGPT, Gemini, xAI, DeepSeek, lokális Ollama) álló tudományos tanács, amely adverzariális protokoll szerint vitatja meg a kérdést — minden panelista minden állítás **mellett és ellen** is érvel. A túlélő állításokat determinisztikus R-ellenőrzések és valódi hivatkozáskeresés (Crossref / Europe PMC) validálja, az eredmény indexelt DuckDB tudásbázisba kerül. Az R egyszerre orkesztrátor, statisztikai motor és adatbázisréteg. |
 | [`memo-index`](memo-index/) | Csökkenti a kontextus-token fogyasztást nagy anyagoknál: **lokális** modellel készít tömörített, sorhoz kötött memókat (nulla API-token), a kontextusban csak egy apró, kereshető indexet tart, és minden állítást külön validál — amit lehet determinisztikusan, a többit egy-egy izolált subagenttel. Kezel kódot, prózát, táblázatokat és képeket/ábrákat (lokális vision modellel). |
 | [`doc-tools`](doc-tools/) | Szövegkinyerés PDF, Word, Excel, PowerPoint és LaTeX fájlokból, valamint `.docx` és `.tex` programozott szerkesztése. A `pdftotext`, `doctotext`, `xlstotext`, `latextotext` parancsokat adja, plusz teljes LaTeX toolchaint (TinyTeX). |
+| ~~`the-collector`~~ | **Átköltözött** a `composer` pluginba (`szk-plugins`), 2026-08-23. Ugyanaz a PubMed-learatás, plusz 5D befogadási kapu (DOI, első szerző, szerzőlista, folyóirat, kötet Crossref + PubMed + Europa PMC ellen), keresésenkénti naplózott könyvtár PRISMA 2020 / PRISMA-S szerint, és PROSPERO protokoll-rekord. Telepítés: `claude plugin install composer@szk-plugins`, vagy a `composer` parancs bármelyik terminálból. |
+
+> A `academic-editor` és a `probast-tripod-ai` skill szintén átköltözött a
+> `szk-plugins` marketplace-be — `academic-editor` és `validator` néven. A régi
+> másolatok archívuma: `~/.claude/skills-backup-20260823.tar.gz`.
 
 ## Telepítés
 
