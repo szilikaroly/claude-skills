@@ -15,7 +15,22 @@ db_connect <- function(path = db_path(), read_only = FALSE) {
     dir.create(ed, recursive = TRUE, showWarnings = FALSE)
     Sys.setenv(DUCKDB_EXTENSION_DIRECTORY = ed)
   }
-  con <- dbConnect(duckdb::duckdb(), dbdir = path, read_only = read_only)
+  ## A crashed or backgrounded run leaves an R process holding the write lock, and
+  ## DuckDB then refuses even a read-only open. The raw error is a wall of JSON that
+  ## says "Conflicting lock" three levels down; say it plainly instead.
+  con <- tryCatch(dbConnect(duckdb::duckdb(), dbdir = path, read_only = read_only),
+    error = function(e) {
+      msg <- conditionMessage(e)
+      if (grepl("Conflicting lock|lock on file", msg)) {
+        pid <- regmatches(msg, regexpr("PID [0-9]+", msg))
+        stop("the claim store is locked by another R process",
+             if (length(pid)) paste0(" (", pid, ")") else "",
+             ". A previous run is still holding it, or crashed without releasing it. ",
+             "Check with `pgrep -fl Rscript` and end that process, then retry.",
+             call. = FALSE)
+      }
+      stop(e)
+    })
   if (!read_only) db_init(con)
   con
 }

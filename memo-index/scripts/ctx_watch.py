@@ -48,6 +48,7 @@ TIERS = (200_000, 500_000, 1_000_000, 2_000_000)
 
 # Prefix match, longest first, so "claude-opus-4-8" beats a bare "claude-opus".
 MODEL_WINDOWS = {
+    "claude-opus-5": 1_000_000,
     "claude-opus-4-8": 1_000_000,
     "claude-sonnet-5": 1_000_000,
     "claude-fable-5": 1_000_000,

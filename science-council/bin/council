@@ -36,7 +36,22 @@ science-council — multi-model scientific deliberation with validated, indexed 
   council stats-report --qid q_xxx [--out report.html] [--meta spec.json]
                                      generate an R statistical report: ggplot2
                                      charts + optional metafor meta-analysis (HTML)
-  council science                     Claude Science integration status (envs, connectors)
+  council science [--probe]           Claude Science specialists + connectors
+  council petals --question "..." --material FILE [--qid q_xxx] [--out petals.md]
+                                     propose human passages for a manuscript, each
+                                     anchored to a checkable fact and verified
+  council assembly --claim "..." --material FILE [--panel a,b,c] [--out record.md]
+                                     one claim, whole panel, every petal lens,
+                                     then cross-examination — full .md transcript
+  council ledger --qid q_xxx [--out ledger.md]
+                                     every verifiable fact: how it was checked,
+                                     what the check returned, what could not be
+  council review --qid q_xxx [--subject "..."] [--material FILE] [--outdir DIR]
+                                     independent reviewer + statistician passes,
+                                     each working from the ledger, separately
+  council petals-interact --qid q_xxx [--tension]
+                                     how a stored petal set behaves as a whole:
+                                     redundancy, crowding, composed overclaim
   council stats                       store summary + panelist calibration
   council bridge --status|--clear     inspect the Claude bridge queue
 
@@ -173,6 +188,7 @@ if (cmd == "science") {
   d <- science_daemon()
   cli_alert_info("Daemon: {if (isTRUE(d$running)) paste0('running (pid ', d$pid %||% '?', ', port ', d$port %||% '?', ')') else 'not running'}")
   cli_h2("Specialist environments")
+  src("specialists.R")
   roles <- c(SCIENCE_ROLE_ENV, SCIENCE_PY_ROLE_ENV)
   for (e in science_envs()) {
     rs <- science_env_rscript(e); py <- science_env_python(e)
@@ -188,6 +204,88 @@ if (cmd == "science") {
   cx <- science_connectors(TRUE)
   if (is.null(cx) || !nrow(cx)) cli_alert_warning("  none authorized")
   else for (i in seq_len(nrow(cx))) cli_text("  {cx$name[i]}")
+  quit(status = 0)
+}
+
+## ---------------------------------------------------------------- petals
+if (cmd == "petals") {
+  src("science.R"); src("providers.R"); src("db.R"); src("petals.R")
+  q <- opt("question"); mf <- opt("material")
+  if (is.null(q) || is.null(mf)) { cli_alert_danger("--question and --material are required"); quit(status = 1) }
+  if (!file.exists(mf)) { cli_alert_danger("material file not found: {mf}"); quit(status = 1) }
+  material <- paste(readLines(mf, warn = FALSE), collapse = "\n")
+  res <- tryCatch(petals_run(q, material, qid = opt("qid"), seat = opt("seat"),
+                             max_petals = as.integer(opt("max", "6")), outfile = opt("out")),
+                  error = function(e) { msg <- conditionMessage(e); cli_alert_danger("{msg}"); quit(status = 1) })
+  if (is.null(opt("out")) && !is.null(res)) cat("\n", res$markdown, "\n")
+  quit(status = 0)
+}
+
+## ---------------------------------------------------------------- assembly
+if (cmd == "assembly") {
+  src("science.R"); src("providers.R"); src("db.R"); src("petals.R"); src("assembly.R")
+  cl <- opt("claim"); mf <- opt("material")
+  if (is.null(cl) || is.null(mf)) { cli_alert_danger("--claim and --material are required"); quit(status = 1) }
+  if (!file.exists(mf)) { cli_alert_danger("material file not found"); quit(status = 1) }
+  material <- paste(readLines(mf, warn = FALSE), collapse = "\n")
+  res <- tryCatch(assembly_run(cl, material,
+      panel  = if (!is.null(opt("panel"))) trimws(strsplit(opt("panel"), ",")[[1]]) else NULL,
+      rounds = as.integer(opt("rounds", "2")), outfile = opt("out")),
+    error = function(e) { msg <- conditionMessage(e); cli_alert_danger("{msg}"); quit(status = 1) })
+  if (is.null(opt("out"))) cat("\n", res$markdown, "\n")
+  quit(status = 0)
+}
+
+## ---------------------------------------------------------------- ledger
+if (cmd == "ledger") {
+  src("db.R"); src("ledger.R")
+  qid <- opt("qid"); if (is.null(qid)) { cli_alert_danger("--qid is required"); quit(status = 1) }
+  con <- db_connect(read_only = TRUE); on.exit(dbDisconnect(con, shutdown = TRUE))
+  led <- ledger_build(con, qid)
+  if (is.null(led)) { cli_alert_info("No facts recorded for {qid}."); quit(status = 0) }
+  md <- ledger_render(led, qid)
+  s <- ledger_summary(led); cli_alert_info("{s}")
+  if (!is.null(opt("out"))) { writeLines(md, opt("out")); cli_alert_success("Written: {opt('out')}") }
+  else cat("\n", md, "\n")
+  quit(status = 0)
+}
+
+## ---------------------------------------------------------------- review
+if (cmd == "review") {
+  src("science.R"); src("providers.R"); src("db.R"); src("ledger.R"); src("review.R")
+  qid <- opt("qid"); if (is.null(qid)) { cli_alert_danger("--qid is required"); quit(status = 1) }
+  con <- db_connect(read_only = TRUE); on.exit(dbDisconnect(con, shutdown = TRUE))
+  q <- tryCatch(dbGetQuery(con, "SELECT question FROM questions WHERE id = ?", params = list(qid)),
+                error = function(e) NULL)
+  subj <- opt("subject", if (!is.null(q) && nrow(q)) q$question[1] else qid)
+  mat <- if (!is.null(opt("material")) && file.exists(opt("material")))
+           paste(readLines(opt("material"), warn = FALSE), collapse = "\n") else ""
+  res <- review_run(subj, con = con, qid = qid, material = mat, outdir = opt("outdir"))
+  if (is.null(opt("outdir"))) cat("\n", res$markdown, "\n")
+  quit(status = 0)
+}
+
+## ---------------------------------------------------------------- petals-interact
+if (cmd == "petals-interact") {
+  src("science.R"); src("providers.R"); src("db.R"); src("petals.R")
+  qid <- opt("qid"); if (is.null(qid)) { cli_alert_danger("--qid is required"); quit(status = 1) }
+  con <- db_connect(read_only = TRUE); on.exit(dbDisconnect(con, shutdown = TRUE))
+  df <- tryCatch(dbGetQuery(con, "SELECT * FROM petals WHERE question_id = ? AND (verified IS NULL OR verified)", params = list(qid)),
+                 error = function(e) NULL)
+  if (is.null(df) || !nrow(df)) { cli_alert_info("No kept petals for {qid}."); quit(status = 0) }
+  ps <- lapply(seq_len(nrow(df)), function(i) as.list(df[i, ]))
+  for (i in seq_along(ps)) ps[[i]]$id <- paste0("P", i)
+  cli_h1("Petal interaction — {qid}")
+  ia <- petals_interact(ps)
+  if (flag("tension")) {
+    cli_h2("Semantic tension")
+    tn <- petal_tension(ps, seat = opt("seat"))
+    if (!is.null(tn$note)) cli_alert_warning(tn$note)
+    else if (tn$failed > 0) cli_alert_danger("{tn$failed} pair(s) could not be judged ({tn$seat} unreachable) — this is NOT a clean result")
+    if (!is.null(tn$pairs)) for (i in seq_len(nrow(tn$pairs)))
+      cli_alert_warning("{tn$pairs$a[i]} <-> {tn$pairs$b[i]} [{tn$pairs$relation[i]}] {tn$pairs$why[i]}")
+    else if (tn$judged > 0) cli_alert_success("{tn$judged} pair(s) judged, no tension found")
+  }
   quit(status = 0)
 }
 

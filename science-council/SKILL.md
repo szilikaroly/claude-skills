@@ -211,6 +211,154 @@ Because the stats env has no `duckdb`, system R exports the session via
 stay cleanly separated. `council_meta()` in `R/stats.R` is callable directly for
 any dataset, independent of a council session.
 
+## Specialist capabilities
+
+Beyond running R in `r-stats-methodologist`, three specialist environments carry
+capabilities the council could not otherwise reach (`R/specialists.R`):
+
+- **`biolit` → PubMed via biopython/Entrez.** Not a duplicate of the Crossref and
+  Europe PMC lookups: Entrez returns MeSH terms and *publication types*, which answer
+  a question the harness could not previously ask — **what kind of evidence is this**.
+  `specialist_evidence_level(pmids)` classifies each citation on a six-level hierarchy
+  (systematic review → RCT → non-randomised trial → observational → case report →
+  narrative). A claim carried by a randomised trial and the same claim carried by a
+  case report are not equally supported; until now they were treated identically.
+  `specialist_pubmed_search(query, pubtype = "Randomized Controlled Trial")` filters by
+  design, which Crossref cannot express.
+- **`crosscheck` → statsmodels.** Re-fits an ANCOVA in a second implementation. Because
+  the checks and the statistics layer both run in R, a mis-specified model would
+  reproduce itself rather than show up.
+- **`figures` → matplotlib.** A fallback renderer for installs with python but no R.
+  ggplot2 is the better one and is what `stats-report` uses.
+
+`./bin/council science --probe` tests each rather than assuming it. Three envs are
+deliberately *not* wired: `compute-provider-modal` needs a Modal account and would fail
+at the point of use for most people, `claude-science-mcp` is the daemon's own server,
+and five envs on a stock install are half-provisioned (interpreter present, not
+executable).
+
+## Petals — the human elements of a manuscript
+
+```bash
+./bin/council petals --question "..." --material facts.txt [--qid q_xxx] [--out petals.md]
+```
+
+Scientific prose has been sanded smooth: the passive voice, the absent author, the
+result that "was observed". Somebody was surprised. Somebody noticed a rash and ordered
+a test that changed a patient's life. Somebody had been wrong in the previous draft.
+Removing that does not make a paper more objective — it removes the reasoning that
+produced the finding. A **petal** is one short, true, human passage attached to one
+place in a manuscript.
+
+Six kinds: `motivation` (why this was really attempted), `surprise` (including being
+wrong earlier), `clinical_narrative` (a patient whose course carried information),
+`uncertainty` (a doubt genuinely held), `patient_impact` (the concrete consequence),
+`craft` (a judgement call and its cost).
+
+**The guard is structural, not advisory.** "Make it human" can mean restoring what was
+stripped out, or manufacturing sentiment that never happened — and a reader cannot tell
+the two apart on the page. So a petal is never accepted for reading well. Each must
+carry an **anchor**: a specific fact, event or record, of a kind that can be checked.
+`petal_verify()` rejects a petal with no anchor, one whose text states figures its
+anchor does not contain (the commonest drift — a real 92.7% becoming a rounder 98.4%),
+and one claiming to come from the council record when no claim matches. Anchors of kind
+`record` cannot be machine-checked — only the clinician knows whether a consultation
+happened as described — so those are rendered flagged **[needs author confirmation]**
+rather than silently trusted.
+
+Rejected petals are rendered too, struck through with the reason, so the same idea is
+not reintroduced later without evidence.
+
+### How petals behave as a set
+
+```bash
+./bin/council petals-interact --qid q_xxx [--tension]
+```
+
+Verifying petals one at a time is not enough, because three things only appear in the
+composition:
+
+- **Redundancy** — several petals drawn from one event, so a single case carries a
+  third of the manuscript's human weight.
+- **Crowding** — petals stacked into one section, which turns the Discussion into a
+  sequence of set pieces with the argument lost between them.
+- **Composed overclaim** — the one that matters. Every petal is true and the portrait
+  they compose is not. Passages in the register of *we noticed, we were careful, we
+  admitted our error* add up to a claim about the authors that no single petal makes
+  and no anchor supports.
+
+Demonstrated on this project's own six-petal set: keeping only the three petals that
+credit the authors — each individually anchored and each passing verification —
+produces *"every petal credits the authors and none costs them; a set this flattering
+reads as curated, whatever each anchor says."* No per-petal check can catch that,
+because nothing is wrong with any petal.
+
+`petal_valence()` scores whether a petal costs the authors something or credits them; a
+healthy set carries both. The analysis also flags anchor concentration, section
+imbalance, and petals resting on a single patient each — in this design the individuals
+with the most quotable courses are usually the ones who left the study.
+
+`--tension` adds the one judgement code cannot make: whether two passages undercut one
+another (*"every record was checked"* beside *"we found four duplicates late"*). Two
+guards, both learned here:
+
+- **Frontier seats only.** Asked to judge three test pairs, `llama3.1:8b` flagged all
+  three at severity 1.0 including two unrelated ones — the same failure that bars local
+  models from authoring R checks. Override with `SCICOUNCIL_TENSION_ANY_SEAT=1`.
+- **An unreachable model is not a clean result.** The first version returned "none" for
+  every pair while Gemini was serving 503s, and the output was indistinguishable from a
+  manuscript with no tension in it. `petal_tension()` now reports `judged` and `failed`
+  separately and says plainly when nothing could be judged.
+
+`--material` is the only permitted source of fact. Pass real things: verified
+statistics, the council record, documented clinical events. What is not in that file
+cannot legitimately appear in a petal.
+
+## The rule of the assembly
+
+```bash
+./bin/council assembly --claim "..." --material facts.txt [--panel a,b,c] [--out record.md]
+```
+
+One claim, the whole panel, every petal lens, then cross-examination — the full
+argument from everyone in a single markdown record.
+
+**No panelist may lie or invent data. Every panelist may foreground one fact over the
+others and read it differently.**
+
+The second half is not a loophole. Honest scientific disagreement almost never turns on
+the facts being different; it turns on which fact is treated as decisive. Two truthful
+readers of the same cohort can disagree about whether a 93.2% completion rate or four
+unexplained discontinuations settles the question. Forbidding that would produce not
+rigour but unanimity — panelists reciting the same safe reading.
+
+What the rule needs is a companion, because emphasis without disclosure is exactly how
+cherry-picking works: cite the supporting facts, omit the ones that cut the other way,
+invent nothing, mislead completely. So each panelist must declare **what it foregrounded
+and what it set aside to do so**, and the record prints that declaration beside the
+argument rather than burying it.
+
+The emphasis map then shows three patterns, of which only the last is a fault:
+
+- **Shared** — panelists foreground the same fact. Agreement about what matters, even
+  where the verdicts differ.
+- **Divided** — panelists foreground different facts. This is the disagreement in its
+  clearest form, and usually more informative than the votes.
+- **Unclaimed** — a fact someone set aside and nobody foregrounded. No one lied and no
+  one argued from it either, so it leaves the assembly unexamined.
+
+Demonstrated live on this project: the two local seats foregrounded the same fact
+(overlap 0.69) while Claude foregrounded a different one (0.04) — and three facts were
+set aside by someone and claimed by no one, including the zero-intolerance figure that
+the claim under examination actually rests on. The votes were unanimous; the emphasis
+map showed the panel was not.
+
+**One defect the first run exposed.** The cross-examination record initially carried
+verdicts, arguments and lenses but *not* the emphasis declarations, so panelists could
+attack a conclusion but not its weighting. A declaration nobody can see is not a
+disclosure. `assembly_format_record()` now circulates it, and round 2 explicitly asks
+each panelist to say whether another's ordering is defensible.
+
 ## The store
 
 DuckDB at `db/council.duckdb`, FTS index on claim text (rebuilt after each run).
