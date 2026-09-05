@@ -5,15 +5,15 @@ antenatal documentation, with a fully reproducible analysis pipeline.
 
 ```
 BMJ-HCI-submission.docx    the submission file, BMJ-formatted (upload this)
-BMJ-HCI-supplementary.docx supplementary table S1 (export to PDF before upload)
-manuscript.md              markdown source of the submission file
+BMJ-HCI-supplementary.docx supplementary methods + tables S1-S2 (export to PDF before upload)
+manuscript.md              markdown source of the submission file (~4,060 words body)
 supplementary.md           markdown source of the supplementary file
 build_docx.js              markdown -> BMJ-formatted .docx
 analysis/params.yaml       every parameter, with a status flag (firm / assumed / todo)
 analysis/analysis.py       reads the workbook + params, writes tables/ and figures/
 tables/results.json        every computed number, machine-readable
 tables/table[1-3]*.md      in-text tables
-tables/tableS1*.md         supplementary table
+tables/tableS[12]*.md      supplementary tables
 figures/fig[1-5]*.png      manuscript figures, 300 dpi
 sync_tables.py             refresh the tables embedded in manuscript.md
 renumber_refs.py           renumber references into first-citation order
@@ -105,8 +105,10 @@ Word tables placed where first cited, statements before references, figure legen
 - [x] References numbered in order of first citation, every listed reference cited
 - [x] Figures as separate 300 dpi files, cited in order, legends at the end
 - [x] Figure legends do not refer to colour
+- [x] Main text cut to 4,061 words; derivations and the full parameter and cost tables
+      moved to supplementary methods and tables S1-S2
 - [ ] Journal-specific word ceiling and table/figure maxima — **could not be retrieved**
       (informatics.bmj.com is blocked by this environment's egress policy); confirm before
-      submitting. Main text is currently 4,915 words.
+      submitting
 - [ ] Author names, institutions and emails are entered in ScholarOne, not in the file
 - [ ] Export the supplementary file to PDF before upload

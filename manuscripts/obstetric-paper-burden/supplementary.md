@@ -4,7 +4,63 @@ Paper consumption in obstetric and antenatal documentation: a micro-costing stud
 
 ---
 
-# Supplementary table S1
+# SUPPLEMENTARY METHODS
+
+## Derivation of physical quantities
+
+Each recorded page is one printed A4 side. Sheets are derived from pages by scenario: single-sided printing gives one sheet per page, double-sided gives the page count halved and rounded up, and the antenatal booklet is treated as double-sided in every scenario because it is purchased pre-printed. Mass follows from A4 area and grammage at 4.99 g per sheet. Shelf length follows from a filed-record density of 10,000 sheets per linear metre, which allows for folders and covers, and archive floor area from 5.5 linear metres of shelving per m² inclusive of an aisle allowance. The last two are conventions rather than measurements and are the two largest sources of uncertainty in the headline capital figure.
+
+## Retention and the steady-state archive
+
+Documents were assigned statutory retention periods by type: 30 years for outpatient antenatal documentation and 50 years for inpatient ward and delivery documentation. At steady state — constant annual volume, each cohort discarded on expiry — the archive holds, for each document type, its annual page volume multiplied by its retention period. This steady-state stock, not the annual flow, determines the floor area a health system must own, and it is what the reported property value prices.
+
+## The four quantities
+
+Printing is charged per printed page, paper per physical sheet, storage per archived sheet, and handling per document. These diverge under duplex printing, which halves sheets but leaves pages and documents unchanged, and under electronic result delivery, which reduces all four. Conflating them is the commonest way a paper-reduction business case reaches the wrong conclusion, and it is why duplex printing appears attractive on paper cost and is in fact an archive intervention.
+
+## Handling time
+
+One document is counted for each referral and each diagnostic report, irrespective of page count: a referral is one document, a paired report is one document per referral, and ultrasound reports are counted at one page per report. Ward and delivery documentation are excluded, being written during care rather than printed on demand. Time is reported in hours and full-time equivalents and is deliberately not monetised, for the reasons given in the main text.
+
+## Environmental conversion
+
+Greenhouse-gas emissions use a cradle-to-gate factor of 950 kg CO2e per tonne of paper, the production-weighted mean of a systematic review and meta-analysis of 45 paper-making life-cycle assessments, with sensitivity across the grade-level spread observed in 252 mills. Water uses the published consumptive (green plus blue) range of 300 to 2600 m³ per tonne for printing and writing paper, accounting for current recovery rates; the source publishes no central value, so its midpoint is used as the point estimate and the full range is carried through every reported figure. Both exclude printing energy, transport, decades of archive conditioning and end-of-life destruction; grey water is excluded. Neither constitutes a life-cycle assessment.
+
+## Statistical and computational methods
+
+Confidence intervals for the mean are from Student's *t* and were corroborated by a 10,000-replicate non-parametric bootstrap with a fixed seed. Scenario outputs are deterministic functions of the observed sample mean and the parameters in supplementary table S1, so uncertainty is expressed as one-way sensitivity analysis rather than probabilistic simulation. Analyses were performed in Python 3. The analysis script and the parameter file are provided; substituting a local unit price and re-running regenerates every table and figure in this paper.
+
+---
+
+# SUPPLEMENTARY TABLE S1
+
+Model parameters, base-case values, sensitivity ranges and sources.
+
+| Parameter | Base case | Sensitivity range | Source |
+|---|---|---|---|
+| Paper, HUF per 500-sheet ream (net) | 1,445 | 1,430 to 1,460 | KEF centralised public procurement framework |
+| Printing, HUF per printed page | 7 | 5 to 10 | Author-supplied; prevailing Hungarian cost-per-page charge |
+| Antenatal booklet, HUF each | 70 | — | Author-supplied purchase price |
+| Archive floor, HUF per m² | 1,560,000 | 1,200,000 to 1,900,000 | NAV property valuation for the archive site |
+| VAT rate | 27% | — | Hungarian standard rate |
+| Discount rate | 3.7% | — | National health technology assessment guidance |
+| A4 sheet area, m² | 0.06237 | — | ISO 216 A4 |
+| Grammage, g/m² | 80 | — | Specification of the procured paper |
+| Sheets per linear metre of shelving | 10,000 | 8,000 to 12,000 | Convention; filed records including covers |
+| Linear metres of shelving per m² floor | 5.5 | 4 to 7 | Convention; shelving with aisle allowance |
+| Handling time, seconds per document | 30 | 20 to 60 | Author-supplied conservative lower bound |
+| Annual hours per FTE | 1,720 | — | Hungarian full-time working year |
+| Greenhouse gas, kg CO2e per tonne | 950 | 608 to 1,978 | Sun 2018, meta-analysis of 45 paper-making LCAs |
+| Water, m³ per tonne | 1,450 | 300 to 2,600 | van Oel & Hoekstra 2012, midpoint of published range |
+| Antenatal consulting room, m² | 18 | — | Typical room area |
+| Care episodes per year, departmental | 2,000 | — | Departmental delivery volume |
+| Care episodes per year, national | 77,500 | 70,000 to 85,000 | KSH, live births 2024 |
+
+Retention periods were 30 years for outpatient antenatal documentation and 50 years for inpatient ward and delivery documentation. Every value above is held in the analysis parameter file; changing one and re-running regenerates all tables and figures.
+
+---
+
+# SUPPLEMENTARY TABLE S2
 
 Full cost, staff-time, space and environmental breakdown by scenario, at departmental and national scale.
 

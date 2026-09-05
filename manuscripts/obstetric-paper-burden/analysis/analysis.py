@@ -616,7 +616,79 @@ def write_tables(R, params, tdir):
                f"booklet purchased at its unit price and carrying neither printing nor paper "
                f"charge. Archivist labour and clinician handling time are quantified but not "
                f"costed, so all monetary totals are floors."]
-    (tdir / "tableS1_cost_detail.md").write_text("\n".join(s1) + "\n")
+    (tdir / "tableS2_cost_detail.md").write_text("\n".join(s1) + "\n")
+
+    # Supplementary table S1: every parameter, its value, range and source
+    SRC = {
+        "paper_per_ream_net": "KEF centralised public procurement framework",
+        "print_per_page": "Author-supplied; prevailing Hungarian cost-per-page charge",
+        "floor_value_per_m2": "NAV property valuation for the archive site",
+        "booklet unit price": "Author-supplied purchase price",
+        "sheet_area_m2": "ISO 216 A4",
+        "grammage_g_m2": "Specification of the procured paper",
+        "sheets_per_linear_metre": "Convention; filed records including covers",
+        "linear_metres_per_m2_floor": "Convention; shelving with aisle allowance",
+        "seconds_per_document": "Author-supplied conservative lower bound",
+        "annual_hours_per_fte": "Hungarian full-time working year",
+        "co2e_kg_per_t": "Sun 2018, meta-analysis of 45 paper-making LCAs",
+        "water_m3_per_t": "van Oel & Hoekstra 2012, midpoint of published range",
+        "national_episodes_per_year": "KSH, live births 2024",
+        "local_episodes_per_year": "Departmental delivery volume",
+        "rate": "National health technology assessment guidance",
+        "vat_rate": "Hungarian standard rate",
+        "antenatal_consulting_room_m2": "Typical room area",
+    }
+    ph, c, tm, env = (params["physical"], params["costs"], params["time"],
+                      params["environment"])
+    def num(v):
+        return f"{v:,.0f}" if float(v).is_integer() else f"{v:,g}"
+
+    def rng(d, key):
+        lo, hi = d.get(f"{key}_low"), d.get(f"{key}_high")
+        return f"{num(lo)} to {num(hi)}" if lo is not None else "—"
+    rows = [
+        ("Paper, HUF per 500-sheet ream (net)", f"{c['paper_per_ream_net']:,}",
+         rng(c, "paper_per_ream_net"), "paper_per_ream_net"),
+        ("Printing, HUF per printed page", f"{c['print_per_page']}",
+         rng(c, "print_per_page"), "print_per_page"),
+        ("Antenatal booklet, HUF each",
+         f"{next(d['unit_price'] for d in params['documents'] if d.get('unit_price'))}",
+         "—", "booklet unit price"),
+        ("Archive floor, HUF per m²", f"{c['floor_value_per_m2']:,}",
+         rng(c, "floor_value_per_m2"), "floor_value_per_m2"),
+        ("VAT rate", f"{c['vat_rate']:.0%}", "—", "vat_rate"),
+        ("Discount rate", f"{params['discounting']['rate']:.1%}", "—", "rate"),
+        ("A4 sheet area, m²", f"{ph['sheet_area_m2']}", "—", "sheet_area_m2"),
+        ("Grammage, g/m²", f"{ph['grammage_g_m2']}", "—", "grammage_g_m2"),
+        ("Sheets per linear metre of shelving", f"{ph['sheets_per_linear_metre']:,}",
+         rng(ph, "sheets_per_linear_metre"), "sheets_per_linear_metre"),
+        ("Linear metres of shelving per m² floor", f"{ph['linear_metres_per_m2_floor']}",
+         rng(ph, "linear_metres_per_m2_floor"), "linear_metres_per_m2_floor"),
+        ("Handling time, seconds per document", f"{tm['seconds_per_document']}",
+         rng(tm, "seconds_per_document"), "seconds_per_document"),
+        ("Annual hours per FTE", f"{tm['annual_hours_per_fte']:,}", "—",
+         "annual_hours_per_fte"),
+        ("Greenhouse gas, kg CO2e per tonne", f"{env['co2e_kg_per_t']}",
+         rng(env, "co2e_kg_per_t"), "co2e_kg_per_t"),
+        ("Water, m³ per tonne", f"{env['water_m3_per_t']:,}",
+         rng(env, "water_m3_per_t"), "water_m3_per_t"),
+        ("Antenatal consulting room, m²",
+         f"{params['space_equivalents']['antenatal_consulting_room_m2']}", "—",
+         "antenatal_consulting_room_m2"),
+        ("Care episodes per year, departmental",
+         f"{params['scale']['local_episodes_per_year']:,}", "—",
+         "local_episodes_per_year"),
+        ("Care episodes per year, national",
+         f"{params['scale']['national_episodes_per_year']:,}",
+         rng(params["scale"], "national_episodes"), "national_episodes_per_year"),
+    ]
+    sp = ["| Parameter | Base case | Sensitivity range | Source |", "|---|---|---|---|"]
+    sp += [f"| {lab} | {val} | {r} | {SRC.get(k, '')} |" for lab, val, r, k in rows]
+    sp += ["", "Retention periods were 30 years for outpatient antenatal documentation and "
+               "50 years for inpatient ward and delivery documentation. Every value above is "
+               "held in the analysis parameter file; changing one and re-running regenerates "
+               "all tables and figures."]
+    (tdir / "tableS1_parameters.md").write_text("\n".join(sp) + "\n")
 
 
 if __name__ == "__main__":
