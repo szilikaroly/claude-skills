@@ -1,0 +1,20 @@
+# EISZ (Elektronikus Információszolgáltatás Nemzeti Program) read & publish roster — SEED, NOT AUTHORITATIVE.
+# Every row is status=unverified on purpose. EISZ agreements are renegotiated yearly, are often
+# capped by an annual article quota, and frequently cover only part of a publisher's list.
+# A match here means "go check the current title list at eisz.mtak.hu" — never "your APC is waived".
+# Verify, then set status=verified and update as_of. Add per-title rows where the deal is partial.
+publisher,publisher_pattern,model,status,as_of,url,note
+Akadémiai Kiadó,akad[eé]miai,read&publish,unverified,,https://eisz.mtak.hu/,Hungarian publisher; national deal has historically been broad
+Elsevier,\belsevier\b|sciencedirect,read&publish,unverified,,https://eisz.mtak.hu/,quota-capped in past years; hybrid vs gold coverage differs
+Springer Nature,springer|biomed ?central|\bbmc\b|nature portfolio,read&publish,unverified,,https://eisz.mtak.hu/,BMC and Nature-branded titles are often carved out separately
+Wiley,\bwiley\b|blackwell,read&publish,unverified,,https://eisz.mtak.hu/,
+Taylor & Francis,taylor|francis|routledge,read&publish,unverified,,https://eisz.mtak.hu/,
+SAGE,\bsage\b,read&publish,unverified,,https://eisz.mtak.hu/,
+Cambridge University Press,cambridge university press|\bcup\b,read&publish,unverified,,https://eisz.mtak.hu/,
+Oxford University Press,oxford university press|\boup\b,read&publish,unverified,,https://eisz.mtak.hu/,
+De Gruyter,de gruyter,read&publish,unverified,,https://eisz.mtak.hu/,
+Emerald,emerald,read&publish,unverified,,https://eisz.mtak.hu/,
+American Chemical Society,american chemical society|\bacs\b,read&publish,unverified,,https://eisz.mtak.hu/,
+Royal Society of Chemistry,royal society of chemistry|\brsc\b,read&publish,unverified,,https://eisz.mtak.hu/,
+IOP Publishing,\biop\b|institute of physics,read&publish,unverified,,https://eisz.mtak.hu/,
+Karger,karger,read&publish,unverified,,https://eisz.mtak.hu/,

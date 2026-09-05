@@ -1,0 +1,5 @@
+# Downloaded / licensed reference data — big, versioned yearly, and in the JCR
+# case not ours to redistribute. Fetch with `scripts/jmatch.py sync`.
+data/scimago-*.csv
+data/jcr.csv
+__pycache__/

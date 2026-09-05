@@ -14,7 +14,7 @@
 set -uo pipefail
 
 REPO_URL="${REPO_URL:-https://github.com/szilikaroly/claude-skills.git}"
-ALL_SKILLS=(doc-tools memo-index science-council)
+ALL_SKILLS=(doc-tools memo-index science-council journal-matcher)
 
 # Honnan fut? Ha a repóból, a saját mappája a cél. Ha curl-lel csövezve
 # (`curl ... | bash`), akkor nincs $BASH_SOURCE útvonal — ilyenkor előbb
@@ -201,6 +201,39 @@ install_memo_index() {
 }
 
 # ===========================================================================
+# journal-matcher — stdlib only; egy letöltendő referencia-fájl kell hozzá
+# ===========================================================================
+install_journal_matcher() {
+  hdr "journal-matcher"
+  ok "python függőség: nincs (csak stdlib)"
+
+  chmod +x "$SKILLS_DIR"/journal-matcher/scripts/*.py 2>/dev/null
+
+  if [ -z "${JMATCH_EMAIL:-}" ]; then
+    warn "JMATCH_EMAIL nincs beállítva — az OpenAlex/NCBI polite pool sokkal jobb rate limitet ad"
+    info "tedd a shell profilodba: export JMATCH_EMAIL=\"te@pelda.hu\""
+  else
+    ok "JMATCH_EMAIL=$JMATCH_EMAIL"
+  fi
+
+  local data="$SKILLS_DIR/journal-matcher/data"
+  if compgen -G "$data/scimago-*.csv" >/dev/null; then
+    ok "Scimago (Scopus) fájl megvan — Q, D1 és Scopus-indexeltség elérhető"
+  else
+    warn "Scimago fájl hiányzik — Q/D1/Scopus oszlopok üresek lesznek"
+    if [ "$MODE" = install ] && confirm "Scimago rangsor letöltése? (~6 MB)"; then
+      python3 "$SKILLS_DIR/journal-matcher/scripts/jmatch.py" sync 2>&1 | sed 's/^/    /' \
+        || bad "a letöltés nem sikerült — töltsd le kézzel a scimagojr.com-ról"
+    else
+      info "később: journal-matcher/scripts/jmatch.py sync"
+    fi
+  fi
+
+  [ -f "$data/jcr.csv" ] && ok "JCR export megvan — valódi IF" \
+    || info "JCR export nincs (opcionális): IF helyett OpenAlex proxy, jelölve"
+}
+
+# ===========================================================================
 # science-council — R + CRAN csomagok
 # ===========================================================================
 # Két különböző R vesz részt a futásban, más-más csomagigénnyel:
@@ -316,6 +349,7 @@ main() {
   wants doc-tools      && install_doc_tools
   wants memo-index     && install_memo_index
   wants science-council && install_science_council
+  wants journal-matcher && install_journal_matcher
 
   hdr "kész"
   info "a skillek a következő Claude Code indításnál töltődnek be"

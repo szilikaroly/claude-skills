@@ -1,0 +1,8 @@
+# Acceptance and desk-reject rates. No free API publishes these — every row is
+# hand-entered from a primary source and must cite it.
+# Good sources, in order: the journal's own "About"/"Journal metrics" page;
+# the publisher's annual transparency or peer-review report (BMJ, PLOS, Wiley,
+# Springer Nature and Frontiers publish these); an editorial in the journal itself.
+# Do NOT enter a number from an aggregator site that does not name its source.
+# Rates are fractions of 1 (0.12 = 12%), not percentages.
+issn,journal,acceptance_rate,desk_reject_rate,year,source
