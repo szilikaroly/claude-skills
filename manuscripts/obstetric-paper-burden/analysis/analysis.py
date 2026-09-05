@@ -477,20 +477,19 @@ def write_tables(R, params, tdir):
     (tdir / "table1_documents.md").write_text("\n".join(t1) + "\n")
 
     # Table 2 (main): compact scenario outcomes, both scales
-    t2 = ["| Scenario | Pages printed / episode | Sheets / episode | Documents / episode | "
-          "Paper (t/y) | CO2e (t/y) | Consumables (HUF/y, net) | Handling (h/y) | Handling (FTE) | "
+    t2 = ["| Scenario | Pages printed / episode | Sheets / episode | "
+          "Paper (t/y) | CO2e (t/y) | Consumables (HUF/y, net) | Handling (FTE) | "
           "Archive floor (m²) | Property value (HUF) |",
-          "|---|---|---|---|---|---|---|---|---|---|---|"]
+          "|---|---|---|---|---|---|---|---|"]
     for lvl in ("local", "national"):
         lab = params["scale"][f"{lvl}_label"]
         eps = params["scale"][f"{lvl}_episodes_per_year"]
-        t2.append(f"| **{lab}, {eps:,} episodes/year** | | | | | | | | | | |")
+        t2.append(f"| **{lab}, {eps:,} episodes/year** | | | | | | | | |")
         for s in R["scenarios"]:
             p = s[lvl]
             t2.append(f"| {s['label']} | {s['printed_pages_per_episode']['mean']:.1f} | "
-                      f"{s['sheets_per_episode']['mean']:.1f} | "
-                      f"{s['documents_per_episode']['mean']:.1f} | {p['mass_t']:.2f} | "
-                      f"{p['co2e_t']:.1f} | {huf(p['consumable_cost_net'])} | {p['handling_hours']:,.0f} | "
+                      f"{s['sheets_per_episode']['mean']:.1f} | {p['mass_t']:.2f} | "
+                      f"{p['co2e_t']:.1f} | {huf(p['consumable_cost_net'])} | "
                       f"{p['handling_fte']:.2f} | {p['steady_state']['floor_m2']:,.0f} | "
                       f"{huf(p['steady_state']['floor_value_huf'])} |")
     c = params["costs"]
@@ -498,7 +497,9 @@ def write_tables(R, params, tdir):
                f"{c['print_per_page']} HUF, so duplex printing halves sheets but not pages and "
                f"saves no toner. Handling time covers referrals and diagnostic reports at "
                f"{params['time']['seconds_per_document']} s per document and is reported as "
-               f"displaced capacity, not costed. Greenhouse-gas emissions are cradle-to-gate for "
+               f"displaced capacity, not costed; documents handled per episode and handling "
+               f"hours are given in supplementary table S1. Greenhouse-gas emissions are "
+               f"cradle-to-gate for "
                f"paper manufacture at {params['environment']['co2e_kg_per_t']} kg CO2e per tonne "
                f"and exclude printing energy and end-of-life disposal. Property value is the "
                f"capital immobilised by "

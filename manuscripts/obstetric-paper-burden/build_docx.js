@@ -29,13 +29,13 @@ function runs(text, base = {}) {
 const body = (text, opts = {}) =>
   new Paragraph({ children: runs(text), spacing: { after: 160, line: 320 }, ...opts });
 
-const cell = (text, { bold = false, width, shaded = false } = {}) =>
+const cell = (text, { bold = false, width, shaded = false, size = 18 } = {}) =>
   new TableCell({
     width: { size: width, type: WidthType.DXA },
     shading: shaded ? { type: ShadingType.CLEAR, fill: 'F2F2F2' } : undefined,
     margins: { top: 60, bottom: 60, left: 80, right: 80 },
     children: [new Paragraph({
-      children: runs(text, { bold, size: 18 }),
+      children: runs(text, { bold, size }),
       spacing: { after: 0, line: 240 },
     })],
   });
@@ -46,9 +46,12 @@ function buildTable(lines) {
     .map(l => l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim()))
     .filter((_, i) => i !== 1);                       // drop the |---| separator
   const n = Math.max(...rows.map(r => r.length));
-  const w = Math.floor(PAGE_DXA / n);
-  const widths = Array(n).fill(w);
-  widths[n - 1] = PAGE_DXA - w * (n - 1);
+  // the label column carries the longest strings; give it extra and split the rest
+  const label = n > 4 ? Math.round(PAGE_DXA * 0.22) : Math.floor(PAGE_DXA / n);
+  const w = Math.floor((PAGE_DXA - label) / (n - 1));
+  const widths = [label, ...Array(n - 1).fill(w)];
+  widths[n - 1] = PAGE_DXA - label - w * (n - 2);
+  const fs = n >= 8 ? 16 : 18;                       // 8 pt when the table is wide
   return new Table({
     width: { size: PAGE_DXA, type: WidthType.DXA },
     columnWidths: widths,
@@ -59,7 +62,7 @@ function buildTable(lines) {
       return new TableRow({
         tableHeader: i === 0,
         children: padded.map((c, k) =>
-          cell(c, { bold: i === 0 || sub, width: widths[k], shaded: i === 0 })),
+          cell(c, { bold: i === 0 || sub, width: widths[k], shaded: i === 0, size: fs })),
       });
     }),
   });
