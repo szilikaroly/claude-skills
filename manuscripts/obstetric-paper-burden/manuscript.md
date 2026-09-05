@@ -4,9 +4,9 @@
 
 **Article type** Original Research
 
-**Word count** Abstract 358; main text 5,709 excluding abstract, tables, statements, references and figure legends.
+**Word count** Abstract 358; main text 6,150 excluding abstract, tables, statements, references and figure legends.
 
-**Tables** 3 in-text, 1 supplementary. **Figures** 5, supplied as separate files. **References** 14.
+**Tables** 3 in-text, 1 supplementary. **Figures** 5, supplied as separate files. **References** 17.
 
 **Reporting guideline** STROBE (cross-sectional) for the observational component.
 
@@ -48,6 +48,7 @@
 
 - Duplex printing releases roughly half the archive burden immediately and without investment, but saves little consumable cost and no staff time, so it should be argued as an archive measure rather than a printing-cost one.
 - Electronic delivery of diagnostic reports is the only intervention that reduces consumables, capital, staff time and floor area together, which makes report delivery — not clinical charting — the target for digitisation in this pathway.
+- Beyond cost, paper records can be misread, misfiled, lost or degraded across a retention period measured in decades; published audits show that scanning paper does not remove these failure modes, so the case rests on capturing data electronically at source.
 - The retention policy is an economic decision distinct from the printing policy, and the two should be appraised separately.
 
 ---
@@ -179,6 +180,8 @@ Costs are 2024 HUF, net of VAT. Printing is charged per printed page at 7 HUF, s
 
 Costs are 2024 HUF, net of VAT. Printing is charged per printed page at 7 HUF, so duplex printing halves sheets but not pages and saves no toner. Handling time covers referrals and diagnostic reports at 30 s per document and is reported as displaced capacity, not costed; documents handled per episode and handling hours are given in supplementary table S1. Greenhouse-gas emissions are cradle-to-gate for paper manufacture at 950 kg CO2e per tonne and exclude printing energy and end-of-life disposal. Property value is the capital immobilised by the archive at steady state under statutory retention, not an annual rent. Full cost components are given in supplementary table S1.
 
+Costs are 2024 HUF, net of VAT. Printing is charged per printed page at 7 HUF, so duplex printing halves sheets but not pages and saves no toner. Handling time covers referrals and diagnostic reports at 30 s per document and is reported as displaced capacity, not costed; documents handled per episode and handling hours are given in supplementary table S1. Greenhouse-gas emissions are cradle-to-gate for paper manufacture at 950 kg CO2e per tonne and exclude printing energy and end-of-life disposal. Property value is the capital immobilised by the archive at steady state under statutory retention, not an annual rent. Full cost components are given in supplementary table S1.
+
 Costs are 2024 HUF, net of VAT. Printing is charged per printed page at 7 HUF, so duplex printing halves sheets but not pages and saves no toner. Handling time covers referrals and diagnostic reports at 30 s per document and is reported as displaced capacity, not costed. Greenhouse-gas emissions are cradle-to-gate for paper manufacture at 950 kg CO2e per tonne and exclude printing energy and end-of-life disposal. Property value is the capital immobilised by the archive at steady state under statutory retention, not an annual rent. Full cost components are given in supplementary table S1.
 
 Costs are 2024 HUF, net of VAT. Printing is charged per printed page at 7 HUF, so duplex printing halves sheets but not pages and saves no toner. Handling time covers referrals and diagnostic reports at 30 s per document and is reported as displaced capacity, not costed. Greenhouse-gas emissions are cradle-to-gate for paper manufacture at 950 kg CO2e per tonne and exclude printing energy and end-of-life disposal. Property value is the capital immobilised by the archive at steady state under statutory retention, not an annual rent. Full cost components are given in supplementary table S1.
@@ -199,6 +202,8 @@ One-way sensitivity analysis (Table 3) puts the national estimate between 6.90 a
 | Property value per m² | 6.90 bn | 10.93 bn | 4.03 bn |
 | Sheets per linear metre | 7.48 bn | 11.22 bn | 3.74 bn |
 | Episodes per year | 8.10 bn | 9.84 bn | 1.74 bn |
+
+National steady-state immobilised property value; base case 8.97 bn HUF. Each parameter is varied alone across the range given in the parameter file, with all others held at base case.
 
 National steady-state immobilised property value; base case 8.97 bn HUF. Each parameter is varied alone across the range given in the parameter file, with all others held at base case.
 
@@ -244,9 +249,21 @@ Direct comparators are scarce, and this is itself a finding: we could not identi
 
 Our count is roughly double the working assumption of 64 pages per birth used in earlier planning for this project. The gap is explained by scope: the lower figure covers the delivery hospital chart, whereas our count spans the whole antenatal and delivery pathway including the diagnostic traffic that dominates it. The discrepancy is worth stating plainly, because it is precisely the kind of scope difference that makes unmeasured assumptions unsafe.
 
+## Record integrity: what paper costs beyond money
+
+This study measured cost, not safety, and nothing in our data speaks to error rates. But a costing that stops at money understates the case against paper in a second way, because the paper record carries four failure modes that a natively electronic one does not.
+
+It can be **misread**. In 405 general surgical operation notes, 8.3% of the handwritten ones were illegible and none of the electronic ones were, and electronic notes were more complete on 17 of 18 quality criteria (p<0.001) [14]. In 398 prescriptions, errors were found in 35.7% of handwritten against 2.5% of electronic ones [15]. Obstetric documentation is written under the conditions that produce this — at speed, often at night, sometimes with gloves on.
+
+It can be **misfiled or lost**, and here the evidence carries a warning for the intervention as much as for the status quo. In an audit of 100 patients whose paper records had been scanned into an electronic document management system, 5% of operation notes were missing outright and 80% were filed in the wrong section [16]. Scanning paper is not the remedy; capturing data electronically in the first place is. That distinction matters for scenario S2, which retrieves reports from the national exchange rather than scanning printed copies of them.
+
+It can **degrade**. Our own retention analysis makes this concrete: a record must remain legible for 30 to 50 years, and thermal cardiotocograph traces, ballpoint ink and carbon copies are not designed to. We have no data on how much of an archive survives legibly, which is precisely why we propose the legibility audit below.
+
+None of this is a finding of ours, and all of it must be weighed against the risks digitisation introduces, which is the subject of the next section.
+
 ## The other side of the ledger
 
-A paper that argues for digitisation owes the reader the risks it creates. Long-term *digital* preservation is not a solved problem: format obsolescence, migration obligations, and above all the maintenance of authenticated electronic signatures and timestamps across a 50-year retention period all require active, funded curation from the first day of a project rather than as an afterthought. Cyber risk is real and its failure mode is a forced reversion to exactly the paper process being replaced, as documented in a solo practice that spent three months on paper after a ransomware attack [14]. And usability is not a soft consideration: hospitals with poorer electronic record usability show significantly higher odds of nurse burnout (OR 1.41, 95% CI 1.21–1.64) and of surgical inpatient mortality (OR 1.21, 95% CI 1.09–1.35) [3]. A badly implemented paperless pathway can plausibly cost more, in the currency that matters, than the paper it removes.
+A paper that argues for digitisation owes the reader the risks it creates. Long-term *digital* preservation is not a solved problem: format obsolescence, migration obligations, and above all the maintenance of authenticated electronic signatures and timestamps across a 50-year retention period all require active, funded curation from the first day of a project rather than as an afterthought. Cyber risk is real and its failure mode is a forced reversion to exactly the paper process being replaced, as documented in a solo practice that spent three months on paper after a ransomware attack [17]. And usability is not a soft consideration: hospitals with poorer electronic record usability show significantly higher odds of nurse burnout (OR 1.41, 95% CI 1.21–1.64) and of surgical inpatient mortality (OR 1.21, 95% CI 1.09–1.35) [3]. A badly implemented paperless pathway can plausibly cost more, in the currency that matters, than the paper it removes.
 
 The corollary is not that digitisation should wait, but that the two interventions answer different questions and should be argued separately. Duplex printing releases 4.09 billion HUF of property value nationally — 105.5 million HUF for a single 2,000-delivery department — requires no investment, no legal change and no new system, and carries none of the risks above; it should be done immediately, and defended on archive space rather than on a printing-cost saving it does not deliver. Electronic report delivery is the only lever that moves the recurrent cost, the staff time and the space at once — and it is also the one that carries the risks above, so it is the one that needs the careful implementation. The 17.1 FTE it addresses is worth stating in workforce terms precisely because it is *not* money: this time is not paid to anyone as a documentation post, it is taken a few seconds at a time from clinicians, midwives and administrators who are doing something else. That is why it never appears in a budget, and why it is nonetheless real. In a system with an obstetric and midwifery staffing shortage, seventeen full-time equivalents of displaced clinical capacity spent printing and filing copies of electronic documents is the more consequential of the two findings.
 
@@ -336,7 +353,10 @@ Data are available ⟦on reasonable request / in a public repository⟧. The per
 11. Hungarian Central Statistical Office. Live births, total fertility rate. Budapest: KSH 2025. ⟦Add stadat table URL and accessed date.⟧
 12. Muinga N, Abejirinde IO, Paton C, et al. Designing paper-based records to improve the quality of nursing documentation in hospitals: a scoping review. J Clin Nurs 2021;30:56-71. doi:10.1111/jocn.15545
 13. Avila-Alvarez A, Ruiz Campillo CW, Zeballos-Sarrato G, et al. Time to improve documentation of neonatal resuscitation: a narrative review. Minerva Pediatr (Torino) 2022. doi:10.23736/S2724-5276.22.06914-2
-14. Bujold E. You have been hacked! Ann Fam Med 2023;21:85-7. doi:10.1370/afm.2906
+14. Ekowo O, Hammenga C, Altaf K, et al. A cross-sectional retrospective study comparing handwritten operation notes with electronic operation notes. Ann R Coll Surg Engl 2022;105:35-42. doi:10.1308/rcsann.2022.0066
+15. Albarrak AI, Al Rashidi EA, Fatani RK, et al. Assessment of legibility and completeness of handwritten and electronic prescriptions. Saudi Pharm J 2014;22:522-7. doi:10.1016/j.jsps.2014.02.013
+16. Murphy C, Keogh IJ. The evolution of the medical record from paper to digital: an ENT perspective. J Laryngol Otol 2022;137:246-8. doi:10.1017/S0022215122002018
+17. Bujold E. You have been hacked! Ann Fam Med 2023;21:85-7. doi:10.1370/afm.2906
 
 # FIGURE LEGENDS
 
