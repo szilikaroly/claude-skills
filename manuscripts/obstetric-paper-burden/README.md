@@ -14,7 +14,9 @@ analysis/analysis.py       reads the workbook + params, writes tables/ and figur
 tables/results.json        every computed number, machine-readable
 tables/table[1-3]*.md      in-text tables
 tables/tableS1*.md         supplementary table
-figures/fig[1-4]*.png      manuscript figures, 300 dpi
+figures/fig[1-5]*.png      manuscript figures, 300 dpi
+sync_tables.py             refresh the tables embedded in manuscript.md
+renumber_refs.py           renumber references into first-citation order
 ```
 
 ## Reproducing every number
@@ -80,7 +82,10 @@ Author-input gaps are marked `⟦…⟧` in the manuscript; `grep -c '⟦' manus
 ## Rebuilding the submission files
 
 ```bash
-node build_docx.js                      # manuscript.md  -> BMJ-HCI-submission.docx
+python3 analysis/analysis.py --data <xlsx>   # numbers, tables, figures
+python3 sync_tables.py                       # push tables into manuscript.md
+python3 renumber_refs.py                     # BMJ citation order
+node build_docx.js                           # -> BMJ-HCI-submission.docx
 sed 's#manuscript.md#supplementary.md#; s#BMJ-HCI-submission#BMJ-HCI-supplementary#' \
   build_docx.js > /tmp/b.js && node /tmp/b.js
 ```
@@ -97,6 +102,7 @@ Word tables placed where first cited, statements before references, figure legen
 - [x] Tables as Word tables, each under two pages; the long cost breakdown moved to S1
 - [x] Vancouver references, first three authors then *et al*, numbered, hyphenated ranges
 - [x] MeSH keywords
+- [x] References numbered in order of first citation, every listed reference cited
 - [x] Figures as separate 300 dpi files, cited in order, legends at the end
 - [x] Figure legends do not refer to colour
 - [ ] Journal-specific word ceiling and table/figure maxima — **could not be retrieved**

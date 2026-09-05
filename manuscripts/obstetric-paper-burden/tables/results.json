@@ -337,6 +337,10 @@
         "co2e_t_iqr_low": 0.853199246592,
         "co2e_t_iqr_high": 1.2450756447359999,
         "co2e_kg_per_episode": 0.5890547124,
+        "water_m3": 1798.1670168,
+        "water_m3_low": 372.0345552,
+        "water_m3_high": 3224.2994783999998,
+        "water_l_per_episode": 899.0835084,
         "consumable_cost_net_10y_discounted": 20831263.768468395
       },
       "national": {
@@ -386,6 +390,10 @@
         "co2e_t_iqr_low": 33.06147080544,
         "co2e_t_iqr_high": 48.24668123352,
         "co2e_kg_per_episode": 0.5890547124000001,
+        "water_m3": 69678.971901,
+        "water_m3_low": 14416.339014000001,
+        "water_m3_high": 124941.604788,
+        "water_l_per_episode": 899.0835083999999,
         "consumable_cost_net_10y_discounted": 807211471.0281503
       }
     },
@@ -492,6 +500,10 @@
         "co2e_t_iqr_low": 0.4651504704,
         "co2e_t_iqr_high": 0.6787951632,
         "co2e_kg_per_episode": 0.32114313,
+        "water_m3": 980.3316599999999,
+        "water_m3_low": 202.82724,
+        "water_m3_high": 1757.83608,
+        "water_l_per_episode": 490.16582999999997,
         "consumable_cost_net_10y_discounted": 18042012.008334737
       },
       "national": {
@@ -541,6 +553,10 @@
         "co2e_t_iqr_low": 18.024580728,
         "co2e_t_iqr_high": 26.303312574,
         "co2e_kg_per_episode": 0.32114313,
+        "water_m3": 37987.851825,
+        "water_m3_low": 7859.55555,
+        "water_m3_high": 68116.14809999999,
+        "water_l_per_episode": 490.1658299999999,
         "consumable_cost_net_10y_discounted": 699127965.3229711
       }
     },
@@ -647,6 +663,10 @@
         "co2e_t_iqr_low": 0.185922874368,
         "co2e_t_iqr_high": 0.271317682944,
         "co2e_kg_per_episode": 0.1283624496,
+        "water_m3": 391.84326720000007,
+        "water_m3_low": 81.07102080000001,
+        "water_m3_high": 702.6155136000001,
+        "water_l_per_episode": 195.92163360000004,
         "consumable_cost_net_10y_discounted": 6359999.737753322
       },
       "national": {
@@ -696,6 +716,10 @@
         "co2e_t_iqr_low": 7.2045113817600015,
         "co2e_t_iqr_high": 10.513560214080002,
         "co2e_kg_per_episode": 0.1283624496,
+        "water_m3": 15183.926604000002,
+        "water_m3_low": 3141.5020560000003,
+        "water_m3_high": 27226.351152000003,
+        "water_l_per_episode": 195.92163360000004,
         "consumable_cost_net_10y_discounted": 246449989.83794123
       }
     },
@@ -802,6 +826,10 @@
         "co2e_t_iqr_low": 0.054925516800000004,
         "co2e_t_iqr_high": 0.0801529344,
         "co2e_kg_per_episode": 0.037920960000000004,
+        "water_m3": 115.75872000000001,
+        "water_m3_low": 23.95008,
+        "water_m3_high": 207.56736,
+        "water_l_per_episode": 57.879360000000005,
         "consumable_cost_net_10y_discounted": 1195324.331463377
       },
       "national": {
@@ -851,6 +879,10 @@
         "co2e_t_iqr_low": 2.1283637759999996,
         "co2e_t_iqr_high": 3.105926208,
         "co2e_kg_per_episode": 0.03792096,
+        "water_m3": 4485.6503999999995,
+        "water_m3_low": 928.0655999999999,
+        "water_m3_high": 8043.2352,
+        "water_l_per_episode": 57.87935999999999,
         "consumable_cost_net_10y_discounted": 46318817.84420586
       }
     }

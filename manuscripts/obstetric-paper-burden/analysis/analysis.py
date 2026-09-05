@@ -258,6 +258,38 @@ def fig_scenarios(rows, out):
     fig.tight_layout(); fig.savefig(out, bbox_inches="tight", facecolor="white"); plt.close(fig)
 
 
+def fig_environment(rows, params, out):
+    """CO2e and water side by side.
+
+    Two measures on different scales, so two panels sharing a category axis
+    rather than one chart with two y-axes. Bars carry the published factor
+    range, which is the dominant uncertainty in both.
+    """
+    labs = [r["label"] for r in rows][::-1]
+    y = range(len(labs))
+    panels = [("Greenhouse gas\n(tonnes CO\u2082e per year)", SERIES[0],
+               [r["national"]["co2e_t"] for r in rows][::-1],
+               [r["national"]["co2e_t_low"] for r in rows][::-1],
+               [r["national"]["co2e_t_high"] for r in rows][::-1], "{:.1f}", 1),
+              ("Water\n(thousand m\u00b3 per year)", SERIES[2],
+               [r["national"]["water_m3"] / 1000 for r in rows][::-1],
+               [r["national"]["water_m3_low"] / 1000 for r in rows][::-1],
+               [r["national"]["water_m3_high"] / 1000 for r in rows][::-1], "{:.1f}", 1)]
+    fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.9), dpi=300, sharey=True)
+    for ax, (title, colour, val, lo, hi, fmt, _) in zip(axes, panels):
+        ax.barh(list(y), val, height=.6, color=colour, edgecolor="white", linewidth=1.2)
+        ax.errorbar(val, list(y), xerr=[[v - l for v, l in zip(val, lo)],
+                                        [h - v for v, h in zip(val, hi)]],
+                    fmt="none", ecolor=INK, elinewidth=1.1, capsize=3)
+        for i, (v, h) in enumerate(zip(val, hi)):
+            ax.text(h + max(hi) * .03, i, fmt.format(v), va="center", fontsize=8, color=INK)
+        ax.set_xlim(0, max(hi) * 1.22)
+        style(ax); ax.xaxis.grid(True, color=GRID, lw=.6); ax.yaxis.grid(False)
+        ax.set_title(title, fontsize=8.5, color=INK, pad=8)
+    axes[0].set_yticks(list(y)); axes[0].set_yticklabels(labs, fontsize=8.5, color=INK)
+    fig.tight_layout(); fig.savefig(out, bbox_inches="tight", facecolor="white"); plt.close(fig)
+
+
 def fig_accrual(rows, params, out):
     yrs = list(range(0, 31))
     fig, ax = plt.subplots(figsize=(6.6, 3.0), dpi=300)
@@ -396,6 +428,10 @@ def main():
             p["co2e_t_iqr_low"] = p["mass_t"] * env["co2e_kg_per_t_iqr_low"] / 1000
             p["co2e_t_iqr_high"] = p["mass_t"] * env["co2e_kg_per_t_iqr_high"] / 1000
             p["co2e_kg_per_episode"] = p["co2e_t"] * 1000 / eps
+            p["water_m3"] = p["mass_t"] * env["water_m3_per_t"]
+            p["water_m3_low"] = p["mass_t"] * env["water_m3_per_t_low"]
+            p["water_m3_high"] = p["mass_t"] * env["water_m3_per_t_high"]
+            p["water_l_per_episode"] = p["water_m3"] * 1000 / eps
             row[lvl] = p
         sc_rows.append(row)
     R["scenarios"] = sc_rows
@@ -447,6 +483,7 @@ def main():
     fig_distribution(totals, out / "figures" / "fig2_distribution.png")
     fig_scenarios(sc_rows, out / "figures" / "fig3_scenarios.png")
     fig_accrual(sc_rows, params, out / "figures" / "fig4_accrual.png")
+    fig_environment(sc_rows, params, out / "figures" / "fig5_environment.png")
 
     write_tables(R, params, out / "tables")
     print(f"n={n}  mean pages/episode={R['total_pages']['mean']:.2f} "
@@ -562,7 +599,17 @@ def write_tables(R, params, tdir):
                f"({n['handling_fte_low']:.1f}–{n['handling_fte_high']:.1f}) |",
                f"| Handling time, minutes per care episode | "
                f"{l['handling_minutes_per_episode']:.1f} | "
-               f"{n['handling_minutes_per_episode']:.1f} |"]
+               f"{n['handling_minutes_per_episode']:.1f} |",
+               f"| Greenhouse gas, t CO2e per year | {l['co2e_t']:.2f} "
+               f"({l['co2e_t_low']:.2f}–{l['co2e_t_high']:.2f}) | {n['co2e_t']:.1f} "
+               f"({n['co2e_t_low']:.1f}–{n['co2e_t_high']:.1f}) |",
+               f"| Greenhouse gas, kg CO2e per care episode | "
+               f"{l['co2e_kg_per_episode']:.2f} | {n['co2e_kg_per_episode']:.2f} |",
+               f"| Water, m³ per year | {l['water_m3']:,.0f} "
+               f"({l['water_m3_low']:,.0f}–{l['water_m3_high']:,.0f}) | {n['water_m3']:,.0f} "
+               f"({n['water_m3_low']:,.0f}–{n['water_m3_high']:,.0f}) |",
+               f"| Water, litres per care episode | {l['water_l_per_episode']:,.0f} | "
+               f"{n['water_l_per_episode']:,.0f} |"]
     s1 += ["", f"All figures 2024 HUF. Printing {c['print_per_page']} HUF per printed page "
                f"(a double-sided sheet costs {2 * c['print_per_page']} HUF); paper "
                f"{c['paper_per_ream_net'] / c['sheets_per_ream']:.2f} HUF per sheet; antenatal "

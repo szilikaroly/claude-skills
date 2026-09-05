@@ -209,6 +209,15 @@ environment:
   co2e_kg_per_t_iqr_low: 688             # status: firm - Kraft-based paper IQR
   co2e_kg_per_t_iqr_high: 1004
 
+  # Consumptive (green + blue) water footprint of printing and writing paper,
+  # m3 per tonne, accounting for current paper recovery rates
+  # (van Oel & Hoekstra 2012, doi:10.1007/s11269-011-9942-7). The source gives a
+  # range, not a central value; the midpoint is used only as a point estimate and
+  # the full range is carried through every reported figure.
+  water_m3_per_t: 1450                   # status: assumed - midpoint of the range below
+  water_m3_per_t_low: 300                # status: firm - van Oel & Hoekstra 2012
+  water_m3_per_t_high: 2600              # status: firm - van Oel & Hoekstra 2012
+
 # ---------------------------------------------------------------------------
 # Scenarios. `drop` removes those document keys entirely; `duplex` halves sheets
 # for the documents that remain.
