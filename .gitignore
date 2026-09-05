@@ -24,3 +24,7 @@ venv/
 *.swp
 .idea/
 .vscode/
+
+# --- betegadat-eredetű forrásállományok: SOHA ne kerüljön be ---
+manuscripts/**/data/
+*.xlsx

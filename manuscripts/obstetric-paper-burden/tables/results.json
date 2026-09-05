@@ -1,0 +1,574 @@
+{
+  "n_episodes": 100,
+  "params_file": "params.yaml",
+  "cross_check": {
+    "compared": 100,
+    "disagreements": 0,
+    "max_abs_diff": 0.0
+  },
+  "documents": {
+    "lab_ref": {
+      "n": 100,
+      "mean": 6.87,
+      "sd": 1.3458128106137648,
+      "ci_low": 6.6029907383742295,
+      "ci_high": 7.137009261625771,
+      "median": 7.0,
+      "q1": 6.0,
+      "q3": 8.0,
+      "min": 5,
+      "max": 9,
+      "sum": 687,
+      "label": "Laboratory referral",
+      "family": "Laboratory",
+      "role": "referral",
+      "retention_years": 30
+    },
+    "lab_res": {
+      "n": 100,
+      "mean": 27.48,
+      "sd": 5.383251242455059,
+      "ci_low": 26.411962953496918,
+      "ci_high": 28.548037046503083,
+      "median": 28.0,
+      "q1": 24.0,
+      "q3": 32.0,
+      "min": 20,
+      "max": 36,
+      "sum": 2748,
+      "label": "Laboratory report",
+      "family": "Laboratory",
+      "role": "result",
+      "retention_years": 30
+    },
+    "abo_ref": {
+      "n": 100,
+      "mean": 7.11,
+      "sd": 1.434742084308134,
+      "ci_low": 6.8253471704732664,
+      "ci_high": 7.394652829526734,
+      "median": 7.0,
+      "q1": 6.0,
+      "q3": 8.0,
+      "min": 5,
+      "max": 9,
+      "sum": 711,
+      "label": "Blood-group referral",
+      "family": "Blood group",
+      "role": "referral",
+      "retention_years": 30
+    },
+    "abo_res": {
+      "n": 100,
+      "mean": 28.44,
+      "sd": 5.738968337232536,
+      "ci_low": 27.301388681893066,
+      "ci_high": 29.578611318106937,
+      "median": 28.0,
+      "q1": 24.0,
+      "q3": 32.0,
+      "min": 20,
+      "max": 36,
+      "sum": 2844,
+      "label": "Blood-group report",
+      "family": "Blood group",
+      "role": "result",
+      "retention_years": 30
+    },
+    "mic_ref": {
+      "n": 100,
+      "mean": 3.67,
+      "sd": 1.0449977043133645,
+      "ci_low": 3.4626724554642285,
+      "ci_high": 3.8773275445357713,
+      "median": 4.0,
+      "q1": 3.0,
+      "q3": 5.0,
+      "min": 2,
+      "max": 5,
+      "sum": 367,
+      "label": "Microbiology referral",
+      "family": "Microbiology",
+      "role": "referral",
+      "retention_years": 30
+    },
+    "mic_res": {
+      "n": 100,
+      "mean": 14.68,
+      "sd": 4.179990817253458,
+      "ci_low": 13.850689821856914,
+      "ci_high": 15.509310178143085,
+      "median": 16.0,
+      "q1": 12.0,
+      "q3": 20.0,
+      "min": 8,
+      "max": 20,
+      "sum": 1468,
+      "label": "Microbiology report",
+      "family": "Microbiology",
+      "role": "result",
+      "retention_years": 30
+    },
+    "usg_res": {
+      "n": 100,
+      "mean": 10.34,
+      "sd": 2.5828494170414023,
+      "ci_low": 9.827562675658985,
+      "ci_high": 10.852437324341015,
+      "median": 11.0,
+      "q1": 8.0,
+      "q3": 12.0,
+      "min": 6,
+      "max": 14,
+      "sum": 1034,
+      "label": "Ultrasound report",
+      "family": "Ultrasound",
+      "role": "result",
+      "retention_years": 30
+    },
+    "book": {
+      "n": 100,
+      "mean": 15,
+      "sd": 0.0,
+      "ci_low": 15.0,
+      "ci_high": 15.0,
+      "median": 15.0,
+      "q1": 15.0,
+      "q3": 15.0,
+      "min": 15,
+      "max": 15,
+      "sum": 1500,
+      "label": "Antenatal care booklet",
+      "family": "Antenatal booklet",
+      "role": "record",
+      "retention_years": 30
+    },
+    "ward": {
+      "n": 100,
+      "mean": 3.97,
+      "sd": 0.8221061889187953,
+      "ci_low": 3.806894132118511,
+      "ci_high": 4.133105867881489,
+      "median": 4.0,
+      "q1": 3.0,
+      "q3": 5.0,
+      "min": 3,
+      "max": 5,
+      "sum": 397,
+      "label": "Ward documentation",
+      "family": "Inpatient",
+      "role": "record",
+      "retention_years": 50
+    },
+    "birth": {
+      "n": 100,
+      "mean": 13.71,
+      "sd": 3.1632198146761152,
+      "ci_low": 13.08241718876826,
+      "ci_high": 14.337582811231742,
+      "median": 14.0,
+      "q1": 11.0,
+      "q3": 17.0,
+      "min": 9,
+      "max": 18,
+      "sum": 1371,
+      "label": "Delivery documentation",
+      "family": "Inpatient",
+      "role": "record",
+      "retention_years": 50
+    }
+  },
+  "amplification": {
+    "lab_res": {
+      "referral": "lab_ref",
+      "ratios": [
+        4.0
+      ],
+      "fixed": true,
+      "value": 4.0
+    },
+    "abo_res": {
+      "referral": "abo_ref",
+      "ratios": [
+        4.0
+      ],
+      "fixed": true,
+      "value": 4.0
+    },
+    "mic_res": {
+      "referral": "mic_ref",
+      "ratios": [
+        4.0
+      ],
+      "fixed": true,
+      "value": 4.0
+    }
+  },
+  "total_pages": {
+    "n": 100,
+    "mean": 131.27,
+    "sd": 10.504308880193168,
+    "ci_low": 129.18594511816968,
+    "ci_high": 133.35405488183034,
+    "median": 130.0,
+    "q1": 123.75,
+    "q3": 138.0,
+    "min": 106,
+    "max": 154,
+    "sum": 13127,
+    "boot_ci_low": 129.24,
+    "boot_ci_high": 133.35
+  },
+  "role_split": {
+    "referral": {
+      "mean": 17.65,
+      "share": 0.13445570198826842
+    },
+    "result": {
+      "mean": 80.94,
+      "share": 0.6165917574464843
+    },
+    "record": {
+      "mean": 32.68,
+      "share": 0.24895254056524718
+    }
+  },
+  "scenarios": [
+    {
+      "key": "S0",
+      "label": "Current practice",
+      "note": "Single-sided printing, all documents on paper",
+      "sheets_per_episode": {
+        "n": 100,
+        "mean": 124.27,
+        "sd": 10.504308880193168,
+        "ci_low": 122.18594511816967,
+        "ci_high": 126.35405488183032,
+        "median": 123.0,
+        "q1": 116.75,
+        "q3": 131.0,
+        "min": 99,
+        "max": 147,
+        "sum": 12427
+      },
+      "local": {
+        "sheets": 248540.0,
+        "mass_kg": 1240.115184,
+        "mass_t": 1.240115184,
+        "linear_m": 24.854,
+        "floor_m2": 4.518909090909091,
+        "episodes": 2000,
+        "paper_cost_net": 718280.6,
+        "paper_cost_gross": 912216.362,
+        "paper_cost_net_low": 710824.4,
+        "paper_cost_net_high": 725736.8,
+        "steady_state": {
+          "sheets": 8163400.0,
+          "mass_kg": 40732.100640000004,
+          "mass_t": 40.73210064,
+          "linear_m": 816.34,
+          "floor_m2": 148.42545454545456,
+          "floor_value_huf": 231543709.0909091,
+          "floor_value_huf_low": 178110545.45454547,
+          "floor_value_huf_high": 282008363.6363637,
+          "floor_value_per_episode": 115771.85454545455
+        },
+        "paper_cost_per_episode_net": 359.14029999999997,
+        "paper_cost_per_episode_gross": 456.108181,
+        "co2e_t": 1.6121497392,
+        "water_m3": 18.60172776,
+        "wood_t": 2.9762764416,
+        "paper_cost_net_10y_discounted": 6132701.985700809
+      },
+      "national": {
+        "sheets": 9630925.0,
+        "mass_kg": 48054.46338,
+        "mass_t": 48.05446338,
+        "linear_m": 963.0925,
+        "floor_m2": 175.10772727272726,
+        "episodes": 77500,
+        "paper_cost_net": 27833373.25,
+        "paper_cost_gross": 35348384.0275,
+        "paper_cost_net_low": 27544445.5,
+        "paper_cost_net_high": 28122301.0,
+        "steady_state": {
+          "sheets": 316331750.0,
+          "mass_kg": 1578368.8998000002,
+          "mass_t": 1578.3688998000002,
+          "linear_m": 31633.175,
+          "floor_m2": 5751.486363636363,
+          "floor_value_huf": 8972318727.272726,
+          "floor_value_huf_low": 6901783636.363636,
+          "floor_value_huf_high": 10927824090.90909,
+          "floor_value_per_episode": 115771.85454545452
+        },
+        "paper_cost_per_episode_net": 359.1403,
+        "paper_cost_per_episode_gross": 456.10818100000006,
+        "co2e_t": 62.470802394,
+        "water_m3": 720.8169507,
+        "wood_t": 115.330712112,
+        "paper_cost_net_10y_discounted": 237642201.94590637
+      }
+    },
+    {
+      "key": "S1",
+      "label": "Duplex printing",
+      "note": "No investment; the pre-printed antenatal booklet is already double-sided",
+      "sheets_per_episode": {
+        "n": 100,
+        "mean": 67.75,
+        "sd": 5.347282893529605,
+        "ci_low": 66.68909907392373,
+        "ci_high": 68.81090092607627,
+        "median": 67.0,
+        "q1": 64.0,
+        "q3": 71.0,
+        "min": 55,
+        "max": 79,
+        "sum": 6775
+      },
+      "local": {
+        "sheets": 135500.0,
+        "mass_kg": 676.0908000000001,
+        "mass_t": 0.6760908,
+        "linear_m": 13.55,
+        "floor_m2": 2.463636363636364,
+        "episodes": 2000,
+        "paper_cost_net": 391595.0,
+        "paper_cost_gross": 497325.65,
+        "paper_cost_net_low": 387530.0,
+        "paper_cost_net_high": 395660.0,
+        "steady_state": {
+          "sheets": 4442200.0,
+          "mass_kg": 22164.80112,
+          "mass_t": 22.16480112,
+          "linear_m": 444.22,
+          "floor_m2": 80.76727272727273,
+          "floor_value_huf": 125996945.45454545,
+          "floor_value_huf_low": 96920727.27272727,
+          "floor_value_huf_high": 153457818.1818182,
+          "floor_value_per_episode": 62998.472727272725
+        },
+        "paper_cost_per_episode_net": 195.7975,
+        "paper_cost_per_episode_gross": 248.662825,
+        "co2e_t": 0.8789180400000001,
+        "water_m3": 10.141361999999999,
+        "wood_t": 1.62261792,
+        "paper_cost_net_10y_discounted": 3343450.225567151
+      },
+      "national": {
+        "sheets": 5250625.0,
+        "mass_kg": 26198.5185,
+        "mass_t": 26.1985185,
+        "linear_m": 525.0625,
+        "floor_m2": 95.4659090909091,
+        "episodes": 77500,
+        "paper_cost_net": 15174306.25,
+        "paper_cost_gross": 19271368.9375,
+        "paper_cost_net_low": 15016787.5,
+        "paper_cost_net_high": 15331825.0,
+        "steady_state": {
+          "sheets": 172135250.0,
+          "mass_kg": 858886.0434000001,
+          "mass_t": 858.8860434000001,
+          "linear_m": 17213.525,
+          "floor_m2": 3129.7318181818187,
+          "floor_value_huf": 4882381636.363637,
+          "floor_value_huf_low": 3755678181.8181825,
+          "floor_value_huf_high": 5946490454.545455,
+          "floor_value_per_episode": 62998.47272727273
+        },
+        "paper_cost_per_episode_net": 195.7975,
+        "paper_cost_per_episode_gross": 248.662825,
+        "co2e_t": 34.05807405,
+        "water_m3": 392.9777775,
+        "wood_t": 62.8764444,
+        "paper_cost_net_10y_discounted": 129558696.2407271
+      }
+    },
+    {
+      "key": "S2",
+      "label": "Electronic result delivery",
+      "note": "Diagnostic reports retrieved from the national exchange, referrals still printed",
+      "sheets_per_episode": {
+        "n": 100,
+        "mean": 27.08,
+        "sd": 1.9052293798645321,
+        "ci_low": 26.702002491034875,
+        "ci_high": 27.45799750896512,
+        "median": 27.0,
+        "q1": 26.0,
+        "q3": 29.0,
+        "min": 23,
+        "max": 31,
+        "sum": 2708
+      },
+      "local": {
+        "sheets": 54160.0,
+        "mass_kg": 270.236736,
+        "mass_t": 0.27023673600000003,
+        "linear_m": 5.416,
+        "floor_m2": 0.9847272727272728,
+        "episodes": 2000,
+        "paper_cost_net": 156522.4,
+        "paper_cost_gross": 198783.448,
+        "paper_cost_net_low": 154897.6,
+        "paper_cost_net_high": 158147.2,
+        "steady_state": {
+          "sheets": 2002000.0,
+          "mass_kg": 9989.1792,
+          "mass_t": 9.9891792,
+          "linear_m": 200.2,
+          "floor_m2": 36.4,
+          "floor_value_huf": 56784000.0,
+          "floor_value_huf_low": 43680000.0,
+          "floor_value_huf_high": 69160000.0,
+          "floor_value_per_episode": 28392.0
+        },
+        "paper_cost_per_episode_net": 78.2612,
+        "paper_cost_per_episode_gross": 99.391724,
+        "co2e_t": 0.35130775680000004,
+        "water_m3": 4.05355104,
+        "wood_t": 0.6485681664,
+        "paper_cost_net_10y_discounted": 1336393.093850309
+      },
+      "national": {
+        "sheets": 2098700.0,
+        "mass_kg": 10471.673520000002,
+        "mass_t": 10.471673520000001,
+        "linear_m": 209.87,
+        "floor_m2": 38.158181818181816,
+        "episodes": 77500,
+        "paper_cost_net": 6065243.0,
+        "paper_cost_gross": 7702858.61,
+        "paper_cost_net_low": 6002282.0,
+        "paper_cost_net_high": 6128204.0,
+        "steady_state": {
+          "sheets": 77577500.0,
+          "mass_kg": 387080.694,
+          "mass_t": 387.080694,
+          "linear_m": 7757.75,
+          "floor_m2": 1410.5,
+          "floor_value_huf": 2200380000.0,
+          "floor_value_huf_low": 1692600000.0,
+          "floor_value_huf_high": 2679950000.0,
+          "floor_value_per_episode": 28392.0
+        },
+        "paper_cost_per_episode_net": 78.2612,
+        "paper_cost_per_episode_gross": 99.39172400000001,
+        "co2e_t": 13.613175576000001,
+        "water_m3": 157.07510280000002,
+        "wood_t": 25.132016448,
+        "paper_cost_net_10y_discounted": 51785232.38669948
+      }
+    },
+    {
+      "key": "S3",
+      "label": "Paperless pathway",
+      "note": "Only the patient-held antenatal booklet remains on paper",
+      "sheets_per_episode": {
+        "n": 100,
+        "mean": 8,
+        "sd": 0.0,
+        "ci_low": 8.0,
+        "ci_high": 8.0,
+        "median": 8.0,
+        "q1": 8.0,
+        "q3": 8.0,
+        "min": 8,
+        "max": 8,
+        "sum": 800
+      },
+      "local": {
+        "sheets": 16000,
+        "mass_kg": 79.8336,
+        "mass_t": 0.0798336,
+        "linear_m": 1.6,
+        "floor_m2": 0.29090909090909095,
+        "episodes": 2000,
+        "paper_cost_net": 46240.0,
+        "paper_cost_gross": 58724.8,
+        "paper_cost_net_low": 45760.0,
+        "paper_cost_net_high": 46720.0,
+        "steady_state": {
+          "sheets": 480000.0,
+          "mass_kg": 2395.008,
+          "mass_t": 2.395008,
+          "linear_m": 48.0,
+          "floor_m2": 8.727272727272727,
+          "floor_value_huf": 13614545.454545453,
+          "floor_value_huf_low": 10472727.272727272,
+          "floor_value_huf_high": 16581818.18181818,
+          "floor_value_per_episode": 6807.272727272727
+        },
+        "paper_cost_per_episode_net": 23.12,
+        "paper_cost_per_episode_gross": 29.3624,
+        "co2e_t": 0.10378368,
+        "water_m3": 1.1975040000000001,
+        "wood_t": 0.19160064000000002,
+        "paper_cost_net_10y_discounted": 394798.5506204754
+      },
+      "national": {
+        "sheets": 620000,
+        "mass_kg": 3093.552,
+        "mass_t": 3.093552,
+        "linear_m": 62.0,
+        "floor_m2": 11.272727272727273,
+        "episodes": 77500,
+        "paper_cost_net": 1791800.0,
+        "paper_cost_gross": 2275586.0,
+        "paper_cost_net_low": 1773200.0,
+        "paper_cost_net_high": 1810400.0,
+        "steady_state": {
+          "sheets": 18600000.0,
+          "mass_kg": 92806.56,
+          "mass_t": 92.80656,
+          "linear_m": 1860.0,
+          "floor_m2": 338.1818181818182,
+          "floor_value_huf": 527563636.3636364,
+          "floor_value_huf_low": 405818181.8181818,
+          "floor_value_huf_high": 642545454.5454545,
+          "floor_value_per_episode": 6807.272727272727
+        },
+        "paper_cost_per_episode_net": 23.12,
+        "paper_cost_per_episode_gross": 29.3624,
+        "co2e_t": 4.0216176,
+        "water_m3": 46.403279999999995,
+        "wood_t": 7.4245247999999995,
+        "paper_cost_net_10y_discounted": 15298443.83654342
+      }
+    }
+  ],
+  "discount_factor_sum": 8.538030939024122,
+  "sensitivity_floor_value": {
+    "base": 8972318727.272726,
+    "rows": [
+      {
+        "parameter": "Sheets per linear metre",
+        "low": 7476932272.727273,
+        "high": 11215398409.09091
+      },
+      {
+        "parameter": "Linear metres per m² floor",
+        "low": 7049678999.999999,
+        "high": 12336938250.0
+      },
+      {
+        "parameter": "Property value per m²",
+        "low": 6901783636.363636,
+        "high": 10927824090.90909
+      },
+      {
+        "parameter": "Episodes per year",
+        "low": 8104029818.181818,
+        "high": 9840607636.363636
+      }
+    ]
+  },
+  "suppressed_outputs": [
+    "print_per_page",
+    "archivist_huf_per_hour",
+    "minutes_per_episode_handling",
+    "minutes_per_dossier_appraisal"
+  ]
+}
