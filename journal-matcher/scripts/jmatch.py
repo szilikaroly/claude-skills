@@ -298,14 +298,20 @@ def medline_status(issns: list[str], journal: str = "") -> dict:
             summ = get_xml(_eutils("esummary.fcgi", db="nlmcatalog", id=ids[0], retmode="xml"))
         except ApiError:
             continue
-        fields = {i.get("Name"): (i.text or "") for i in summ.iter("Item")}
+        # nlmcatalog nests Items inside List/Structure containers whose own text is
+        # whitespace; keep only Items that carry real text so a container cannot win.
+        fields = {}
+        for i in summ.iter("Item"):
+            txt = (i.text or "").strip()
+            if i.get("Name") and txt:
+                fields.setdefault(i.get("Name"), txt)
         status = fields.get("currentindexingstatus", "")
         return {
             "nlm_id": ids[0],
             "in_pubmed": True,
             "medline_indexed": status.strip() in ("Y", "Currently indexed"),
             "nlm_indexing_status": status or "unknown",
-            "nlm_title": fields.get("TitleMainList") or fields.get("Title") or journal,
+            "nlm_title": fields.get("Title") or fields.get("TitleMain") or journal,
         }
     return {"in_pubmed": False, "medline_indexed": False, "nlm_indexing_status": "not found in NLM Catalog"}
 

@@ -249,6 +249,24 @@ their institution has access, to the Scopus source list and JCR directly.
   is a good approximation and no substitute — tell the user to verify both before
   submitting.
 
+## Tests
+
+```bash
+python3 tests/test_jmatch.py
+```
+
+87 offline assertions. Every network call is answered from `tests/fixtures.py`,
+which holds payloads written to each API's *documented* response shape — so a
+parser that assumes the wrong shape fails here rather than on the user's first
+real run. It covers manuscript parsing (English and Hungarian headings), candidate
+discovery, reference overlap, the full journal dossier, every integrity flag,
+scoring and the hard filters, the novelty scan, all three renderers, the curated
+data loaders, and the error paths.
+
+What it cannot prove is that the live APIs still return that shape. After any
+suspected API change, run one real call — `jmatch.py profile "The Lancet"` — and
+compare against `tests/fixtures.py`.
+
 ## References
 
 - `references/scoring.md` — the weights, why each, and how to override them
