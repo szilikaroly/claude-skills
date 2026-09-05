@@ -267,11 +267,11 @@ def fig_environment(rows, params, out):
     """
     labs = [r["label"] for r in rows][::-1]
     y = range(len(labs))
-    panels = [("Greenhouse gas\n(tonnes CO\u2082e per year)", SERIES[0],
+    panels = [("Greenhouse gas\n(tonnes CO\u2082e per year, national)", SERIES[0],
                [r["national"]["co2e_t"] for r in rows][::-1],
                [r["national"]["co2e_t_low"] for r in rows][::-1],
                [r["national"]["co2e_t_high"] for r in rows][::-1], "{:.1f}", 1),
-              ("Water\n(thousand m\u00b3 per year)", SERIES[2],
+              ("Water\n(thousand m\u00b3 per year, national)", SERIES[2],
                [r["national"]["water_m3"] / 1000 for r in rows][::-1],
                [r["national"]["water_m3_low"] / 1000 for r in rows][::-1],
                [r["national"]["water_m3_high"] / 1000 for r in rows][::-1], "{:.1f}", 1)]

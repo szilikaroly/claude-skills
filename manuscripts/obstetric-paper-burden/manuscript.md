@@ -360,9 +360,9 @@ Data are available ⟦on reasonable request / in a public repository⟧. The per
 
 # FIGURE LEGENDS
 
-**Figure 1.** Mean printed pages per care episode by document family, split by document role. Diagnostic reports (solid fill) account for 61.7% of all pages; referrals (hatched) for 13.4%; clinical records (dotted) for 24.9%. Each diagnostic referral generates exactly four report pages.
+**Figure 1.** Mean printed pages per care episode by document family, split by document role. Values are per care episode and therefore independent of departmental or national volume. Diagnostic reports (solid fill) account for 61.7% of all pages; referrals (hatched) for 13.4%; clinical records (dotted) for 24.9%. Each diagnostic referral generates exactly four report pages.
 
-**Figure 2.** Distribution of total printed pages per care episode (n = 100). Dashed line, mean 131.3 pages. The distribution is symmetric and narrow (IQR 124 to 138), indicating that documentation volume behaves as a near-fixed cost of the care pathway.
+**Figure 2.** Distribution of total printed pages per care episode in the study sample (n = 100). Dashed line, mean 131.3 pages. The distribution is symmetric and narrow (IQR 124 to 138), indicating that documentation volume behaves as a near-fixed cost of the care pathway.
 
 **Figure 3.** Annual national paper consumption by scenario, at 77,500 care episodes per year. Percentages are reductions relative to current practice. At departmental scale (2,000 episodes per year) the same scenarios correspond to 1.24, 0.68, 0.27 and 0.08 tonnes per year. The mass reduction under duplex printing does not carry through to consumable cost, because toner is charged per printed page (Table 2).
 
