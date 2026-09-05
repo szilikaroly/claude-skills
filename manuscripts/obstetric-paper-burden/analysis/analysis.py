@@ -508,11 +508,13 @@ def write_tables(R, params, tdir):
 
     # Table 3 (main): one-way sensitivity
     s = R["sensitivity_floor_value"]
-    t3 = [f"Steady-state immobilised property value, national. Base case {huf(s['base'])} HUF.", "",
-          "| Parameter varied | Low | High | Swing |", "|---|---|---|---|"]
+    t3 = ["| Parameter varied | Low | High | Swing |", "|---|---|---|---|"]
     for r in sorted(s["rows"], key=lambda r: -(r["high"] - r["low"])):
         t3.append(f"| {r['parameter']} | {huf(r['low'])} | {huf(r['high'])} | "
                   f"{huf(r['high']-r['low'])} |")
+    t3 += ["", f"National steady-state immobilised property value; base case "
+               f"{huf(s['base'])} HUF. Each parameter is varied alone across the range given "
+               f"in the parameter file, with all others held at base case."]
     (tdir / "table3_sensitivity.md").write_text("\n".join(t3) + "\n")
 
     # Supplementary S1: full cost breakdown, both scales
