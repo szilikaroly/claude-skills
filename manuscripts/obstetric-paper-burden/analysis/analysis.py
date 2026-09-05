@@ -390,9 +390,12 @@ def main():
                 p["steady_state"]["floor_m2"] / se["antenatal_consulting_room_m2"])
             p["steady_state"]["delivery_rooms"] = (
                 p["steady_state"]["floor_m2"] / se["delivery_room_m2"])
-            p["co2e_t"] = p["mass_t"] * env["co2e_t_per_t"]
-            p["water_m3"] = p["mass_t"] * env["water_m3_per_t"]
-            p["wood_t"] = p["mass_t"] * env["wood_t_per_t"]
+            p["co2e_t"] = p["mass_t"] * env["co2e_kg_per_t"] / 1000
+            p["co2e_t_low"] = p["mass_t"] * env["co2e_kg_per_t_low"] / 1000
+            p["co2e_t_high"] = p["mass_t"] * env["co2e_kg_per_t_high"] / 1000
+            p["co2e_t_iqr_low"] = p["mass_t"] * env["co2e_kg_per_t_iqr_low"] / 1000
+            p["co2e_t_iqr_high"] = p["mass_t"] * env["co2e_kg_per_t_iqr_high"] / 1000
+            p["co2e_kg_per_episode"] = p["co2e_t"] * 1000 / eps
             row[lvl] = p
         sc_rows.append(row)
     R["scenarios"] = sc_rows
@@ -475,19 +478,19 @@ def write_tables(R, params, tdir):
 
     # Table 2 (main): compact scenario outcomes, both scales
     t2 = ["| Scenario | Pages printed / episode | Sheets / episode | Documents / episode | "
-          "Paper (t/y) | Consumables (HUF/y, net) | Handling (h/y) | Handling (FTE) | "
+          "Paper (t/y) | CO2e (t/y) | Consumables (HUF/y, net) | Handling (h/y) | Handling (FTE) | "
           "Archive floor (m²) | Property value (HUF) |",
-          "|---|---|---|---|---|---|---|---|---|---|"]
+          "|---|---|---|---|---|---|---|---|---|---|---|"]
     for lvl in ("local", "national"):
         lab = params["scale"][f"{lvl}_label"]
         eps = params["scale"][f"{lvl}_episodes_per_year"]
-        t2.append(f"| **{lab}, {eps:,} episodes/year** | | | | | | | | | |")
+        t2.append(f"| **{lab}, {eps:,} episodes/year** | | | | | | | | | | |")
         for s in R["scenarios"]:
             p = s[lvl]
             t2.append(f"| {s['label']} | {s['printed_pages_per_episode']['mean']:.1f} | "
                       f"{s['sheets_per_episode']['mean']:.1f} | "
                       f"{s['documents_per_episode']['mean']:.1f} | {p['mass_t']:.2f} | "
-                      f"{huf(p['consumable_cost_net'])} | {p['handling_hours']:,.0f} | "
+                      f"{p['co2e_t']:.1f} | {huf(p['consumable_cost_net'])} | {p['handling_hours']:,.0f} | "
                       f"{p['handling_fte']:.2f} | {p['steady_state']['floor_m2']:,.0f} | "
                       f"{huf(p['steady_state']['floor_value_huf'])} |")
     c = params["costs"]
@@ -495,7 +498,10 @@ def write_tables(R, params, tdir):
                f"{c['print_per_page']} HUF, so duplex printing halves sheets but not pages and "
                f"saves no toner. Handling time covers referrals and diagnostic reports at "
                f"{params['time']['seconds_per_document']} s per document and is reported as "
-               f"displaced capacity, not costed. Property value is the capital immobilised by "
+               f"displaced capacity, not costed. Greenhouse-gas emissions are cradle-to-gate for "
+               f"paper manufacture at {params['environment']['co2e_kg_per_t']} kg CO2e per tonne "
+               f"and exclude printing energy and end-of-life disposal. Property value is the "
+               f"capital immobilised by "
                f"the archive at steady state under statutory retention, not an annual rent. "
                f"Full cost components are given in supplementary table S1."]
     (tdir / "table2_scenarios.md").write_text("\n".join(t2) + "\n")

@@ -331,9 +331,12 @@
         "handling_fte_low": 0.29483204134366925,
         "handling_fte_high": 0.8844961240310077,
         "handling_minutes_per_episode": 22.82,
-        "co2e_t": 1.6121497392,
-        "water_m3": 18.60172776,
-        "wood_t": 2.9762764416,
+        "co2e_t": 1.1781094248,
+        "co2e_t_low": 0.753990031872,
+        "co2e_t_high": 2.452947833952,
+        "co2e_t_iqr_low": 0.853199246592,
+        "co2e_t_iqr_high": 1.2450756447359999,
+        "co2e_kg_per_episode": 0.5890547124,
         "consumable_cost_net_10y_discounted": 20831263.768468395
       },
       "national": {
@@ -377,9 +380,12 @@
         "handling_fte_low": 11.424741602067183,
         "handling_fte_high": 34.27422480620155,
         "handling_minutes_per_episode": 22.82,
-        "co2e_t": 62.470802394,
-        "water_m3": 720.8169507,
-        "wood_t": 115.330712112,
+        "co2e_t": 45.651740211,
+        "co2e_t_low": 29.21711373504,
+        "co2e_t_high": 95.05172856564,
+        "co2e_t_iqr_low": 33.06147080544,
+        "co2e_t_iqr_high": 48.24668123352,
+        "co2e_kg_per_episode": 0.5890547124000001,
         "consumable_cost_net_10y_discounted": 807211471.0281503
       }
     },
@@ -480,9 +486,12 @@
         "handling_fte_low": 0.29483204134366925,
         "handling_fte_high": 0.8844961240310077,
         "handling_minutes_per_episode": 22.82,
-        "co2e_t": 0.8789180400000001,
-        "water_m3": 10.141361999999999,
-        "wood_t": 1.62261792,
+        "co2e_t": 0.64228626,
+        "co2e_t_low": 0.4110632064,
+        "co2e_t_high": 1.3373076024,
+        "co2e_t_iqr_low": 0.4651504704,
+        "co2e_t_iqr_high": 0.6787951632,
+        "co2e_kg_per_episode": 0.32114313,
         "consumable_cost_net_10y_discounted": 18042012.008334737
       },
       "national": {
@@ -526,9 +535,12 @@
         "handling_fte_low": 11.424741602067183,
         "handling_fte_high": 34.27422480620155,
         "handling_minutes_per_episode": 22.82,
-        "co2e_t": 34.05807405,
-        "water_m3": 392.9777775,
-        "wood_t": 62.8764444,
+        "co2e_t": 24.888592574999997,
+        "co2e_t_low": 15.928699248,
+        "co2e_t_high": 51.820669593,
+        "co2e_t_iqr_low": 18.024580728,
+        "co2e_t_iqr_high": 26.303312574,
+        "co2e_kg_per_episode": 0.32114313,
         "consumable_cost_net_10y_discounted": 699127965.3229711
       }
     },
@@ -629,9 +641,12 @@
         "handling_fte_low": 0.11401808785529716,
         "handling_fte_high": 0.34205426356589147,
         "handling_minutes_per_episode": 8.825,
-        "co2e_t": 0.35130775680000004,
-        "water_m3": 4.05355104,
-        "wood_t": 0.6485681664,
+        "co2e_t": 0.2567248992,
+        "co2e_t_low": 0.164303935488,
+        "co2e_t_high": 0.534528263808,
+        "co2e_t_iqr_low": 0.185922874368,
+        "co2e_t_iqr_high": 0.271317682944,
+        "co2e_kg_per_episode": 0.1283624496,
         "consumable_cost_net_10y_discounted": 6359999.737753322
       },
       "national": {
@@ -675,9 +690,12 @@
         "handling_fte_low": 4.418200904392765,
         "handling_fte_high": 13.254602713178295,
         "handling_minutes_per_episode": 8.825,
-        "co2e_t": 13.613175576000001,
-        "water_m3": 157.07510280000002,
-        "wood_t": 25.132016448,
+        "co2e_t": 9.948089844000002,
+        "co2e_t_low": 6.366777500160001,
+        "co2e_t_high": 20.712970222560003,
+        "co2e_t_iqr_low": 7.2045113817600015,
+        "co2e_t_iqr_high": 10.513560214080002,
+        "co2e_kg_per_episode": 0.1283624496,
         "consumable_cost_net_10y_discounted": 246449989.83794123
       }
     },
@@ -778,9 +796,12 @@
         "handling_fte_low": 0.0,
         "handling_fte_high": 0.0,
         "handling_minutes_per_episode": 0.0,
-        "co2e_t": 0.10378368,
-        "water_m3": 1.1975040000000001,
-        "wood_t": 0.19160064000000002,
+        "co2e_t": 0.07584192000000001,
+        "co2e_t_low": 0.0485388288,
+        "co2e_t_high": 0.15791086080000002,
+        "co2e_t_iqr_low": 0.054925516800000004,
+        "co2e_t_iqr_high": 0.0801529344,
+        "co2e_kg_per_episode": 0.037920960000000004,
         "consumable_cost_net_10y_discounted": 1195324.331463377
       },
       "national": {
@@ -824,9 +845,12 @@
         "handling_fte_low": 0.0,
         "handling_fte_high": 0.0,
         "handling_minutes_per_episode": 0.0,
-        "co2e_t": 4.0216176,
-        "water_m3": 46.403279999999995,
-        "wood_t": 7.4245247999999995,
+        "co2e_t": 2.9388743999999996,
+        "co2e_t_low": 1.8808796159999999,
+        "co2e_t_high": 6.119045856,
+        "co2e_t_iqr_low": 2.1283637759999996,
+        "co2e_t_iqr_high": 3.105926208,
+        "co2e_kg_per_episode": 0.03792096,
         "consumable_cost_net_10y_discounted": 46318817.84420586
       }
     }

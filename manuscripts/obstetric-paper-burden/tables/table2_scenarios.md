@@ -1,14 +1,14 @@
-| Scenario | Pages printed / episode | Sheets / episode | Documents / episode | Paper (t/y) | Consumables (HUF/y, net) | Handling (h/y) | Handling (FTE) | Archive floor (m²) | Property value (HUF) |
-|---|---|---|---|---|---|---|---|---|---|
-| **University department, 2,000 episodes/year** | | | | | | | | | |
-| Current practice | 116.3 | 124.3 | 45.6 | 1.24 | 2.44 M | 761 | 0.44 | 148 | 231.54 M |
-| Duplex printing | 116.3 | 67.8 | 45.6 | 0.68 | 2.11 M | 761 | 0.44 | 81 | 126.00 M |
-| Electronic result delivery | 35.3 | 27.1 | 17.6 | 0.27 | 744.90k | 294 | 0.17 | 36 | 56.78 M |
-| Paperless pathway | 0.0 | 8.0 | 0.0 | 0.08 | 140.00k | 0 | 0.00 | 9 | 13.61 M |
-| **Hungary, 77,500 episodes/year** | | | | | | | | | |
-| Current practice | 116.3 | 124.3 | 45.6 | 48.05 | 94.54 M | 29,476 | 17.14 | 5,751 | 8.97 bn |
-| Duplex printing | 116.3 | 67.8 | 45.6 | 26.20 | 81.88 M | 29,476 | 17.14 | 3,130 | 4.88 bn |
-| Electronic result delivery | 35.3 | 27.1 | 17.6 | 10.47 | 28.86 M | 11,399 | 6.63 | 1,410 | 2.20 bn |
-| Paperless pathway | 0.0 | 8.0 | 0.0 | 3.09 | 5.42 M | 0 | 0.00 | 338 | 527.56 M |
+| Scenario | Pages printed / episode | Sheets / episode | Documents / episode | Paper (t/y) | CO2e (t/y) | Consumables (HUF/y, net) | Handling (h/y) | Handling (FTE) | Archive floor (m²) | Property value (HUF) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **University department, 2,000 episodes/year** | | | | | | | | | | |
+| Current practice | 116.3 | 124.3 | 45.6 | 1.24 | 1.2 | 2.44 M | 761 | 0.44 | 148 | 231.54 M |
+| Duplex printing | 116.3 | 67.8 | 45.6 | 0.68 | 0.6 | 2.11 M | 761 | 0.44 | 81 | 126.00 M |
+| Electronic result delivery | 35.3 | 27.1 | 17.6 | 0.27 | 0.3 | 744.90k | 294 | 0.17 | 36 | 56.78 M |
+| Paperless pathway | 0.0 | 8.0 | 0.0 | 0.08 | 0.1 | 140.00k | 0 | 0.00 | 9 | 13.61 M |
+| **Hungary, 77,500 episodes/year** | | | | | | | | | | |
+| Current practice | 116.3 | 124.3 | 45.6 | 48.05 | 45.7 | 94.54 M | 29,476 | 17.14 | 5,751 | 8.97 bn |
+| Duplex printing | 116.3 | 67.8 | 45.6 | 26.20 | 24.9 | 81.88 M | 29,476 | 17.14 | 3,130 | 4.88 bn |
+| Electronic result delivery | 35.3 | 27.1 | 17.6 | 10.47 | 9.9 | 28.86 M | 11,399 | 6.63 | 1,410 | 2.20 bn |
+| Paperless pathway | 0.0 | 8.0 | 0.0 | 3.09 | 2.9 | 5.42 M | 0 | 0.00 | 338 | 527.56 M |
 
-Costs are 2024 HUF, net of VAT. Printing is charged per printed page at 7 HUF, so duplex printing halves sheets but not pages and saves no toner. Handling time covers referrals and diagnostic reports at 30 s per document and is reported as displaced capacity, not costed. Property value is the capital immobilised by the archive at steady state under statutory retention, not an annual rent. Full cost components are given in supplementary table S1.
+Costs are 2024 HUF, net of VAT. Printing is charged per printed page at 7 HUF, so duplex printing halves sheets but not pages and saves no toner. Handling time covers referrals and diagnostic reports at 30 s per document and is reported as displaced capacity, not costed. Greenhouse-gas emissions are cradle-to-gate for paper manufacture at 950 kg CO2e per tonne and exclude printing energy and end-of-life disposal. Property value is the capital immobilised by the archive at steady state under statutory retention, not an annual rent. Full cost components are given in supplementary table S1.

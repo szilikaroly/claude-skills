@@ -4,9 +4,9 @@
 
 **Article type** Original Research
 
-**Word count** Abstract 347; main text 4,915 excluding abstract, tables, statements, references and figure legends.
+**Word count** Abstract 358; main text 5,275 excluding abstract, tables, statements, references and figure legends.
 
-**Tables** 3 in-text, 1 supplementary. **Figures** 4, supplied as separate files. **References** 11.
+**Tables** 3 in-text, 1 supplementary. **Figures** 4, supplied as separate files. **References** 13.
 
 **Reporting guideline** STROBE (cross-sectional) for the observational component.
 
@@ -20,7 +20,7 @@
 
 **Methods.** Retrospective bottom-up micro-costing study in ⟦setting⟧. For 100 antenatal and delivery care episodes we counted printed pages in ten document categories; the primary outcome was printed pages per episode. Counts were converted to sheets, mass, shelf length, archive floor area and staff handling time, and costed at official unit prices: centralised procurement for paper, 7 HUF per printed page for toner, and the tax authority's property valuation for the archive. Four scenarios were modelled at departmental (2,000/year) and national (77,500 births/year) scale, with one-way sensitivity analysis.
 
-**Results.** A care episode generated a mean of 131.3 printed pages (SD 10.5; 95% CI 129.2 to 133.4) on 124.3 sheets, in 45.6 documents. Diagnostic reports accounted for 61.7% of pages and generated clinical record for 13.5%; each referral produced exactly four report pages in every episode. Consumables cost 1,220 HUF net per episode (94.5 million HUF/year nationally), 66.7% of it toner. Printing and filing took an estimated 22.8 minutes per episode: 17.1 FTE nationally (11.4 to 34.3). At steady state the national archive occupied 5,751 m² and immobilised 8.97 billion HUF of property (range 6.90 to 12.34 billion), 95 times the annual consumable spend.
+**Results.** A care episode generated a mean of 131.3 printed pages (SD 10.5; 95% CI 129.2 to 133.4) on 124.3 sheets, in 45.6 documents. Diagnostic reports accounted for 61.7% of pages and generated clinical record for 13.5%; each referral produced exactly four report pages in every episode. Consumables cost 1,220 HUF net per episode (94.5 million HUF/year nationally), 66.7% of it toner, and paper manufacture accounted for 45.7 tonnes CO2e per year nationally. Printing and filing took an estimated 22.8 minutes per episode: 17.1 FTE nationally (11.4 to 34.3). At steady state the national archive occupied 5,751 m² and immobilised 8.97 billion HUF of property (range 6.90 to 12.34 billion), 95 times the annual consumable spend.
 
 **Discussion.** Duplex printing removed 45.5% of sheets and 4.09 billion HUF of tied-up property, but only 13.4% of consumable cost and no staff time, because toner is charged per page and handling per document. Electronic report delivery removed 78.2% of sheets, 6.77 billion HUF, 69.5% of consumable cost and 10.5 FTE. Handling time is reported as displaced capacity rather than money and archivist labour is excluded, so monetary totals are floors.
 
@@ -44,7 +44,7 @@
 
 - One obstetric care episode generated 131.3 printed pages on 124.3 sheets, in 45.6 separate documents; 61.7% of the pages were printed copies of diagnostic reports that already exist in the national exchange, and each referral produced exactly four report pages.
 - Consumables cost 1,220 HUF per episode, two-thirds of it toner rather than paper, and printing and filing took an estimated 22.8 minutes per episode — 17.1 full-time equivalents nationally, absorbed into existing staff duties rather than paid as posts.
-- Under statutory retention the national archive immobilises 8.97 billion HUF of property and 5,751 m² of hospital floor, equivalent to 320 antenatal consulting rooms, and 95 times the annual consumable spend.
+- Under statutory retention the national archive immobilises 8.97 billion HUF of property and 5,751 m² of hospital floor, equivalent to 320 antenatal consulting rooms, and 95 times the annual consumable spend; paper manufacture adds 45.7 tonnes CO2e per year.
 
 **How this study might affect research, practice or policy**
 
@@ -103,6 +103,8 @@ The costing therefore distinguishes four quantities that must not be conflated: 
 **Handling time.** Each referral and each diagnostic report is one document a member of staff must print, collect, check and file, irrespective of how many pages it runs to. A referral is one document; a paired report is one document per referral; ultrasound reports are counted at one page per report. We applied 30 seconds per document — a deliberately conservative lower bound — with a sensitivity range of 20–60 seconds.
 
 We report this time in hours and full-time equivalents (1,720 h/FTE) and **deliberately do not monetise it**. Document handling in this setting is not a staffed post: it is absorbed into the existing duties of clinicians, midwives and administrators, a few seconds at a time. There is consequently no wage rate that would represent it honestly, and attaching one would imply a budget line that does not exist. The FTE figure should be read as *displaced capacity* — the volume of existing staff time consumed — not as posts that could be cut. Ward and delivery documentation are excluded: they are written during care rather than printed on demand, so their production time is clinical documentation time, not handling time.
+
+**Greenhouse-gas emissions.** Paper mass was converted to carbon dioxide equivalent using a cradle-to-gate factor of 950 kg CO2e per tonne, the production-weighted mean of a systematic review and meta-analysis of 45 paper-making life-cycle assessments [12]. Sensitivity used the full spread across paper grades in 252 mills, 608 to 1978 kg CO2e per tonne, and the narrower interquartile range for Kraft-based paper, 688 to 1004 [13]. The factor covers paper manufacture only: printing energy, transport, decades of archive conditioning and end-of-life destruction are all excluded, so the emissions reported here are a floor in the same direction as the monetary ones. We report emissions rather than a full life-cycle assessment, which was outside the scope of this study.
 
 **Space as opportunity cost.** Archive floor area is not neutral space. It sits inside hospital buildings and is therefore withdrawn from clinical or productive use, so we also express it in clinical equivalents at 18 m² per antenatal consulting room and 35 m² per delivery room.
 
@@ -208,11 +210,11 @@ The second is space. The 5,751 m² the national archive occupies at steady state
 
 **A paperless pathway (S3)**, retaining only the patient-held booklet, reduces printed output to zero and the archive to 338 m² and 0.53 billion HUF. It is not free: the booklets themselves still cost 70 HUF per episode, 5.4 million HUF a year nationally, which is the irreducible floor of this pathway as long as the patient-held record stays on paper. The residual is the booklet, and it is deliberate: a patient-held record that works offline has a function no electronic system replaces.
 
-## Environmental burden
+## Greenhouse-gas emissions
 
-As an illustrative secondary outcome, national annual consumption under current practice corresponds to approximately 63 tonnes CO₂e, 721 m³ of water and 115 tonnes of wood, falling to 34 tonnes CO₂e under duplex and 14 under electronic result delivery. These figures use generic cradle-to-gate factors for uncoated woodfree paper and should be read as an order of magnitude, not an estimate; they are reported because environmental reporting increasingly requires them, not because our data constrain them.
+Paper manufacture for current practice accounts for **45.7 tonnes CO2e per year nationally** (sensitivity 29.2 to 95.1 across paper grades; 33.1 to 48.2 across the Kraft interquartile range) and 1.2 tonnes at departmental scale, or **0.59 kg CO2e per care episode**. Duplex printing halves this to 24.9 tonnes, electronic report delivery reduces it to 9.9 and a paperless pathway to 2.9 (Table 2).
 
----
+These are modest quantities in absolute terms, and we state that plainly rather than inflate them: on its own, the emissions saving is not the reason to change this pathway. The emissions figure earns its place for two other reasons. It converts a physical count into the unit that sustainability reporting now requires, so a department can put a defensible number in an environmental report rather than an estimate. And it points the same way as everything else in this analysis: the reduction tracks the number of pages printed, so the intervention that removes printed copies of electronic results removes 78% of the emissions as well as 78% of the sheets.
 
 # DISCUSSION
 
@@ -220,7 +222,7 @@ As an illustrative secondary outcome, national annual consumption under current 
 
 An obstetric care episode generates about 131 printed pages on 124 sheets, and roughly six in ten of those pages are printed copies of diagnostic reports that already exist in a national electronic exchange. The pathway's paper is therefore not, in the main, a record of clinical work. It is a physical rendering of data that has been captured electronically, printed once, filed once, and then stored for three to five decades at a cost dominated by real estate rather than stationery.
 
-Four numbers carry the argument, and all are scale-invariant, so they transfer to any unit or country that knows its delivery volume and its property prices. The first is the composition: 62% reports against 14% generated clinical record. The second is the ratio between flow and stock: **1,220 HUF of consumables per care episode against 115,772 HUF of immobilised property** — a factor of 95. The third is inside the consumable figure itself: **66.7% of it is toner, not paper.** The fourth is that none of these capture the two largest burdens, because neither reaches an invoice: **22.8 minutes of staff handling per episode — 17.1 FTE nationally — and 5,751 m² of hospital floor withdrawn from clinical use.** Any analysis that stops at the annual stationery invoice, as cost arguments in this area usually do, sees just over a quarter of the recurrent consumable cost, about one percent of the capital position, and none of the workforce or the space.
+Four numbers carry the argument, and all are scale-invariant, so they transfer to any unit or country that knows its delivery volume and its property prices. The first is the composition: 62% reports against 14% generated clinical record. The second is the ratio between flow and stock: **1,220 HUF of consumables per care episode against 115,772 HUF of immobilised property** — a factor of 95. The third is inside the consumable figure itself: **66.7% of it is toner, not paper.** The fourth is that none of these capture the two largest burdens, because neither reaches an invoice: **22.8 minutes of staff handling per episode — 17.1 FTE nationally — and 5,751 m² of hospital floor withdrawn from clinical use.** Any analysis that stops at the annual stationery invoice, as cost arguments in this area usually do, sees just over a quarter of the recurrent consumable cost, about one percent of the capital position, and none of the workforce or the space. Greenhouse-gas emissions, at 45.7 tonnes CO2e a year, are the one dimension where the honest answer is that the quantity is small; we report it because environmental reporting requires it and because it moves with the same lever, not because it carries the argument.
 
 The fixed 4:1 amplification gives the finding an unusually clean policy handle. Because every referral deterministically produces five printed pages, paper volume is a linear function of referral count, and any intervention that changes how *reports* are delivered scales directly with the number of investigations ordered. This is why S2 releases 1.7 times as much property value as S1 despite being conceptually the smaller change, and five times as much recurrent cost, and why the gap would widen further in any setting that orders more investigations.
 
@@ -251,6 +253,8 @@ The limitations are substantial and we state them in order of severity.
 *Staff time is quantified but not costed.* Handling time is absorbed into existing duties rather than paid as a distinct post, so we report it as displaced capacity and not as money. This is a deliberate choice, but it means the monetary totals — **94.5 million HUF of annual consumables and 8.97 billion HUF of immobilised property nationally, 2.44 million and 231.5 million departmentally** — are floors, and are not comparable with analyses that do monetise staff time.
 
 *Handling time is modelled, not observed.* The 30 seconds per document is an assumption supplied by the authors as a conservative lower bound, not a time-and-motion measurement, and the resulting FTE figures inherit that status entirely. They are reported in hours and FTE rather than money precisely so that they are not mistaken for a costed finding. A direct time-and-motion study is the obvious next step, and the 20–60 second range should be read as the honest width of the current estimate.
+
+*Emissions are a factor-based estimate, not a life-cycle assessment.* A single cradle-to-gate factor is applied to paper mass. Printing energy, transport, archive conditioning over decades and end-of-life destruction are excluded, and the grade-level spread in the source data is wide (608 to 1978 kg CO2e per tonne), so the figure is an order of magnitude rather than a measurement. Water and land-use footprints were considered and omitted: we could not identify a per-tonne figure we were willing to cite, and reporting an unsourced number beside a sourced one would misrepresent the confidence of both.
 
 *Space equivalents are illustrative.* Expressing the archive as consulting or delivery rooms assumes the space is physically convertible, which in an old hospital building it often is not.
 
@@ -318,6 +322,9 @@ Data are available ⟦on reasonable request / in a public repository⟧. The per
 9. Hungarian Central Statistical Office. Live births, total fertility rate. Budapest: KSH 2025. ⟦Add stadat table URL and accessed date.⟧
 10. Közbeszerzési és Ellátási Főigazgatóság. Framework agreement price list, A4 80 g/m2 copier paper, 500-sheet ream. https://www.parlament.hu/documents/d/guest/10_2023_megrendelo ⟦Add accessed date.⟧
 11. Nemzeti Adó- és Vámhivatal. Property valuation for the archive site, 1 560 000 HUF/m2. ⟦Add valuation reference and date.⟧
+
+12. Sun M, Wang Y, Shi L, et al. Uncovering energy use, carbon emissions and environmental burdens of pulp and paper industry: a systematic review and meta-analysis. Renew Sustain Energy Rev 2018;92:823-33. doi:10.1016/j.rser.2018.04.036
+13. Tomberlin KE, Venditti R, Yao Y. Life cycle carbon footprint analysis of pulp and paper grades in the United States using production-line-based data and integration. BioResources 2020;15:3899-914. doi:10.15376/biores.15.2.3899-3914
 
 ⟦**References still to add:** the Hungarian decree governing the 30/50/70-year retention periods, and the national health technology assessment guideline specifying the 3.7% discount rate.⟧
 
