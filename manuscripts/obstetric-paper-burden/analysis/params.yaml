@@ -74,6 +74,7 @@ documents:
     # change how a pre-printed booklet is manufactured).
     pages_per_unit: 15                   # status: firm - author-supplied
     preprinted_duplex: true
+    unit_price: 70                       # status: firm - author-supplied, HUF per booklet
     # Purchased as a finished booklet, not printed by the institution: it incurs
     # no paper or toner cost here, but it still occupies archive space.
     purchased: true
@@ -156,7 +157,6 @@ costs:
   print_cost_includes_paper: false       # status: assumed - see interpretation note
 
   # --- NOT YET SOURCED: outputs that need these are suppressed -------------
-  booklet_unit_price: null               # status: todo - purchase price of one antenatal booklet
   archivist_huf_per_hour: null           # status: todo - gross employer cost per hour
   minutes_per_episode_handling: null     # status: todo - print/collate/file time, time-and-motion
   minutes_per_dossier_appraisal: null    # status: todo - retention-split appraisal at 30/50/70 y

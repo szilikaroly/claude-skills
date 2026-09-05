@@ -154,13 +154,17 @@ def paper_cost(sheets, params, which="paper_per_ream_net"):
     return sheets * c[which] / c["sheets_per_ream"]
 
 
-def consumable_cost(own_sheets, pages, params, ream="paper_per_ream_net",
+def consumable_cost(own_sheets, pages, purchase, params, ream="paper_per_ream_net",
                     ppp="print_per_page"):
-    """Paper + toner. If the print price is all-in, paper is not added on top."""
+    """Toner + paper + purchased pre-printed items.
+
+    If the print price is all-in, paper is not added on top.
+    """
     c = params["costs"]
     printing = pages * c[ppp]
     paper = 0.0 if c.get("print_cost_includes_paper") else paper_cost(own_sheets, params, ream)
-    return {"printing": printing, "paper": paper, "total": printing + paper}
+    return {"printing": printing, "paper": paper, "purchased": purchase,
+            "total": printing + paper + purchase}
 
 
 def retention_weighted_stock(params, cols, n, episodes, sc):
@@ -325,6 +329,9 @@ def main():
                         if d["key"] not in drop_keys and not d.get("purchased")
                         and d["role"] in roles]
         docs_case = [sum(docs[k][i] for k in printed_docs) for i in range(n)]
+        bought = [d for d in params["documents"]
+                  if d["key"] not in drop_keys and d.get("purchased") and d.get("unit_price")]
+        buy_case = [sum(docs[d["key"]][i] * d["unit_price"] for d in bought) for i in range(n)]
         per_case, own_case, page_case = scenario_quantities(params, cols, n, sc)
         stt = describe(per_case)
         row = {"key": sc["key"], "label": sc["label"], "note": sc.get("note", ""),
@@ -341,17 +348,19 @@ def main():
             p["episodes"] = eps
             p["printed_pages"] = annual_pages
             p["self_printed_sheets"] = annual_own
-            cc = consumable_cost(annual_own, annual_pages, params)
+            annual_buy = st.mean(buy_case) * eps
+            cc = consumable_cost(annual_own, annual_pages, annual_buy, params)
             p["print_cost_net"] = cc["printing"]
             p["paper_cost_net"] = cc["paper"]
+            p["purchased_cost_net"] = cc["purchased"]
             p["consumable_cost_net"] = cc["total"]
             p["consumable_cost_gross"] = cc["total"] * (1 + costs["vat_rate"])
             p["paper_cost_gross"] = p["paper_cost_net"] * (1 + costs["vat_rate"])
             p["consumable_cost_net_low"] = consumable_cost(
-                annual_own, annual_pages, params, "paper_per_ream_net_low",
+                annual_own, annual_pages, annual_buy, params, "paper_per_ream_net_low",
                 "print_per_page_low")["total"]
             p["consumable_cost_net_high"] = consumable_cost(
-                annual_own, annual_pages, params, "paper_per_ream_net_high",
+                annual_own, annual_pages, annual_buy, params, "paper_per_ream_net_high",
                 "print_per_page_high")["total"]
             stock = retention_weighted_stock(params, cols, n, eps, sc)
             ps = physical(stock, params)
@@ -423,7 +432,7 @@ def main():
     R["sensitivity_floor_value"] = {
         "base": base["national"]["steady_state"]["floor_value_huf"], "rows": sens}
 
-    R["suppressed_outputs"] = [k for k in ("booklet_unit_price", "archivist_huf_per_hour",
+    R["suppressed_outputs"] = [k for k in ("archivist_huf_per_hour",
                                            "minutes_per_episode_handling",
                                            "minutes_per_dossier_appraisal")
                                if costs.get(k) is None]
@@ -463,19 +472,19 @@ def write_tables(R, params, tdir):
     (tdir / "table1_documents.md").write_text("\n".join(t1) + "\n")
 
     t2 = ["| Scenario | Pages printed/episode | Sheets/episode | Paper (t/y) | "
-          "Printing (HUF/y) | Paper (HUF/y) | Consumables (HUF/y, net) | "
+          "Printing (HUF/y) | Paper (HUF/y) | Booklets (HUF/y) | Consumables (HUF/y, net) | "
           "Shelf (lm/y) | Steady-state floor (m²) | Tied-up property value (HUF) |",
-          "|---|---|---|---|---|---|---|---|---|---|"]
+          "|---|---|---|---|---|---|---|---|---|---|---|"]
     for lvl in ("local", "national"):
         lab = params["scale"][f"{lvl}_label"]
         eps = params["scale"][f"{lvl}_episodes_per_year"]
-        t2.append(f"| **{lab} ({eps:,}/y)** | | | | | | | | | |")
+        t2.append(f"| **{lab} ({eps:,}/y)** | | | | | | | | | | |")
         for s in R["scenarios"]:
             p = s[lvl]
             t2.append(f"| {s['label']} | {s['printed_pages_per_episode']['mean']:.1f} | "
                       f"{s['sheets_per_episode']['mean']:.1f} | {p['mass_t']:.2f} | "
                       f"{huf(p['print_cost_net'])} | {huf(p['paper_cost_net'])} | "
-                      f"{huf(p['consumable_cost_net'])} | {p['linear_m']:,.0f} | "
+                      f"{huf(p['purchased_cost_net'])} | {huf(p['consumable_cost_net'])} | {p['linear_m']:,.0f} | "
                       f"{p['steady_state']['floor_m2']:,.0f} | "
                       f"{huf(p['steady_state']['floor_value_huf'])} |")
     (tdir / "table2_scenarios.md").write_text("\n".join(t2) + "\n")
@@ -498,6 +507,8 @@ def write_tables(R, params, tdir):
                f"| Printing (toner, device), per year | {huf(l['print_cost_net'])} | "
                f"{huf(n['print_cost_net'])} |",
                f"| Paper, per year | {huf(l['paper_cost_net'])} | {huf(n['paper_cost_net'])} |",
+               f"| Purchased antenatal booklets, per year | {huf(l['purchased_cost_net'])} | "
+               f"{huf(n['purchased_cost_net'])} |",
                f"| **Consumables, per year (net)** | **{huf(l['consumable_cost_net'])}** | "
                f"**{huf(n['consumable_cost_net'])}** |",
                f"| Consumables, per year (gross, incl. VAT) | {huf(l['consumable_cost_gross'])} | "
@@ -538,7 +549,7 @@ def write_tables(R, params, tdir):
               f"Paper is charged per physical sheet at "
               f"{c['paper_per_ream_net'] / c['sheets_per_ream']:.2f} HUF and is added on top of "
               f"the printing charge. The antenatal booklet is purchased rather than printed and "
-              f"carries neither charge; its purchase price is not yet included. Archivist labour "
+              f"is charged at its purchase price instead. Archivist labour "
               f"and clinician handling time are also excluded, so these are floors.")
     (tdir / "table4_costs.md").write_text("\n".join(t4) + "\n")
 

@@ -3,10 +3,11 @@
 | **Current practice** | | |
 | Printing (toner, device), per year | 1.63 M | 63.08 M |
 | Paper, per year | 672.04k | 26.04 M |
-| **Consumables, per year (net)** | **2.30 M** | **89.12 M** |
-| Consumables, per year (gross, incl. VAT) | 2.92 M | 113.18 M |
-| Consumables, 10 y discounted (net) | 19.64 M | 760.89 M |
-| **Consumables, per care episode (net)** | **1,150** | **1,150** |
+| Purchased antenatal booklets, per year | 140.00k | 5.42 M |
+| **Consumables, per year (net)** | **2.44 M** | **94.54 M** |
+| Consumables, per year (gross, incl. VAT) | 3.10 M | 120.07 M |
+| Consumables, 10 y discounted (net) | 20.83 M | 807.21 M |
+| **Consumables, per care episode (net)** | **1,220** | **1,220** |
 | Archive property value at steady state | 231.54 M | 8.97 bn |
 | Property value per care episode | 115,772 | 115,772 |
 | Archive floor area (steady state) | 148 m² | 5,751 m² |
@@ -18,10 +19,11 @@
 | **Duplex printing** | | |
 | Printing (toner, device), per year | 1.63 M | 63.08 M |
 | Paper, per year | 345.36k | 13.38 M |
-| **Consumables, per year (net)** | **1.97 M** | **76.46 M** |
-| Consumables, per year (gross, incl. VAT) | 2.51 M | 97.10 M |
-| Consumables, 10 y discounted (net) | 16.85 M | 652.81 M |
-| **Consumables, per care episode (net)** | **987** | **987** |
+| Purchased antenatal booklets, per year | 140.00k | 5.42 M |
+| **Consumables, per year (net)** | **2.11 M** | **81.88 M** |
+| Consumables, per year (gross, incl. VAT) | 2.68 M | 103.99 M |
+| Consumables, 10 y discounted (net) | 18.04 M | 699.13 M |
+| **Consumables, per care episode (net)** | **1,057** | **1,057** |
 | Archive property value at steady state | 126.00 M | 4.88 bn |
 | Property value per care episode | 62,998 | 62,998 |
 | Archive floor area (steady state) | 81 m² | 3,130 m² |
@@ -33,10 +35,11 @@
 | **Electronic result delivery** | | |
 | Printing (toner, device), per year | 494.62k | 19.17 M |
 | Paper, per year | 110.28k | 4.27 M |
-| **Consumables, per year (net)** | **604.90k** | **23.44 M** |
-| Consumables, per year (gross, incl. VAT) | 768.23k | 29.77 M |
-| Consumables, 10 y discounted (net) | 5.16 M | 200.13 M |
-| **Consumables, per care episode (net)** | **302** | **302** |
+| Purchased antenatal booklets, per year | 140.00k | 5.42 M |
+| **Consumables, per year (net)** | **744.90k** | **28.86 M** |
+| Consumables, per year (gross, incl. VAT) | 946.03k | 36.66 M |
+| Consumables, 10 y discounted (net) | 6.36 M | 246.45 M |
+| **Consumables, per care episode (net)** | **372** | **372** |
 | Archive property value at steady state | 56.78 M | 2.20 bn |
 | Property value per care episode | 28,392 | 28,392 |
 | Archive floor area (steady state) | 36 m² | 1,410 m² |
@@ -48,10 +51,11 @@
 | **Paperless pathway** | | |
 | Printing (toner, device), per year | 0 | 0 |
 | Paper, per year | 0 | 0 |
-| **Consumables, per year (net)** | **0** | **0** |
-| Consumables, per year (gross, incl. VAT) | 0 | 0 |
-| Consumables, 10 y discounted (net) | 0 | 0 |
-| **Consumables, per care episode (net)** | **0** | **0** |
+| Purchased antenatal booklets, per year | 140.00k | 5.42 M |
+| **Consumables, per year (net)** | **140.00k** | **5.42 M** |
+| Consumables, per year (gross, incl. VAT) | 177.80k | 6.89 M |
+| Consumables, 10 y discounted (net) | 1.20 M | 46.32 M |
+| **Consumables, per care episode (net)** | **70** | **70** |
 | Archive property value at steady state | 13.61 M | 527.56 M |
 | Property value per care episode | 6,807 | 6,807 |
 | Archive floor area (steady state) | 9 m² | 338 m² |
@@ -61,4 +65,4 @@
 | **Handling time, FTE** | **0.00** (0.00–0.00) | **0.0** (0.0–0.0) |
 | Handling time, minutes per care episode | 0.0 | 0.0 |
 
-All figures in HUF, 2024 prices. Printing is charged per printed page at 7 HUF, so a double-sided sheet costs 14 HUF and duplex printing saves paper but not toner. Paper is charged per physical sheet at 2.89 HUF and is added on top of the printing charge. The antenatal booklet is purchased rather than printed and carries neither charge; its purchase price is not yet included. Archivist labour and clinician handling time are also excluded, so these are floors.
+All figures in HUF, 2024 prices. Printing is charged per printed page at 7 HUF, so a double-sided sheet costs 14 HUF and duplex printing saves paper but not toner. Paper is charged per physical sheet at 2.89 HUF and is added on top of the printing charge. The antenatal booklet is purchased rather than printed and is charged at its purchase price instead. Archivist labour and clinician handling time are also excluded, so these are floors.
