@@ -156,10 +156,13 @@ costs:
   print_per_page_high: 10                # status: assumed - sensitivity
   print_cost_includes_paper: false       # status: assumed - see interpretation note
 
-  # --- NOT YET SOURCED: outputs that need these are suppressed -------------
-  archivist_huf_per_hour: null           # status: todo - gross employer cost per hour
-  minutes_per_episode_handling: null     # status: todo - print/collate/file time, time-and-motion
-  minutes_per_dossier_appraisal: null    # status: todo - retention-split appraisal at 30/50/70 y
+  # --- DELIBERATELY NOT MONETISED ------------------------------------------
+  # Document handling is not a staffed post. It is absorbed into the existing
+  # duties of clinicians, midwives and administrators, so there is no wage rate
+  # that would represent it honestly, and pricing it at any rate would imply a
+  # budget line that does not exist. It is reported in hours and FTE-equivalent
+  # only - see the time: block and the manuscript Methods.
+  archivist_huf_per_hour: null           # status: not-applicable - see note above
 
 # ---------------------------------------------------------------------------
 # Staff time spent printing and filing paper documents. This is handling time

@@ -432,10 +432,11 @@ def main():
     R["sensitivity_floor_value"] = {
         "base": base["national"]["steady_state"]["floor_value_huf"], "rows": sens}
 
-    R["suppressed_outputs"] = [k for k in ("archivist_huf_per_hour",
-                                           "minutes_per_episode_handling",
-                                           "minutes_per_dossier_appraisal")
-                               if costs.get(k) is None]
+    R["not_monetised"] = {
+        "handling_time": "absorbed into existing staff duties, not a staffed post; "
+                         "reported in hours and FTE-equivalent only"}
+    R["suppressed_outputs"] = [k for k in costs
+                               if costs[k] is None and k != "archivist_huf_per_hour"]
 
     (out / "tables" / "results.json").write_text(json.dumps(R, indent=2, ensure_ascii=False))
 
@@ -448,6 +449,7 @@ def main():
     print(f"n={n}  mean pages/episode={R['total_pages']['mean']:.2f} "
           f"(95% CI {R['total_pages']['ci_low']:.2f}-{R['total_pages']['ci_high']:.2f})")
     print("suppressed (parameter still null):", R["suppressed_outputs"] or "none")
+    print("not monetised by design:", ", ".join(R["not_monetised"]))
 
 
 def write_tables(R, params, tdir):

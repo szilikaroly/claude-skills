@@ -857,9 +857,8 @@
       }
     ]
   },
-  "suppressed_outputs": [
-    "archivist_huf_per_hour",
-    "minutes_per_episode_handling",
-    "minutes_per_dossier_appraisal"
-  ]
+  "not_monetised": {
+    "handling_time": "absorbed into existing staff duties, not a staffed post; reported in hours and FTE-equivalent only"
+  },
+  "suppressed_outputs": []
 }
