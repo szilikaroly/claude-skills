@@ -73,6 +73,9 @@ documents:
     # change how a pre-printed booklet is manufactured).
     pages_per_unit: 15                   # status: firm - author-supplied
     preprinted_duplex: true
+    # Purchased as a finished booklet, not printed by the institution: it incurs
+    # no paper or toner cost here, but it still occupies archive space.
+    purchased: true
   - key: ward
     label: Ward documentation
     column: "Osztályos dokumentáció"
@@ -141,8 +144,18 @@ costs:
   floor_value_per_m2_low: 1200000        # status: assumed - sensitivity
   floor_value_per_m2_high: 1900000
 
+  # Printing cost per printed page: toner, device amortisation and service.
+  # INTERPRETATION: taken as the cost of putting ink on a page, EXCLUSIVE of the
+  # paper itself, which is priced separately above. If the 7 HUF figure is an
+  # all-in cost-per-page that already includes paper, set the flag below to true
+  # and paper is no longer added on top.
+  print_per_page: 7                      # status: firm - author-supplied, Hungarian average
+  print_per_page_low: 5                  # status: assumed - sensitivity
+  print_per_page_high: 10                # status: assumed - sensitivity
+  print_cost_includes_paper: false       # status: assumed - see interpretation note
+
   # --- NOT YET SOURCED: outputs that need these are suppressed -------------
-  print_per_page: null                   # status: todo - toner + device amortisation + service
+  booklet_unit_price: null               # status: todo - purchase price of one antenatal booklet
   archivist_huf_per_hour: null           # status: todo - gross employer cost per hour
   minutes_per_episode_handling: null     # status: todo - print/collate/file time, time-and-motion
   minutes_per_dossier_appraisal: null    # status: todo - retention-split appraisal at 30/50/70 y

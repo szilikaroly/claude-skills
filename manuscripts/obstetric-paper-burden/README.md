@@ -4,7 +4,7 @@ English-language original research manuscript on paper consumption in obstetric 
 antenatal documentation, with a fully reproducible analysis pipeline.
 
 ```
-manuscript.md              the manuscript (IMRaD, ~3,515 words body)
+manuscript.md              the manuscript (IMRaD, ~3,982 words body)
 analysis/params.yaml       every parameter, with a status flag (firm / assumed / todo)
 analysis/analysis.py       reads the workbook + params, writes tables/ and figures/
 tables/results.json        every computed number, machine-readable
@@ -35,12 +35,15 @@ Pass its path with `--data`.
 | Physical sheets per episode | 124.3 | same |
 | Diagnostic reports as share of pages | 61.7% | same |
 | Referral → report amplification | exactly 4.0, all families, all episodes | same |
-| Paper per year, current practice | 1.24 t · 718k HUF net | 48.1 t · 27.8 M HUF net |
-| Paper per care episode | 359 HUF net (456 gross) | same |
+| Consumables per year, current practice | 2.30 M HUF net | 89.1 M HUF net |
+| Consumables per care episode | 1,150 HUF net | same |
+| — of which toner/device | 70.8% | 70.8% |
 | Steady-state archive | 148 m² · 231.5 M HUF | 5,751 m² · **8.97 bn HUF** |
 | Property immobilised per episode | 115,772 HUF | same |
-| Duplex printing (no investment) | −45.5% sheets · releases 105.5 M HUF | releases **4.09 bn HUF** |
-| Electronic report delivery | −78.2% sheets · releases 174.8 M HUF | releases **6.77 bn HUF** |
+| Duplex: capital released | 105.5 M HUF | **4.09 bn HUF** |
+| Duplex: recurrent saved | 327k HUF/y (−14.2%) | 12.7 M HUF/y |
+| Electronic reports: capital released | 174.8 M HUF | **6.77 bn HUF** |
+| Electronic reports: recurrent saved | 1.70 M HUF/y (−73.7%) | 65.7 M HUF/y |
 
 ## Still open
 
@@ -48,12 +51,16 @@ Pass its path with `--data`.
    Exclusions? This is the largest remaining Methods gap.
 2. **Report length** — report pages were derived at the institutional 4:1 convention, not
    counted. Independent measurement would firm up the 69% figure.
-3. **Costs not yet monetised** — printing per page, archivist hourly cost, handling minutes
-   per episode, retention-appraisal minutes per dossier. All four would raise the cost of
-   current practice, so present figures are a floor.
-4. **Two citations to add** — the Hungarian decree governing 30/50/70-year retention, and
+3. **Costs not yet monetised** — archivist hourly cost, handling minutes per episode,
+   retention-appraisal minutes per dossier, and the purchase price of the antenatal booklet.
+   All would raise the cost of current practice, so present figures are a floor. The missing
+   booklet price is why the paperless scenario shows zero consumables.
+4. **Printing charge interpretation** — 7 HUF/page is modelled as toner and device cost with
+   paper added on top (so a duplex sheet costs 14 HUF + 2.89 HUF). If it is an all-in
+   cost-per-page, set `costs.print_cost_includes_paper: true` and re-run.
+5. **Two citations to add** — the Hungarian decree governing 30/50/70-year retention, and
    the HTA guideline specifying the 3.7% discount rate.
-5. **Archival constants** — shelving density and floor efficiency are the two largest
+6. **Archival constants** — shelving density and floor efficiency are the two largest
    sources of uncertainty and can be measured directly in the institution's archive.
 
 Author-input gaps are marked `⟦…⟧` in the manuscript; `grep -c '⟦' manuscript.md` counts them.

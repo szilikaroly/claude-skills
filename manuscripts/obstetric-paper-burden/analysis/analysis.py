@@ -102,14 +102,23 @@ def cross_check(params, cols, header, rows, n):
 
 
 # ------------------------------------------------------------------ scenario
-def scenario_sheets(params, cols, n, sc):
-    """Sheets of paper per episode under one scenario (pages -> physical sheets)."""
+def scenario_quantities(params, cols, n, sc):
+    """Per-episode quantities under one scenario.
+
+    Three quantities differ and must not be conflated. Physical sheets drive
+    archive volume and include purchased items. Self-printed sheets drive paper
+    cost. Printed pages drive toner cost - and duplex does not reduce them,
+    because the same number of pages still has ink put on it.
+    """
     drop = set(sc.get("drop") or [])
-    per_case = []
+    live = [d for d in params["documents"] if d["key"] not in drop]
+    sheets, own_sheets, pages = [], [], []
     for i in range(n):
-        per_case.append(sum(sheets_of(d, cols[d["key"]][i], sc)
-                            for d in params["documents"] if d["key"] not in drop))
-    return per_case
+        sheets.append(sum(sheets_of(d, cols[d["key"]][i], sc) for d in live))
+        own_sheets.append(sum(sheets_of(d, cols[d["key"]][i], sc)
+                              for d in live if not d.get("purchased")))
+        pages.append(sum(cols[d["key"]][i] for d in live if not d.get("purchased")))
+    return sheets, own_sheets, pages
 
 
 def physical(sheets, params):
@@ -123,6 +132,15 @@ def physical(sheets, params):
 def paper_cost(sheets, params, which="paper_per_ream_net"):
     c = params["costs"]
     return sheets * c[which] / c["sheets_per_ream"]
+
+
+def consumable_cost(own_sheets, pages, params, ream="paper_per_ream_net",
+                    ppp="print_per_page"):
+    """Paper + toner. If the print price is all-in, paper is not added on top."""
+    c = params["costs"]
+    printing = pages * c[ppp]
+    paper = 0.0 if c.get("print_cost_includes_paper") else paper_cost(own_sheets, params, ream)
+    return {"printing": printing, "paper": paper, "total": printing + paper}
 
 
 def retention_weighted_stock(params, cols, n, episodes, sc):
@@ -280,19 +298,33 @@ def main():
     # scenarios
     sc_rows, costs = [], params["costs"]
     for sc in params["scenarios"]:
-        per_case = scenario_sheets(params, cols, n, sc)
+        per_case, own_case, page_case = scenario_quantities(params, cols, n, sc)
         stt = describe(per_case)
         row = {"key": sc["key"], "label": sc["label"], "note": sc.get("note", ""),
-               "sheets_per_episode": stt}
+               "sheets_per_episode": stt,
+               "self_printed_sheets_per_episode": describe(own_case),
+               "printed_pages_per_episode": describe(page_case)}
         for lvl, eps in (("local", params["scale"]["local_episodes_per_year"]),
                          ("national", params["scale"]["national_episodes_per_year"])):
             annual = stt["mean"] * eps
+            annual_own = st.mean(own_case) * eps
+            annual_pages = st.mean(page_case) * eps
             p = physical(annual, params)
             p["episodes"] = eps
-            p["paper_cost_net"] = paper_cost(annual, params)
+            p["printed_pages"] = annual_pages
+            p["self_printed_sheets"] = annual_own
+            cc = consumable_cost(annual_own, annual_pages, params)
+            p["print_cost_net"] = cc["printing"]
+            p["paper_cost_net"] = cc["paper"]
+            p["consumable_cost_net"] = cc["total"]
+            p["consumable_cost_gross"] = cc["total"] * (1 + costs["vat_rate"])
             p["paper_cost_gross"] = p["paper_cost_net"] * (1 + costs["vat_rate"])
-            p["paper_cost_net_low"] = paper_cost(annual, params, "paper_per_ream_net_low")
-            p["paper_cost_net_high"] = paper_cost(annual, params, "paper_per_ream_net_high")
+            p["consumable_cost_net_low"] = consumable_cost(
+                annual_own, annual_pages, params, "paper_per_ream_net_low",
+                "print_per_page_low")["total"]
+            p["consumable_cost_net_high"] = consumable_cost(
+                annual_own, annual_pages, params, "paper_per_ream_net_high",
+                "print_per_page_high")["total"]
             stock = retention_weighted_stock(params, cols, n, eps, sc)
             ps = physical(stock, params)
             p["steady_state"] = ps
@@ -300,8 +332,9 @@ def main():
             p["steady_state"]["floor_value_huf_low"] = ps["floor_m2"] * costs["floor_value_per_m2_low"]
             p["steady_state"]["floor_value_huf_high"] = ps["floor_m2"] * costs["floor_value_per_m2_high"]
             env = params["environment"]
+            p["consumable_cost_per_episode_net"] = cc["total"] / eps
+            p["consumable_cost_per_episode_gross"] = p["consumable_cost_gross"] / eps
             p["paper_cost_per_episode_net"] = p["paper_cost_net"] / eps
-            p["paper_cost_per_episode_gross"] = p["paper_cost_gross"] / eps
             p["steady_state"]["floor_value_per_episode"] = (
                 p["steady_state"]["floor_value_huf"] / eps)
             p["co2e_t"] = p["mass_t"] * env["co2e_t_per_t"]
@@ -316,7 +349,8 @@ def main():
     disc = sum(1 / (1 + r) ** t for t in range(H))
     for row in sc_rows:
         for lvl in ("local", "national"):
-            row[lvl]["paper_cost_net_10y_discounted"] = row[lvl]["paper_cost_net"] * disc
+            row[lvl]["consumable_cost_net_10y_discounted"] = (
+                row[lvl]["consumable_cost_net"] * disc)
     R["discount_factor_sum"] = disc
 
     # one-way sensitivity on the steady-state floor value, base scenario
@@ -345,7 +379,7 @@ def main():
     R["sensitivity_floor_value"] = {
         "base": base["national"]["steady_state"]["floor_value_huf"], "rows": sens}
 
-    R["suppressed_outputs"] = [k for k in ("print_per_page", "archivist_huf_per_hour",
+    R["suppressed_outputs"] = [k for k in ("booklet_unit_price", "archivist_huf_per_hour",
                                            "minutes_per_episode_handling",
                                            "minutes_per_dossier_appraisal")
                                if costs.get(k) is None]
@@ -384,23 +418,26 @@ def write_tables(R, params, tdir):
               f"{R['total_pages']['max']}** | 100% |")
     (tdir / "table1_documents.md").write_text("\n".join(t1) + "\n")
 
-    t2 = ["| Scenario | Sheets/episode | Sheets/y | Paper (t/y) | Paper cost (HUF/y, net) | "
+    t2 = ["| Scenario | Pages printed/episode | Sheets/episode | Paper (t/y) | "
+          "Printing (HUF/y) | Paper (HUF/y) | Consumables (HUF/y, net) | "
           "Shelf (lm/y) | Steady-state floor (m²) | Tied-up property value (HUF) |",
-          "|---|---|---|---|---|---|---|---|"]
+          "|---|---|---|---|---|---|---|---|---|---|"]
     for lvl in ("local", "national"):
         lab = params["scale"][f"{lvl}_label"]
         eps = params["scale"][f"{lvl}_episodes_per_year"]
-        t2.append(f"| **{lab} ({eps:,}/y)** | | | | | | | |")
+        t2.append(f"| **{lab} ({eps:,}/y)** | | | | | | | | | |")
         for s in R["scenarios"]:
             p = s[lvl]
-            t2.append(f"| {s['label']} | {s['sheets_per_episode']['mean']:.1f} | "
-                      f"{p['sheets']:,.0f} | {p['mass_t']:.2f} | {huf(p['paper_cost_net'])} | "
-                      f"{p['linear_m']:,.0f} | {p['steady_state']['floor_m2']:,.0f} | "
+            t2.append(f"| {s['label']} | {s['printed_pages_per_episode']['mean']:.1f} | "
+                      f"{s['sheets_per_episode']['mean']:.1f} | {p['mass_t']:.2f} | "
+                      f"{huf(p['print_cost_net'])} | {huf(p['paper_cost_net'])} | "
+                      f"{huf(p['consumable_cost_net'])} | {p['linear_m']:,.0f} | "
+                      f"{p['steady_state']['floor_m2']:,.0f} | "
                       f"{huf(p['steady_state']['floor_value_huf'])} |")
     (tdir / "table2_scenarios.md").write_text("\n".join(t2) + "\n")
 
     s = R["sensitivity_floor_value"]
-    t3 = [f"Base case: {huf(s['base'])} HUF", "",
+    t3 = [f"Steady-state immobilised property value. Base case: {huf(s['base'])} HUF", "",
           "| Parameter varied | Low | High | Swing |", "|---|---|---|---|"]
     for r in sorted(s["rows"], key=lambda r: -(r["high"] - r["low"])):
         t3.append(f"| {r['parameter']} | {huf(r['low'])} | {huf(r['high'])} | "
@@ -414,12 +451,19 @@ def write_tables(R, params, tdir):
     for s in R["scenarios"]:
         l, n = s["local"], s["national"]
         t4 += [f"| **{s['label']}** | | |",
-               f"| Paper, per year (net) | {huf(l['paper_cost_net'])} | {huf(n['paper_cost_net'])} |",
-               f"| Paper, per year (gross, incl. VAT) | {huf(l['paper_cost_gross'])} | {huf(n['paper_cost_gross'])} |",
-               f"| Paper, 10 y discounted (net) | {huf(l['paper_cost_net_10y_discounted'])} | "
-               f"{huf(n['paper_cost_net_10y_discounted'])} |",
-               f"| Paper, per care episode (net) | {l['paper_cost_per_episode_net']:,.0f} | "
-               f"{n['paper_cost_per_episode_net']:,.0f} |",
+               f"| Printing (toner, device), per year | {huf(l['print_cost_net'])} | "
+               f"{huf(n['print_cost_net'])} |",
+               f"| Paper, per year | {huf(l['paper_cost_net'])} | {huf(n['paper_cost_net'])} |",
+               f"| **Consumables, per year (net)** | **{huf(l['consumable_cost_net'])}** | "
+               f"**{huf(n['consumable_cost_net'])}** |",
+               f"| Consumables, per year (gross, incl. VAT) | {huf(l['consumable_cost_gross'])} | "
+               f"{huf(n['consumable_cost_gross'])} |",
+               f"| Consumables, 10 y discounted (net) | "
+               f"{huf(l['consumable_cost_net_10y_discounted'])} | "
+               f"{huf(n['consumable_cost_net_10y_discounted'])} |",
+               f"| **Consumables, per care episode (net)** | "
+               f"**{l['consumable_cost_per_episode_net']:,.0f}** | "
+               f"**{n['consumable_cost_per_episode_net']:,.0f}** |",
                f"| Archive property value at steady state | "
                f"{huf(l['steady_state']['floor_value_huf'])} | "
                f"{huf(n['steady_state']['floor_value_huf'])} |",
@@ -427,9 +471,15 @@ def write_tables(R, params, tdir):
                f"{l['steady_state']['floor_value_per_episode']:,.0f} | "
                f"{n['steady_state']['floor_value_per_episode']:,.0f} |"]
     t4.append("")
-    t4.append("All figures in HUF, 2024 prices. Excludes printing consumables, "
-              "archivist labour and clinician handling time (see Methods), all of which "
-              "would increase the cost of current practice.")
+    c = params["costs"]
+    t4.append(f"All figures in HUF, 2024 prices. Printing is charged per printed page at "
+              f"{c['print_per_page']} HUF, so a double-sided sheet costs "
+              f"{2 * c['print_per_page']} HUF and duplex printing saves paper but not toner. "
+              f"Paper is charged per physical sheet at "
+              f"{c['paper_per_ream_net'] / c['sheets_per_ream']:.2f} HUF and is added on top of "
+              f"the printing charge. The antenatal booklet is purchased rather than printed and "
+              f"carries neither charge; its purchase price is not yet included. Archivist labour "
+              f"and clinician handling time are also excluded, so these are floors.")
     (tdir / "table4_costs.md").write_text("\n".join(t4) + "\n")
 
 

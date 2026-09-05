@@ -251,6 +251,32 @@
         "max": 147,
         "sum": 12427
       },
+      "self_printed_sheets_per_episode": {
+        "n": 100,
+        "mean": 116.27,
+        "sd": 10.504308880193168,
+        "ci_low": 114.18594511816967,
+        "ci_high": 118.35405488183032,
+        "median": 115.0,
+        "q1": 108.75,
+        "q3": 123.0,
+        "min": 91,
+        "max": 139,
+        "sum": 11627
+      },
+      "printed_pages_per_episode": {
+        "n": 100,
+        "mean": 116.27,
+        "sd": 10.504308880193168,
+        "ci_low": 114.18594511816967,
+        "ci_high": 118.35405488183032,
+        "median": 115.0,
+        "q1": 108.75,
+        "q3": 123.0,
+        "min": 91,
+        "max": 139,
+        "sum": 11627
+      },
       "local": {
         "sheets": 248540.0,
         "mass_kg": 1240.115184,
@@ -258,10 +284,15 @@
         "linear_m": 24.854,
         "floor_m2": 4.518909090909091,
         "episodes": 2000,
-        "paper_cost_net": 718280.6,
-        "paper_cost_gross": 912216.362,
-        "paper_cost_net_low": 710824.4,
-        "paper_cost_net_high": 725736.8,
+        "printed_pages": 232540.0,
+        "self_printed_sheets": 232540.0,
+        "print_cost_net": 1627780.0,
+        "paper_cost_net": 672040.6,
+        "consumable_cost_net": 2299820.6,
+        "consumable_cost_gross": 2920772.162,
+        "paper_cost_gross": 853491.562,
+        "consumable_cost_net_low": 1827764.4,
+        "consumable_cost_net_high": 3004416.8,
         "steady_state": {
           "sheets": 8163400.0,
           "mass_kg": 40732.100640000004,
@@ -273,12 +304,13 @@
           "floor_value_huf_high": 282008363.6363637,
           "floor_value_per_episode": 115771.85454545455
         },
-        "paper_cost_per_episode_net": 359.14029999999997,
-        "paper_cost_per_episode_gross": 456.108181,
+        "consumable_cost_per_episode_net": 1149.9103,
+        "consumable_cost_per_episode_gross": 1460.386081,
+        "paper_cost_per_episode_net": 336.02029999999996,
         "co2e_t": 1.6121497392,
         "water_m3": 18.60172776,
         "wood_t": 2.9762764416,
-        "paper_cost_net_10y_discounted": 6132701.985700809
+        "consumable_cost_net_10y_discounted": 19635939.43700502
       },
       "national": {
         "sheets": 9630925.0,
@@ -287,10 +319,15 @@
         "linear_m": 963.0925,
         "floor_m2": 175.10772727272726,
         "episodes": 77500,
-        "paper_cost_net": 27833373.25,
-        "paper_cost_gross": 35348384.0275,
-        "paper_cost_net_low": 27544445.5,
-        "paper_cost_net_high": 28122301.0,
+        "printed_pages": 9010925.0,
+        "self_printed_sheets": 9010925.0,
+        "print_cost_net": 63076475.0,
+        "paper_cost_net": 26041573.25,
+        "consumable_cost_net": 89118048.25,
+        "consumable_cost_gross": 113179921.2775,
+        "paper_cost_gross": 33072798.0275,
+        "consumable_cost_net_low": 70825870.5,
+        "consumable_cost_net_high": 116421151.0,
         "steady_state": {
           "sheets": 316331750.0,
           "mass_kg": 1578368.8998000002,
@@ -302,12 +339,13 @@
           "floor_value_huf_high": 10927824090.90909,
           "floor_value_per_episode": 115771.85454545452
         },
-        "paper_cost_per_episode_net": 359.1403,
-        "paper_cost_per_episode_gross": 456.10818100000006,
+        "consumable_cost_per_episode_net": 1149.9103,
+        "consumable_cost_per_episode_gross": 1460.386081,
+        "paper_cost_per_episode_net": 336.0203,
         "co2e_t": 62.470802394,
         "water_m3": 720.8169507,
         "wood_t": 115.330712112,
-        "paper_cost_net_10y_discounted": 237642201.94590637
+        "consumable_cost_net_10y_discounted": 760892653.1839445
       }
     },
     {
@@ -327,6 +365,32 @@
         "max": 79,
         "sum": 6775
       },
+      "self_printed_sheets_per_episode": {
+        "n": 100,
+        "mean": 59.75,
+        "sd": 5.347282893529605,
+        "ci_low": 58.68909907392373,
+        "ci_high": 60.81090092607627,
+        "median": 59.0,
+        "q1": 56.0,
+        "q3": 63.0,
+        "min": 47,
+        "max": 71,
+        "sum": 5975
+      },
+      "printed_pages_per_episode": {
+        "n": 100,
+        "mean": 116.27,
+        "sd": 10.504308880193168,
+        "ci_low": 114.18594511816967,
+        "ci_high": 118.35405488183032,
+        "median": 115.0,
+        "q1": 108.75,
+        "q3": 123.0,
+        "min": 91,
+        "max": 139,
+        "sum": 11627
+      },
       "local": {
         "sheets": 135500.0,
         "mass_kg": 676.0908000000001,
@@ -334,10 +398,15 @@
         "linear_m": 13.55,
         "floor_m2": 2.463636363636364,
         "episodes": 2000,
-        "paper_cost_net": 391595.0,
-        "paper_cost_gross": 497325.65,
-        "paper_cost_net_low": 387530.0,
-        "paper_cost_net_high": 395660.0,
+        "printed_pages": 232540.0,
+        "self_printed_sheets": 119500.0,
+        "print_cost_net": 1627780.0,
+        "paper_cost_net": 345355.0,
+        "consumable_cost_net": 1973135.0,
+        "consumable_cost_gross": 2505881.45,
+        "paper_cost_gross": 438600.85000000003,
+        "consumable_cost_net_low": 1504470.0,
+        "consumable_cost_net_high": 2674340.0,
         "steady_state": {
           "sheets": 4442200.0,
           "mass_kg": 22164.80112,
@@ -349,12 +418,13 @@
           "floor_value_huf_high": 153457818.1818182,
           "floor_value_per_episode": 62998.472727272725
         },
-        "paper_cost_per_episode_net": 195.7975,
-        "paper_cost_per_episode_gross": 248.662825,
+        "consumable_cost_per_episode_net": 986.5675,
+        "consumable_cost_per_episode_gross": 1252.9407250000002,
+        "paper_cost_per_episode_net": 172.6775,
         "co2e_t": 0.8789180400000001,
         "water_m3": 10.141361999999999,
         "wood_t": 1.62261792,
-        "paper_cost_net_10y_discounted": 3343450.225567151
+        "consumable_cost_net_10y_discounted": 16846687.67687136
       },
       "national": {
         "sheets": 5250625.0,
@@ -363,10 +433,15 @@
         "linear_m": 525.0625,
         "floor_m2": 95.4659090909091,
         "episodes": 77500,
-        "paper_cost_net": 15174306.25,
-        "paper_cost_gross": 19271368.9375,
-        "paper_cost_net_low": 15016787.5,
-        "paper_cost_net_high": 15331825.0,
+        "printed_pages": 9010925.0,
+        "self_printed_sheets": 4630625.0,
+        "print_cost_net": 63076475.0,
+        "paper_cost_net": 13382506.25,
+        "consumable_cost_net": 76458981.25,
+        "consumable_cost_gross": 97102906.1875,
+        "paper_cost_gross": 16995782.9375,
+        "consumable_cost_net_low": 58298212.5,
+        "consumable_cost_net_high": 103630675.0,
         "steady_state": {
           "sheets": 172135250.0,
           "mass_kg": 858886.0434000001,
@@ -378,12 +453,13 @@
           "floor_value_huf_high": 5946490454.545455,
           "floor_value_per_episode": 62998.47272727273
         },
-        "paper_cost_per_episode_net": 195.7975,
-        "paper_cost_per_episode_gross": 248.662825,
+        "consumable_cost_per_episode_net": 986.5675,
+        "consumable_cost_per_episode_gross": 1252.940725,
+        "paper_cost_per_episode_net": 172.6775,
         "co2e_t": 34.05807405,
         "water_m3": 392.9777775,
         "wood_t": 62.8764444,
-        "paper_cost_net_10y_discounted": 129558696.2407271
+        "consumable_cost_net_10y_discounted": 652809147.4787652
       }
     },
     {
@@ -403,6 +479,32 @@
         "max": 31,
         "sum": 2708
       },
+      "self_printed_sheets_per_episode": {
+        "n": 100,
+        "mean": 19.08,
+        "sd": 1.9052293798645321,
+        "ci_low": 18.702002491034875,
+        "ci_high": 19.45799750896512,
+        "median": 19.0,
+        "q1": 18.0,
+        "q3": 21.0,
+        "min": 15,
+        "max": 23,
+        "sum": 1908
+      },
+      "printed_pages_per_episode": {
+        "n": 100,
+        "mean": 35.33,
+        "sd": 3.6015008094970744,
+        "ci_low": 34.61546223939578,
+        "ci_high": 36.044537760604214,
+        "median": 35.0,
+        "q1": 32.0,
+        "q3": 38.0,
+        "min": 28,
+        "max": 43,
+        "sum": 3533
+      },
       "local": {
         "sheets": 54160.0,
         "mass_kg": 270.236736,
@@ -410,10 +512,15 @@
         "linear_m": 5.416,
         "floor_m2": 0.9847272727272728,
         "episodes": 2000,
-        "paper_cost_net": 156522.4,
-        "paper_cost_gross": 198783.448,
-        "paper_cost_net_low": 154897.6,
-        "paper_cost_net_high": 158147.2,
+        "printed_pages": 70660.0,
+        "self_printed_sheets": 38160.0,
+        "print_cost_net": 494620.0,
+        "paper_cost_net": 110282.4,
+        "consumable_cost_net": 604902.4,
+        "consumable_cost_gross": 768226.0480000001,
+        "paper_cost_gross": 140058.648,
+        "consumable_cost_net_low": 462437.6,
+        "consumable_cost_net_high": 818027.2,
         "steady_state": {
           "sheets": 2002000.0,
           "mass_kg": 9989.1792,
@@ -425,12 +532,13 @@
           "floor_value_huf_high": 69160000.0,
           "floor_value_per_episode": 28392.0
         },
-        "paper_cost_per_episode_net": 78.2612,
-        "paper_cost_per_episode_gross": 99.391724,
+        "consumable_cost_per_episode_net": 302.45120000000003,
+        "consumable_cost_per_episode_gross": 384.11302400000005,
+        "paper_cost_per_episode_net": 55.1412,
         "co2e_t": 0.35130775680000004,
         "water_m3": 4.05355104,
         "wood_t": 0.6485681664,
-        "paper_cost_net_10y_discounted": 1336393.093850309
+        "consumable_cost_net_10y_discounted": 5164675.406289945
       },
       "national": {
         "sheets": 2098700.0,
@@ -439,10 +547,15 @@
         "linear_m": 209.87,
         "floor_m2": 38.158181818181816,
         "episodes": 77500,
-        "paper_cost_net": 6065243.0,
-        "paper_cost_gross": 7702858.61,
-        "paper_cost_net_low": 6002282.0,
-        "paper_cost_net_high": 6128204.0,
+        "printed_pages": 2738075.0,
+        "self_printed_sheets": 1478699.9999999998,
+        "print_cost_net": 19166525.0,
+        "paper_cost_net": 4273442.999999999,
+        "consumable_cost_net": 23439968.0,
+        "consumable_cost_gross": 29768759.36,
+        "paper_cost_gross": 5427272.6099999985,
+        "consumable_cost_net_low": 17919457.0,
+        "consumable_cost_net_high": 31698554.0,
         "steady_state": {
           "sheets": 77577500.0,
           "mass_kg": 387080.694,
@@ -454,12 +567,13 @@
           "floor_value_huf_high": 2679950000.0,
           "floor_value_per_episode": 28392.0
         },
-        "paper_cost_per_episode_net": 78.2612,
-        "paper_cost_per_episode_gross": 99.39172400000001,
+        "consumable_cost_per_episode_net": 302.4512,
+        "consumable_cost_per_episode_gross": 384.113024,
+        "paper_cost_per_episode_net": 55.14119999999999,
         "co2e_t": 13.613175576000001,
         "water_m3": 157.07510280000002,
         "wood_t": 25.132016448,
-        "paper_cost_net_10y_discounted": 51785232.38669948
+        "consumable_cost_net_10y_discounted": 200131171.99373537
       }
     },
     {
@@ -479,6 +593,32 @@
         "max": 8,
         "sum": 800
       },
+      "self_printed_sheets_per_episode": {
+        "n": 100,
+        "mean": 0,
+        "sd": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "median": 0.0,
+        "q1": 0.0,
+        "q3": 0.0,
+        "min": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "printed_pages_per_episode": {
+        "n": 100,
+        "mean": 0,
+        "sd": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "median": 0.0,
+        "q1": 0.0,
+        "q3": 0.0,
+        "min": 0,
+        "max": 0,
+        "sum": 0
+      },
       "local": {
         "sheets": 16000,
         "mass_kg": 79.8336,
@@ -486,10 +626,15 @@
         "linear_m": 1.6,
         "floor_m2": 0.29090909090909095,
         "episodes": 2000,
-        "paper_cost_net": 46240.0,
-        "paper_cost_gross": 58724.8,
-        "paper_cost_net_low": 45760.0,
-        "paper_cost_net_high": 46720.0,
+        "printed_pages": 0,
+        "self_printed_sheets": 0,
+        "print_cost_net": 0,
+        "paper_cost_net": 0.0,
+        "consumable_cost_net": 0.0,
+        "consumable_cost_gross": 0.0,
+        "paper_cost_gross": 0.0,
+        "consumable_cost_net_low": 0.0,
+        "consumable_cost_net_high": 0.0,
         "steady_state": {
           "sheets": 480000.0,
           "mass_kg": 2395.008,
@@ -501,12 +646,13 @@
           "floor_value_huf_high": 16581818.18181818,
           "floor_value_per_episode": 6807.272727272727
         },
-        "paper_cost_per_episode_net": 23.12,
-        "paper_cost_per_episode_gross": 29.3624,
+        "consumable_cost_per_episode_net": 0.0,
+        "consumable_cost_per_episode_gross": 0.0,
+        "paper_cost_per_episode_net": 0.0,
         "co2e_t": 0.10378368,
         "water_m3": 1.1975040000000001,
         "wood_t": 0.19160064000000002,
-        "paper_cost_net_10y_discounted": 394798.5506204754
+        "consumable_cost_net_10y_discounted": 0.0
       },
       "national": {
         "sheets": 620000,
@@ -515,10 +661,15 @@
         "linear_m": 62.0,
         "floor_m2": 11.272727272727273,
         "episodes": 77500,
-        "paper_cost_net": 1791800.0,
-        "paper_cost_gross": 2275586.0,
-        "paper_cost_net_low": 1773200.0,
-        "paper_cost_net_high": 1810400.0,
+        "printed_pages": 0,
+        "self_printed_sheets": 0,
+        "print_cost_net": 0,
+        "paper_cost_net": 0.0,
+        "consumable_cost_net": 0.0,
+        "consumable_cost_gross": 0.0,
+        "paper_cost_gross": 0.0,
+        "consumable_cost_net_low": 0.0,
+        "consumable_cost_net_high": 0.0,
         "steady_state": {
           "sheets": 18600000.0,
           "mass_kg": 92806.56,
@@ -530,12 +681,13 @@
           "floor_value_huf_high": 642545454.5454545,
           "floor_value_per_episode": 6807.272727272727
         },
-        "paper_cost_per_episode_net": 23.12,
-        "paper_cost_per_episode_gross": 29.3624,
+        "consumable_cost_per_episode_net": 0.0,
+        "consumable_cost_per_episode_gross": 0.0,
+        "paper_cost_per_episode_net": 0.0,
         "co2e_t": 4.0216176,
         "water_m3": 46.403279999999995,
         "wood_t": 7.4245247999999995,
-        "paper_cost_net_10y_discounted": 15298443.83654342
+        "consumable_cost_net_10y_discounted": 0.0
       }
     }
   ],
@@ -566,7 +718,7 @@
     ]
   },
   "suppressed_outputs": [
-    "print_per_page",
+    "booklet_unit_price",
     "archivist_huf_per_hour",
     "minutes_per_episode_handling",
     "minutes_per_dossier_appraisal"
