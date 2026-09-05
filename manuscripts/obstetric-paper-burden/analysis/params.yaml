@@ -61,6 +61,7 @@ documents:
     family: Ultrasound
     role: result
     retention_years: 30
+    pages_per_document: 1                # status: assumed - no paired referral to count from
   - key: book
     label: Antenatal care booklet
     column: "Terheskönyv"
@@ -160,6 +161,28 @@ costs:
   minutes_per_episode_handling: null     # status: todo - print/collate/file time, time-and-motion
   minutes_per_dossier_appraisal: null    # status: todo - retention-split appraisal at 30/50/70 y
 
+# ---------------------------------------------------------------------------
+# Staff time spent printing and filing paper documents. This is handling time
+# only - not total documentation time - and is reported in hours and FTE even
+# where no wage rate is available.
+# ---------------------------------------------------------------------------
+time:
+  # Which document roles incur print-and-file handling. Ward and delivery
+  # documentation are written during care rather than printed on demand, so
+  # their production time is clinical documentation time, not handling time,
+  # and they are excluded here.
+  handling_roles: [referral, result]
+  seconds_per_document: 30               # status: assumed - author-supplied lower bound
+  seconds_per_document_low: 20
+  seconds_per_document_high: 60
+  annual_hours_per_fte: 1720             # status: assumed - Hungarian full-time year
+
+# Archive floor area is not neutral space: it is taken out of clinical or
+# productive use. These reference areas express the archive in clinical terms.
+space_equivalents:
+  antenatal_consulting_room_m2: 18       # status: assumed - typical room area
+  delivery_room_m2: 35                   # status: assumed - typical room area
+
 discounting:
   rate: 0.037                            # status: firm - Hungarian HTA guideline
   horizon_years: 10
@@ -183,7 +206,7 @@ environment:
 scenarios:
   - key: S0
     label: "Current practice"
-    note: "Single-sided printing, all documents on paper"
+    note: "Single-sided printing of all self-printed output; the antenatal booklet is a purchased, pre-printed double-sided item"
     duplex: false
     drop: []
   - key: S1

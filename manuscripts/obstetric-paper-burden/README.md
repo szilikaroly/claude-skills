@@ -4,7 +4,7 @@ English-language original research manuscript on paper consumption in obstetric 
 antenatal documentation, with a fully reproducible analysis pipeline.
 
 ```
-manuscript.md              the manuscript (IMRaD, ~3,982 words body)
+manuscript.md              the manuscript (IMRaD, ~4,684 words body)
 analysis/params.yaml       every parameter, with a status flag (firm / assumed / todo)
 analysis/analysis.py       reads the workbook + params, writes tables/ and figures/
 tables/results.json        every computed number, machine-readable
@@ -42,8 +42,12 @@ Pass its path with `--data`.
 | Property immobilised per episode | 115,772 HUF | same |
 | Duplex: capital released | 105.5 M HUF | **4.09 bn HUF** |
 | Duplex: recurrent saved | 327k HUF/y (−14.2%) | 12.7 M HUF/y |
+| Duplex: staff time saved | none | none |
 | Electronic reports: capital released | 174.8 M HUF | **6.77 bn HUF** |
 | Electronic reports: recurrent saved | 1.70 M HUF/y (−73.7%) | 65.7 M HUF/y |
+| Electronic reports: staff time saved | 466 h/y | **10.5 FTE** |
+| Handling time, current practice | 22.8 min/episode · 0.44 FTE | 17.1 FTE (11.4–34.3) |
+| Archive as clinical space | 8 consulting rooms | 320 consulting rooms |
 
 ## Still open
 
@@ -60,7 +64,10 @@ Pass its path with `--data`.
    cost-per-page, set `costs.print_cost_includes_paper: true` and re-run.
 5. **Two citations to add** — the Hungarian decree governing 30/50/70-year retention, and
    the HTA guideline specifying the 3.7% discount rate.
-6. **Archival constants** — shelving density and floor efficiency are the two largest
+6. **Handling time is assumed, not measured** — 30 s/document is a conservative
+   lower bound supplied by the authors, reported in hours and FTE rather than money
+   because no wage rate is available. A time-and-motion study would replace it.
+7. **Archival constants** — shelving density and floor efficiency are the two largest
    sources of uncertainty and can be measured directly in the institution's archive.
 
 Author-input gaps are marked `⟦…⟧` in the manuscript; `grep -c '⟦' manuscript.md` counts them.

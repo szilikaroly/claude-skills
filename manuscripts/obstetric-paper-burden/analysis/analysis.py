@@ -102,6 +102,26 @@ def cross_check(params, cols, header, rows, n):
 
 
 # ------------------------------------------------------------------ scenario
+def doc_counts(params, cols, n):
+    """Physical documents per episode, the unit staff actually handle.
+
+    A referral is one document. A paired report is one document per referral,
+    however many pages it runs to. An unpaired report is counted from its pages
+    via pages_per_document.
+    """
+    out = {}
+    for d in params["documents"]:
+        k = d["key"]
+        if d.get("pairs_with"):
+            out[k] = list(cols[d["pairs_with"]])
+        elif d.get("pages_per_unit"):
+            out[k] = [1] * n                      # one bound booklet
+        else:
+            per = d.get("pages_per_document")
+            out[k] = [v / per for v in cols[k]] if per else list(cols[k])
+    return out
+
+
 def scenario_quantities(params, cols, n, sc):
     """Per-episode quantities under one scenario.
 
@@ -262,6 +282,7 @@ def main():
     (out / "figures").mkdir(parents=True, exist_ok=True)
 
     cols, n, header, rows = load(a.data, params)
+    docs = doc_counts(params, cols, n)
     R = {"n_episodes": n, "params_file": Path(a.params).name}
     R["cross_check"] = cross_check(params, cols, header, rows, n)
 
@@ -298,12 +319,19 @@ def main():
     # scenarios
     sc_rows, costs = [], params["costs"]
     for sc in params["scenarios"]:
+        drop_keys = set(sc.get("drop") or [])
+        roles = set(params["time"]["handling_roles"])
+        printed_docs = [d["key"] for d in params["documents"]
+                        if d["key"] not in drop_keys and not d.get("purchased")
+                        and d["role"] in roles]
+        docs_case = [sum(docs[k][i] for k in printed_docs) for i in range(n)]
         per_case, own_case, page_case = scenario_quantities(params, cols, n, sc)
         stt = describe(per_case)
         row = {"key": sc["key"], "label": sc["label"], "note": sc.get("note", ""),
                "sheets_per_episode": stt,
                "self_printed_sheets_per_episode": describe(own_case),
-               "printed_pages_per_episode": describe(page_case)}
+               "printed_pages_per_episode": describe(page_case),
+               "documents_per_episode": describe(docs_case)}
         for lvl, eps in (("local", params["scale"]["local_episodes_per_year"]),
                          ("national", params["scale"]["national_episodes_per_year"])):
             annual = stt["mean"] * eps
@@ -337,6 +365,22 @@ def main():
             p["paper_cost_per_episode_net"] = p["paper_cost_net"] / eps
             p["steady_state"]["floor_value_per_episode"] = (
                 p["steady_state"]["floor_value_huf"] / eps)
+            tm = params["time"]
+            docs_yr = st.mean(docs_case) * eps
+            p["documents"] = docs_yr
+            p["handling_hours"] = docs_yr * tm["seconds_per_document"] / 3600
+            p["handling_hours_low"] = docs_yr * tm["seconds_per_document_low"] / 3600
+            p["handling_hours_high"] = docs_yr * tm["seconds_per_document_high"] / 3600
+            p["handling_fte"] = p["handling_hours"] / tm["annual_hours_per_fte"]
+            p["handling_fte_low"] = p["handling_hours_low"] / tm["annual_hours_per_fte"]
+            p["handling_fte_high"] = p["handling_hours_high"] / tm["annual_hours_per_fte"]
+            p["handling_minutes_per_episode"] = (
+                st.mean(docs_case) * tm["seconds_per_document"] / 60)
+            se = params["space_equivalents"]
+            p["steady_state"]["consulting_rooms"] = (
+                p["steady_state"]["floor_m2"] / se["antenatal_consulting_room_m2"])
+            p["steady_state"]["delivery_rooms"] = (
+                p["steady_state"]["floor_m2"] / se["delivery_room_m2"])
             p["co2e_t"] = p["mass_t"] * env["co2e_t_per_t"]
             p["water_m3"] = p["mass_t"] * env["water_m3_per_t"]
             p["wood_t"] = p["mass_t"] * env["wood_t_per_t"]
@@ -469,7 +513,23 @@ def write_tables(R, params, tdir):
                f"{huf(n['steady_state']['floor_value_huf'])} |",
                f"| Property value per care episode | "
                f"{l['steady_state']['floor_value_per_episode']:,.0f} | "
-               f"{n['steady_state']['floor_value_per_episode']:,.0f} |"]
+               f"{n['steady_state']['floor_value_per_episode']:,.0f} |",
+               f"| Archive floor area (steady state) | {l['steady_state']['floor_m2']:,.0f} m² | "
+               f"{n['steady_state']['floor_m2']:,.0f} m² |",
+               f"| — as antenatal consulting rooms | "
+               f"{l['steady_state']['consulting_rooms']:,.0f} | "
+               f"{n['steady_state']['consulting_rooms']:,.0f} |",
+               f"| Documents printed and filed, per year | {l['documents']:,.0f} | "
+               f"{n['documents']:,.0f} |",
+               f"| Handling time, hours per year (at 30 s/document) | "
+               f"{l['handling_hours']:,.0f} | {n['handling_hours']:,.0f} |",
+               f"| **Handling time, FTE** | **{l['handling_fte']:.2f}** "
+               f"({l['handling_fte_low']:.2f}–{l['handling_fte_high']:.2f}) | "
+               f"**{n['handling_fte']:.1f}** "
+               f"({n['handling_fte_low']:.1f}–{n['handling_fte_high']:.1f}) |",
+               f"| Handling time, minutes per care episode | "
+               f"{l['handling_minutes_per_episode']:.1f} | "
+               f"{n['handling_minutes_per_episode']:.1f} |"]
     t4.append("")
     c = params["costs"]
     t4.append(f"All figures in HUF, 2024 prices. Printing is charged per printed page at "
