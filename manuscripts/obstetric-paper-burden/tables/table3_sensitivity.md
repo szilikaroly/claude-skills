@@ -1,4 +1,4 @@
-Steady-state immobilised property value. Base case: 8.97 bn HUF
+Steady-state immobilised property value, national. Base case 8.97 bn HUF.
 
 | Parameter varied | Low | High | Swing |
 |---|---|---|---|

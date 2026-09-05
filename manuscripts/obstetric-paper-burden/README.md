@@ -4,11 +4,16 @@ English-language original research manuscript on paper consumption in obstetric 
 antenatal documentation, with a fully reproducible analysis pipeline.
 
 ```
-manuscript.md              the manuscript (IMRaD, ~4,684 words body)
+BMJ-HCI-submission.docx    the submission file, BMJ-formatted (upload this)
+BMJ-HCI-supplementary.docx supplementary table S1 (export to PDF before upload)
+manuscript.md              markdown source of the submission file
+supplementary.md           markdown source of the supplementary file
+build_docx.js              markdown -> BMJ-formatted .docx
 analysis/params.yaml       every parameter, with a status flag (firm / assumed / todo)
 analysis/analysis.py       reads the workbook + params, writes tables/ and figures/
 tables/results.json        every computed number, machine-readable
-tables/table[1-4]*.md      manuscript tables
+tables/table[1-3]*.md      in-text tables
+tables/tableS1*.md         supplementary table
 figures/fig[1-4]*.png      manuscript figures, 300 dpi
 ```
 
@@ -71,3 +76,31 @@ Pass its path with `--data`.
    sources of uncertainty and can be measured directly in the institution's archive.
 
 Author-input gaps are marked `⟦…⟧` in the manuscript; `grep -c '⟦' manuscript.md` counts them.
+
+## Rebuilding the submission files
+
+```bash
+node build_docx.js                      # manuscript.md  -> BMJ-HCI-submission.docx
+sed 's#manuscript.md#supplementary.md#; s#BMJ-HCI-submission#BMJ-HCI-supplementary#' \
+  build_docx.js > /tmp/b.js && node /tmp/b.js
+```
+
+The builder needs the npm `docx` package. It applies BMJ's general formatting rules:
+sentence-case title, BOLD CAPS level-1 and bold lower-case level-2 headings, tables as
+Word tables placed where first cited, statements before references, figure legends last.
+
+## BMJ submission checklist
+
+- [x] Word format, not PDF
+- [x] Order: abstract, main text, tables in place, statements, references
+- [x] Heading hierarchy BOLD CAPS / bold lower case / plain
+- [x] Tables as Word tables, each under two pages; the long cost breakdown moved to S1
+- [x] Vancouver references, first three authors then *et al*, numbered, hyphenated ranges
+- [x] MeSH keywords
+- [x] Figures as separate 300 dpi files, cited in order, legends at the end
+- [x] Figure legends do not refer to colour
+- [ ] Journal-specific word ceiling and table/figure maxima — **could not be retrieved**
+      (informatics.bmj.com is blocked by this environment's egress policy); confirm before
+      submitting. Main text is currently 4,915 words.
+- [ ] Author names, institutions and emails are entered in ScholarOne, not in the file
+- [ ] Export the supplementary file to PDF before upload

@@ -473,54 +473,65 @@ def write_tables(R, params, tdir):
               f"{R['total_pages']['max']}** | 100% |")
     (tdir / "table1_documents.md").write_text("\n".join(t1) + "\n")
 
-    t2 = ["| Scenario | Pages printed/episode | Sheets/episode | Paper (t/y) | "
-          "Printing (HUF/y) | Paper (HUF/y) | Booklets (HUF/y) | Consumables (HUF/y, net) | "
-          "Shelf (lm/y) | Steady-state floor (m²) | Tied-up property value (HUF) |",
-          "|---|---|---|---|---|---|---|---|---|---|---|"]
+    # Table 2 (main): compact scenario outcomes, both scales
+    t2 = ["| Scenario | Pages printed / episode | Sheets / episode | Documents / episode | "
+          "Paper (t/y) | Consumables (HUF/y, net) | Handling (h/y) | Handling (FTE) | "
+          "Archive floor (m²) | Property value (HUF) |",
+          "|---|---|---|---|---|---|---|---|---|---|"]
     for lvl in ("local", "national"):
         lab = params["scale"][f"{lvl}_label"]
         eps = params["scale"][f"{lvl}_episodes_per_year"]
-        t2.append(f"| **{lab} ({eps:,}/y)** | | | | | | | | | | |")
+        t2.append(f"| **{lab}, {eps:,} episodes/year** | | | | | | | | | |")
         for s in R["scenarios"]:
             p = s[lvl]
             t2.append(f"| {s['label']} | {s['printed_pages_per_episode']['mean']:.1f} | "
-                      f"{s['sheets_per_episode']['mean']:.1f} | {p['mass_t']:.2f} | "
-                      f"{huf(p['print_cost_net'])} | {huf(p['paper_cost_net'])} | "
-                      f"{huf(p['purchased_cost_net'])} | {huf(p['consumable_cost_net'])} | {p['linear_m']:,.0f} | "
-                      f"{p['steady_state']['floor_m2']:,.0f} | "
+                      f"{s['sheets_per_episode']['mean']:.1f} | "
+                      f"{s['documents_per_episode']['mean']:.1f} | {p['mass_t']:.2f} | "
+                      f"{huf(p['consumable_cost_net'])} | {p['handling_hours']:,.0f} | "
+                      f"{p['handling_fte']:.2f} | {p['steady_state']['floor_m2']:,.0f} | "
                       f"{huf(p['steady_state']['floor_value_huf'])} |")
+    c = params["costs"]
+    t2 += ["", f"Costs are 2024 HUF, net of VAT. Printing is charged per printed page at "
+               f"{c['print_per_page']} HUF, so duplex printing halves sheets but not pages and "
+               f"saves no toner. Handling time covers referrals and diagnostic reports at "
+               f"{params['time']['seconds_per_document']} s per document and is reported as "
+               f"displaced capacity, not costed. Property value is the capital immobilised by "
+               f"the archive at steady state under statutory retention, not an annual rent. "
+               f"Full cost components are given in supplementary table S1."]
     (tdir / "table2_scenarios.md").write_text("\n".join(t2) + "\n")
 
+    # Table 3 (main): one-way sensitivity
     s = R["sensitivity_floor_value"]
-    t3 = [f"Steady-state immobilised property value. Base case: {huf(s['base'])} HUF", "",
+    t3 = [f"Steady-state immobilised property value, national. Base case {huf(s['base'])} HUF.", "",
           "| Parameter varied | Low | High | Swing |", "|---|---|---|---|"]
     for r in sorted(s["rows"], key=lambda r: -(r["high"] - r["low"])):
         t3.append(f"| {r['parameter']} | {huf(r['low'])} | {huf(r['high'])} | "
                   f"{huf(r['high']-r['low'])} |")
     (tdir / "table3_sensitivity.md").write_text("\n".join(t3) + "\n")
 
+    # Supplementary S1: full cost breakdown, both scales
     loc, nat = params["scale"]["local_label"], params["scale"]["national_label"]
     le, ne = (params["scale"]["local_episodes_per_year"],
               params["scale"]["national_episodes_per_year"])
-    t4 = [f"| Cost component | {loc} ({le:,}/y) | {nat} ({ne:,}/y) |", "|---|---|---|"]
+    s1 = [f"| Cost component | {loc} ({le:,}/y) | {nat} ({ne:,}/y) |", "|---|---|---|"]
     for s in R["scenarios"]:
         l, n = s["local"], s["national"]
-        t4 += [f"| **{s['label']}** | | |",
+        s1 += [f"| **{s['label']}** | | |",
                f"| Printing (toner, device), per year | {huf(l['print_cost_net'])} | "
                f"{huf(n['print_cost_net'])} |",
                f"| Paper, per year | {huf(l['paper_cost_net'])} | {huf(n['paper_cost_net'])} |",
                f"| Purchased antenatal booklets, per year | {huf(l['purchased_cost_net'])} | "
                f"{huf(n['purchased_cost_net'])} |",
-               f"| **Consumables, per year (net)** | **{huf(l['consumable_cost_net'])}** | "
-               f"**{huf(n['consumable_cost_net'])}** |",
+               f"| Consumables, per year (net) | {huf(l['consumable_cost_net'])} | "
+               f"{huf(n['consumable_cost_net'])} |",
                f"| Consumables, per year (gross, incl. VAT) | {huf(l['consumable_cost_gross'])} | "
                f"{huf(n['consumable_cost_gross'])} |",
                f"| Consumables, 10 y discounted (net) | "
                f"{huf(l['consumable_cost_net_10y_discounted'])} | "
                f"{huf(n['consumable_cost_net_10y_discounted'])} |",
-               f"| **Consumables, per care episode (net)** | "
-               f"**{l['consumable_cost_per_episode_net']:,.0f}** | "
-               f"**{n['consumable_cost_per_episode_net']:,.0f}** |",
+               f"| Consumables, per care episode (net) | "
+               f"{l['consumable_cost_per_episode_net']:,.0f} | "
+               f"{n['consumable_cost_per_episode_net']:,.0f} |",
                f"| Archive property value at steady state | "
                f"{huf(l['steady_state']['floor_value_huf'])} | "
                f"{huf(n['steady_state']['floor_value_huf'])} |",
@@ -534,26 +545,22 @@ def write_tables(R, params, tdir):
                f"{n['steady_state']['consulting_rooms']:,.0f} |",
                f"| Documents printed and filed, per year | {l['documents']:,.0f} | "
                f"{n['documents']:,.0f} |",
-               f"| Handling time, hours per year (at 30 s/document) | "
-               f"{l['handling_hours']:,.0f} | {n['handling_hours']:,.0f} |",
-               f"| **Handling time, FTE** | **{l['handling_fte']:.2f}** "
+               f"| Handling time, hours per year | {l['handling_hours']:,.0f} | "
+               f"{n['handling_hours']:,.0f} |",
+               f"| Handling time, FTE | {l['handling_fte']:.2f} "
                f"({l['handling_fte_low']:.2f}–{l['handling_fte_high']:.2f}) | "
-               f"**{n['handling_fte']:.1f}** "
+               f"{n['handling_fte']:.1f} "
                f"({n['handling_fte_low']:.1f}–{n['handling_fte_high']:.1f}) |",
                f"| Handling time, minutes per care episode | "
                f"{l['handling_minutes_per_episode']:.1f} | "
                f"{n['handling_minutes_per_episode']:.1f} |"]
-    t4.append("")
-    c = params["costs"]
-    t4.append(f"All figures in HUF, 2024 prices. Printing is charged per printed page at "
-              f"{c['print_per_page']} HUF, so a double-sided sheet costs "
-              f"{2 * c['print_per_page']} HUF and duplex printing saves paper but not toner. "
-              f"Paper is charged per physical sheet at "
-              f"{c['paper_per_ream_net'] / c['sheets_per_ream']:.2f} HUF and is added on top of "
-              f"the printing charge. The antenatal booklet is purchased rather than printed and "
-              f"is charged at its purchase price instead. Archivist labour "
-              f"and clinician handling time are also excluded, so these are floors.")
-    (tdir / "table4_costs.md").write_text("\n".join(t4) + "\n")
+    s1 += ["", f"All figures 2024 HUF. Printing {c['print_per_page']} HUF per printed page "
+               f"(a double-sided sheet costs {2 * c['print_per_page']} HUF); paper "
+               f"{c['paper_per_ream_net'] / c['sheets_per_ream']:.2f} HUF per sheet; antenatal "
+               f"booklet purchased at its unit price and carrying neither printing nor paper "
+               f"charge. Archivist labour and clinician handling time are quantified but not "
+               f"costed, so all monetary totals are floors."]
+    (tdir / "tableS1_cost_detail.md").write_text("\n".join(s1) + "\n")
 
 
 if __name__ == "__main__":

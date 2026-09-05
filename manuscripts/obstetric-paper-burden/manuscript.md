@@ -1,16 +1,38 @@
 # Paper consumption in obstetric and antenatal documentation: a micro-costing study with national extrapolation
 
-**Authors** ⟦Author list, affiliations, ORCIDs, corresponding author⟧
+**Authors** ⟦Author list. Names, institutions and email addresses are entered in the submission system, not taken from this document.⟧
 
-**Target journal** *BMJ Health & Care Informatics* (Original Research). Alternative title if a stronger hook is wanted: "The price of single-use data: paper consumption in obstetric and antenatal documentation".
+**Article type** Original Research
 
-**Formatting note** ⟦The journal's own author instructions could not be retrieved from this environment (informatics.bmj.com is unreachable). Confirm the Original Research word ceiling, abstract word limit and maximum table/figure count at https://informatics.bmj.com/pages/authors/ before submission. Everything below follows the conventions observed in the journal's recent Original Research articles.⟧
+**Word count** Abstract 347; main text 4,915 excluding abstract, tables, statements, references and figure legends.
 
-**Word count** Abstract 347; main text 4,853. Tables 4, Figures 4, References 11 (retention decree and HTA guideline still to be added).
+**Tables** 3 in-text, 1 supplementary. **Figures** 4, supplied as separate files. **References** 11.
+
+**Reporting guideline** STROBE (cross-sectional) for the observational component.
+
+⟦**Before submission:** this document follows BMJ's general formatting guidance. The journal-specific limits for Original Research — main-text word ceiling, abstract ceiling, maximum tables and figures — could not be retrieved from the build environment and must be checked at https://informatics.bmj.com/pages/authors. Convert this file to .docx, keep tables as Word tables in place, and upload the four figures separately.⟧
 
 ---
 
-## Key messages
+# ABSTRACT
+
+**Objectives.** Obstetric care remains paper-based across much of Europe, but the volume has almost never been counted, so the case for digitising maternity records rests on assertion. We counted the printed output of one obstetric care pathway, determined its composition, and priced the consequences.
+
+**Methods.** Retrospective bottom-up micro-costing study in ⟦setting⟧. For 100 antenatal and delivery care episodes we counted printed pages in ten document categories; the primary outcome was printed pages per episode. Counts were converted to sheets, mass, shelf length, archive floor area and staff handling time, and costed at official unit prices: centralised procurement for paper, 7 HUF per printed page for toner, and the tax authority's property valuation for the archive. Four scenarios were modelled at departmental (2,000/year) and national (77,500 births/year) scale, with one-way sensitivity analysis.
+
+**Results.** A care episode generated a mean of 131.3 printed pages (SD 10.5; 95% CI 129.2 to 133.4) on 124.3 sheets, in 45.6 documents. Diagnostic reports accounted for 61.7% of pages and generated clinical record for 13.5%; each referral produced exactly four report pages in every episode. Consumables cost 1,220 HUF net per episode (94.5 million HUF/year nationally), 66.7% of it toner. Printing and filing took an estimated 22.8 minutes per episode: 17.1 FTE nationally (11.4 to 34.3). At steady state the national archive occupied 5,751 m² and immobilised 8.97 billion HUF of property (range 6.90 to 12.34 billion), 95 times the annual consumable spend.
+
+**Discussion.** Duplex printing removed 45.5% of sheets and 4.09 billion HUF of tied-up property, but only 13.4% of consumable cost and no staff time, because toner is charged per page and handling per document. Electronic report delivery removed 78.2% of sheets, 6.77 billion HUF, 69.5% of consumable cost and 10.5 FTE. Handling time is reported as displaced capacity rather than money and archivist labour is excluded, so monetary totals are floors.
+
+**Conclusion.** Obstetric paper is dominated not by clinical narrative but by printed copies of results that already exist electronically, and its dominant cost is the hospital floor it occupies for thirty to fifty years. Only electronic report delivery moves cost, staff time and space together.
+
+**Keywords** (MeSH) Medical Records; Prenatal Care; Documentation; Costs and Cost Analysis; Health Information Exchange; Paper
+
+---
+
+---
+
+# KEY MESSAGES
 
 **What is already known on this topic**
 
@@ -32,53 +54,39 @@
 
 ---
 
-## Abstract
-
-**Objectives.** Obstetric care remains paper-based across much of Europe, but the volume has almost never been counted, so the case for digitising maternity records rests on assertion. We counted the printed output of one obstetric care pathway, determined its composition, and priced the consequences.
-
-**Methods.** Retrospective bottom-up micro-costing study in ⟦setting⟧. For 100 antenatal and delivery care episodes we counted printed pages in ten document categories; the primary outcome was printed pages per episode. Counts were converted to sheets, mass, shelf length, archive floor area and staff handling time, and costed at official unit prices: centralised procurement for paper, 7 HUF per printed page for toner, and the tax authority's property valuation for the archive. Four scenarios were modelled at departmental (2,000/year) and national (77,500 births/year) scale, with one-way sensitivity analysis.
-
-**Results.** A care episode generated a mean of 131.3 printed pages (SD 10.5; 95% CI 129.2 to 133.4) on 124.3 sheets, in 45.6 documents. Diagnostic reports accounted for 61.7% of pages and generated clinical record for 13.5%; each referral produced exactly four report pages in every episode. Consumables cost 1,220 HUF net per episode (94.5 million HUF/year nationally), 66.7% of it toner. Printing and filing took an estimated 22.8 minutes per episode: 17.1 FTE nationally (11.4 to 34.3). At steady state the national archive occupied 5,751 m² and immobilised 8.97 billion HUF of property (range 6.90 to 12.34 billion), 95 times the annual consumable spend.
-
-**Discussion.** Duplex printing removed 45.5% of sheets and 4.09 billion HUF of tied-up property, but only 13.4% of consumable cost and no staff time, because toner is charged per page and handling per document. Electronic report delivery removed 78.2% of sheets, 6.77 billion HUF, 69.5% of consumable cost and 10.5 FTE. Handling time is reported as displaced capacity rather than money and archivist labour is excluded, so monetary totals are floors.
-
-**Conclusion.** Obstetric paper is dominated not by clinical narrative but by printed copies of results that already exist electronically, and its dominant cost is the hospital floor it occupies for thirty to fifty years. Only electronic report delivery moves cost, staff time and space together.
-
-**Keywords** Medical Records; Health Services Research; Electronic Health Records; Health Information Exchange; Costs and Cost Analysis; Obstetrics
-
 ---
 
-## 1. Introduction
+# INTRODUCTION
 
 Health systems across Europe have spent two decades building national electronic health infrastructures, and Hungary's Electronic Health Service Space (EESZT) is among the more complete of them: laboratory results, imaging reports, discharge summaries and prescriptions are uploaded centrally and are legally retrievable at the point of care. Yet in obstetric and antenatal care the paper has not gone away. Referrals are printed, carried and filed; results already present in the national exchange are printed again on arrival and filed a second time; and the resulting dossier is retained for decades because obstetric liability horizons are long.
 
 The economic case for removing that paper is made surprisingly often and measured surprisingly rarely. Costing arguments in this area typically begin from an assumed number of pages per patient, and the assumption is rarely traced to a count. This matters because the two candidate answers differ by an order of magnitude in their policy implications: if a care episode generates a few dozen pages, paper is a rounding error and digitisation must be justified on clinical grounds alone; if it generates well over a hundred, and if those pages are then held under statutory retention for thirty to fifty years, the accumulated physical footprint becomes a capital question rather than a stationery question.
 
-The second gap is structural. Most published work on documentation burden concerns clinician time inside electronic systems — task switching, after-hours charting, and the usability failures that drive burnout and are associated with worse patient outcomes [1–3]. Far less attention has gone to the physical artefact: how many sheets a pathway actually produces, what proportion of them are duplicates of data that already exist electronically, and what happens to them across a retention period longer than most clinicians' careers. Guidance on how to cost such resource use exists and is explicit that bottom-up micro-costing is the appropriate method where the resource is countable and the unit price is known [4,5]; it has simply not been applied here.
+The second gap is structural. Most published work on documentation burden concerns clinician time inside electronic systems — task switching, after-hours charting, and the usability failures that drive burnout and are associated with worse patient outcomes [1-3]. Far less attention has gone to the physical artefact: how many sheets a pathway actually produces, what proportion of them are duplicates of data that already exist electronically, and what happens to them across a retention period longer than most clinicians' careers. Guidance on how to cost such resource use exists and is explicit that bottom-up micro-costing is the appropriate method where the resource is countable and the unit price is known [4,5]; it has simply not been applied here.
 
 We therefore set out to answer three questions. How many printed pages does one obstetric care episode actually generate? What is the composition of that output — how much of it is clinical record and how much is a printed copy of an electronic result? And what does the resulting volume cost, once the statutory retention period is priced not as an abstraction but as square metres of building?
 
 ---
 
-## 2. Methods
+# METHODS
 
-### 2.1 Design and setting
+## Design and setting
 
 Retrospective observational bottom-up micro-costing study of documentation output, conducted in ⟦setting: institution, unit, country⟧. Reporting follows STROBE for the observational component and the costing-method taxonomy of Špacírová et al. [4] for the economic component. The unit of analysis is the *care episode*: one pregnancy followed to delivery, together with all paper documents generated for it in the antenatal and delivery pathway.
 
 ⟦**Author to specify:** the sampling frame and period — whether the 100 episodes were consecutive, and over what calendar interval; and any exclusions (multiple pregnancy, transfer of care, pregnancy loss). This is the single most important remaining gap in the Methods and reviewers will ask for it.⟧
 
-### 2.2 Data collection
+## Data collection
 
 For each episode we counted printed A4 pages in ten prespecified categories: laboratory referrals and reports, blood-group referrals and reports, microbiology referrals and reports, ultrasound reports, the antenatal care booklet, ward documentation and delivery documentation. Counts were recorded per episode in a single spreadsheet; a per-episode total was computed independently of the workbook's own sum column and the two agreed for all 100 episodes with zero discrepancies.
 
 Two features of the source data constrain interpretation and are stated here rather than in the limitations alone. First, report pages for the three diagnostic families were **derived** from referral counts using the institution's fixed convention of four printed report pages per referral, not counted independently; the observed ratio was exactly 4.00 in every one of the 100 episodes, in all three families. Report page counts are therefore deterministic functions of referral counts, and their dispersion is inherited rather than observed. Second, the antenatal care booklet is recorded as a single unit per episode. It is a bound, pre-printed, double-sided booklet of 15 printed pages, so one recorded unit was expanded to 15 pages occupying 8 sheets. Because it is manufactured double-sided, it is treated as duplex in every scenario, including the single-sided base case — a printing policy cannot change how a pre-printed booklet is made.
 
-### 2.3 Physical conversion
+## Physical conversion
 
 Page counts were converted to physical quantities using stated constants: A4 area 0.06237 m² and grammage 80 g/m², giving 4.99 g per sheet; 10,000 filed sheets per linear metre of shelving (allowing for folders and covers); and 5.5 linear metres of shelving per m² of archive floor, inclusive of an aisle allowance. The latter two are conventions rather than measurements and are carried through sensitivity analysis at 8,000–12,000 sheets/linear metre and 4.0–7.0 linear metres/m².
 
-### 2.4 Costing
+## Costing
 
 Costs are reported in 2024 Hungarian forint (HUF), net of VAT, with gross figures given alongside at the 27% standard rate. Two unit prices enter the base case, both from official sources rather than estimation:
 
@@ -88,7 +96,7 @@ Costs are reported in 2024 Hungarian forint (HUF), net of VAT, with gross figure
 
 - **Antenatal booklet.** 70 HUF per booklet. It is purchased as a finished item rather than printed, so it carries the purchase price instead of the printing and paper charges, in every scenario including the paperless one.
 
-Staff time spent handling paper is **not** monetised, by design rather than for want of a figure; §2.4 sets out why, and it is reported in hours and FTE-equivalent instead. Its omission is one-directional — including it could only increase the estimated cost of current practice — so every monetary figure in this paper is a floor.
+Staff time spent handling paper is **not** monetised, by design rather than for want of a figure; the Costing subsection sets out why, and it is reported in hours and FTE-equivalent instead. Its omission is one-directional — including it could only increase the estimated cost of current practice — so every monetary figure in this paper is a floor.
 
 The costing therefore distinguishes four quantities that must not be conflated: **printed pages**, which drive toner cost; **physical sheets**, which drive paper cost; **archived sheets**, which drive storage; and **documents**, which drive staff handling time. Duplex printing changes the second and third but neither the first nor the fourth.
 
@@ -98,55 +106,101 @@ We report this time in hours and full-time equivalents (1,720 h/FTE) and **delib
 
 **Space as opportunity cost.** Archive floor area is not neutral space. It sits inside hospital buildings and is therefore withdrawn from clinical or productive use, so we also express it in clinical equivalents at 18 m² per antenatal consulting room and 35 m² per delivery room.
 
-### 2.5 Retention and steady-state stock
+## Retention and steady-state stock
 
 Documents were assigned statutory retention periods by type: 30 years for outpatient antenatal documentation and 50 years for inpatient ward and delivery documentation. At steady state — constant annual volume, each cohort discarded on expiry — the archive holds, for each document type, the annual page volume multiplied by its retention period. This steady-state stock, not the annual flow, is what determines the floor area a health system must own.
 
-### 2.6 Scenarios and analysis
+## Scenarios and analysis
 
 Four scenarios were modelled. **S0, current practice**: single-sided printing of all documents. **S1, duplex printing**: double-sided printing of all printed output, requiring no capital investment; the antenatal booklet is already double-sided and cannot be improved further. **S2, electronic result delivery**: diagnostic reports retrieved from the national exchange rather than printed, referrals still printed, duplex throughout. **S3, paperless pathway**: only the patient-held antenatal booklet remains on paper.
 
 Descriptive statistics are reported as mean (SD) with 95% confidence intervals from Student's *t*, and as median (IQR) and range. Confidence intervals for the mean were corroborated by a 10,000-replicate non-parametric bootstrap (seed fixed for reproducibility). Scenario results are deterministic functions of the observed mean and the stated parameters; uncertainty is expressed through one-way sensitivity analysis rather than probabilistic simulation, because the dominant parameters are conventions with defensible bounds rather than sampled quantities. A 10-year discounted paper spend is reported at both scales at the 3.7% rate specified by Hungarian health technology assessment guidance. All analyses were performed in Python 3; the analysis script and the parameter file that drives it are provided so that every reported number can be re-derived, and so that substituting a local unit price regenerates the whole model.
 
-### 2.7 Ethics
+## Ethics
 
 The dataset contains document counts only, with no clinical, demographic or identifying patient information; episodes are labelled by sequence number. ⟦Author to insert: institutional review board reference and determination, or the formal exemption.⟧
 
 ---
 
-## 3. Results
+# RESULTS
 
-### 3.1 Pages per care episode
+## Pages per care episode
 
 Across 100 care episodes, documentation output was a mean of **131.3 printed pages per episode** (SD 10.5; 95% CI 129.2–133.4; bootstrap 95% CI 129.2–133.4), occupying 124.3 physical sheets. The median was 130 pages (IQR 124–138) and the range 106–154 (Figure 2). The distribution is symmetric and tight: the ratio of the interquartile range to the median is 0.11, meaning documentation volume behaves as a near-fixed cost of the pathway rather than a function of case complexity. Table 1 gives the full breakdown.
 
-### 3.2 What the paper actually is
+**Table 1** Printed pages per care episode by document type (n=100)
+
+| Document | Role | Retention (y) | Mean (SD) | Median (IQR) | Range | Share |
+|---|---|---|---|---|---|---|
+| Laboratory referral | referral | 30 | 6.87 (1.35) | 7 (6–8) | 5–9 | 5.2% |
+| Laboratory report | result | 30 | 27.48 (5.38) | 28 (24–32) | 20–36 | 20.9% |
+| Blood-group referral | referral | 30 | 7.11 (1.43) | 7 (6–8) | 5–9 | 5.4% |
+| Blood-group report | result | 30 | 28.44 (5.74) | 28 (24–32) | 20–36 | 21.7% |
+| Microbiology referral | referral | 30 | 3.67 (1.04) | 4 (3–5) | 2–5 | 2.8% |
+| Microbiology report | result | 30 | 14.68 (4.18) | 16 (12–20) | 8–20 | 11.2% |
+| Ultrasound report | result | 30 | 10.34 (2.58) | 11 (8–12) | 6–14 | 7.9% |
+| Antenatal care booklet | record | 30 | 15.00 (0.00) | 15 (15–15) | 15–15 | 11.4% |
+| Ward documentation | record | 50 | 3.97 (0.82) | 4 (3–5) | 3–5 | 3.0% |
+| Delivery documentation | record | 50 | 13.71 (3.16) | 14 (11–17) | 9–18 | 10.4% |
+| **All documents** | | | **131.27 (10.50)** | **130 (124–138)** | **106–154** | 100% |
+
+Retention is the statutory period the document must be kept. Shares are of the mean total. Report page counts were derived from referral counts at the institution's fixed four-pages-per-referral convention and were not counted independently.
+
+## What the paper actually is
 
 The composition is the study's principal finding (Figure 1). **Diagnostic reports account for 61.7% of all printed pages** (mean 80.9 per episode). Referrals account for a further 13.4% (17.7 pages). Genuine clinical records account for 24.9% (32.7 pages), and 15 of those 32.7 pages are the pre-printed antenatal booklet, which is a fixed manufactured item rather than generated output. Excluding it, the documentation actually produced during care is three-quarters diagnostic traffic and less than a sixth clinical narrative.
 
 The mechanism is a fixed amplification. In every episode, in all three diagnostic families, each referral generated exactly four report pages. **One diagnostic referral therefore costs five printed pages** — one outgoing, four returning — and the number of referrals, not the complexity of the pregnancy, is the proximate driver of paper volume. Blood-group and laboratory investigations dominate at 35.6 and 34.4 pages per episode (27.1% and 26.2%); microbiology contributes 18.4 (14.0%), all inpatient documentation combined 17.7 (13.5%), the antenatal booklet 15.0 (11.4%) and ultrasound 10.3 (7.9%).
 
-### 3.3 Annual flow
+## Annual flow
 
 Consumables cost **1,220 HUF net per care episode** — a scale-invariant figure that transfers directly to any unit that knows its delivery volume. Its composition is itself informative: **66.7% is toner and device cost, 27.5% is paper and 5.7% is the purchased antenatal booklet.** An institution that counts only its paper invoice sees just over a quarter of what documentation actually costs it to produce.
 
 At **departmental scale** (2,000 episodes/year) current practice prints 232,540 pages onto 248,540 sheets, consuming 1.24 tonnes of paper and costing **2.44 million HUF net** (3.10 million gross) per year — 1.63 million in printing, 672,000 in paper and 140,000 in booklets — or 20.8 million HUF discounted over ten years, and adds 25 linear metres to the archive annually.
 
-At **national scale** (77,500 births, KSH 2024) it prints 9.01 million pages onto **9.63 million sheets, consumes 48.1 tonnes of paper and costs 94.5 million HUF net** (120.1 million gross) per year — 63.1 million in printing, 26.0 million in paper and 5.4 million in booklets, with a range of 76.3–121.9 million across the unit-price ranges — or 807.2 million HUF discounted over ten years, and adds 963 linear metres of shelving annually. Tables 2 and 4 give all scenarios at both scales.
+At **national scale** (77,500 births, KSH 2024) it prints 9.01 million pages onto **9.63 million sheets, consumes 48.1 tonnes of paper and costs 94.5 million HUF net** (120.1 million gross) per year — 63.1 million in printing, 26.0 million in paper and 5.4 million in booklets, with a range of 76.3–121.9 million across the unit-price ranges — or 807.2 million HUF discounted over ten years, and adds 963 linear metres of shelving annually. Table 2 gives all scenarios at both scales, and supplementary table S1 the full cost breakdown.
 
-### 3.4 The archive: where the cost actually is
+**Table 2** Physical, cost, staff-time and space outcomes by scenario, at departmental and national scale
+
+| Scenario | Pages printed / episode | Sheets / episode | Documents / episode | Paper (t/y) | Consumables (HUF/y, net) | Handling (h/y) | Handling (FTE) | Archive floor (m²) | Property value (HUF) |
+|---|---|---|---|---|---|---|---|---|---|
+| **University department, 2,000 episodes/year** | | | | | | | | | |
+| Current practice | 116.3 | 124.3 | 45.6 | 1.24 | 2.44 M | 761 | 0.44 | 148 | 231.54 M |
+| Duplex printing | 116.3 | 67.8 | 45.6 | 0.68 | 2.11 M | 761 | 0.44 | 81 | 126.00 M |
+| Electronic result delivery | 35.3 | 27.1 | 17.6 | 0.27 | 744.90k | 294 | 0.17 | 36 | 56.78 M |
+| Paperless pathway | 0.0 | 8.0 | 0.0 | 0.08 | 140.00k | 0 | 0.00 | 9 | 13.61 M |
+| **Hungary, 77,500 episodes/year** | | | | | | | | | |
+| Current practice | 116.3 | 124.3 | 45.6 | 48.05 | 94.54 M | 29,476 | 17.14 | 5,751 | 8.97 bn |
+| Duplex printing | 116.3 | 67.8 | 45.6 | 26.20 | 81.88 M | 29,476 | 17.14 | 3,130 | 4.88 bn |
+| Electronic result delivery | 35.3 | 27.1 | 17.6 | 10.47 | 28.86 M | 11,399 | 6.63 | 1,410 | 2.20 bn |
+| Paperless pathway | 0.0 | 8.0 | 0.0 | 3.09 | 5.42 M | 0 | 0.00 | 338 | 527.56 M |
+
+Costs are 2024 HUF, net of VAT. Printing is charged per printed page at 7 HUF, so duplex printing halves sheets but not pages and saves no toner. Handling time covers referrals and diagnostic reports at 30 s per document and is reported as displaced capacity, not costed. Property value is the capital immobilised by the archive at steady state under statutory retention, not an annual rent. Full cost components are given in supplementary table S1.
+
+## The archive: where the cost actually is
 
 Annual paper spend is not the interesting number. Under statutory retention the steady-state national holding for these documents is **316 million sheets on 31,633 linear metres of shelving, occupying 5,751 m² of floor** and immobilising **8.97 billion HUF** of property value at the NAV valuation. The consumables cost 94.5 million HUF a year; the building the output lives in represents **95 times** that in tied-up capital. Per care episode this is **115,772 HUF of immobilised property against 1,220 HUF of consumables** — again scale-invariant, and at departmental scale it amounts to 231.5 million HUF held in 148 m² of archive.
 
-One-way sensitivity analysis (Table 3) puts the national estimate between 6.90 and 12.34 billion HUF. The most influential parameter is shelving density per m² of floor (swing 5.29 billion), followed by property value (4.03 billion), sheets per linear metre (3.74 billion) and annual birth volume (1.74 billion). The ranking matters: the two largest sources of uncertainty are archival conventions we assumed rather than measured, and both should be measured directly before this figure is used in a business case. Even the most favourable corner of the parameter space leaves the tied-up property value above 6.9 billion HUF.
+One-way sensitivity analysis (Table 3) puts the national estimate between 6.90 and 12.34 billion HUF.
 
-### 3.5 Staff time and forgone clinical space
+**Table 3** One-way sensitivity analysis of the steady-state immobilised property value
+
+Steady-state immobilised property value, national. Base case 8.97 bn HUF.
+
+| Parameter varied | Low | High | Swing |
+|---|---|---|---|
+| Linear metres per m² floor | 7.05 bn | 12.34 bn | 5.29 bn |
+| Property value per m² | 6.90 bn | 10.93 bn | 4.03 bn |
+| Sheets per linear metre | 7.48 bn | 11.22 bn | 3.74 bn |
+| Episodes per year | 8.10 bn | 9.84 bn | 1.74 bn | The most influential parameter is shelving density per m² of floor (swing 5.29 billion), followed by property value (4.03 billion), sheets per linear metre (3.74 billion) and annual birth volume (1.74 billion). The ranking matters: the two largest sources of uncertainty are archival conventions we assumed rather than measured, and both should be measured directly before this figure is used in a business case. Even the most favourable corner of the parameter space leaves the tied-up property value above 6.9 billion HUF.
+
+## Staff time and forgone clinical space
 
 Two burdens do not appear in any invoice. The first is time. Current practice requires **45.6 documents to be printed and filed per care episode** — 17.7 referrals, 17.7 paired diagnostic reports and 10.3 ultrasound reports. At a conservative 30 seconds each this is **22.8 minutes of handling per care episode**: 761 hours a year at departmental scale (0.44 FTE) and **29,476 hours, or 17.1 FTE, nationally** (11.4–34.3 FTE across the 20–60 second range). Duplex printing does not change this at all — the same documents are still printed and filed — whereas electronic report delivery removes the reports entirely, cutting handling to 8.8 minutes per episode and **releasing 10.5 FTE nationally**.
 
-The second is space. The 5,751 m² the national archive occupies at steady state is not warehouse space on an industrial estate; it is floor area inside hospital buildings, withdrawn from clinical or productive use. It is equivalent to **320 antenatal consulting rooms or 164 delivery rooms**. At departmental scale the 148 m² archive is equivalent to 8 consulting rooms, or just over 4 delivery rooms. This is the sense in which the property valuation of §3.4 understates the position: the capital is not merely tied up, it is displacing the activity the building exists for.
+The second is space. The 5,751 m² the national archive occupies at steady state is not warehouse space on an industrial estate; it is floor area inside hospital buildings, withdrawn from clinical or productive use. It is equivalent to **320 antenatal consulting rooms or 164 delivery rooms**. At departmental scale the 148 m² archive is equivalent to 8 consulting rooms, or just over 4 delivery rooms. This is the sense in which the property valuation above understates the position: the capital is not merely tied up, it is displacing the activity the building exists for.
 
-### 3.6 What each intervention buys
+## What each intervention buys
 
 **Duplex printing (S1)** requires no capital investment, no software and no legal change. It reduces output from 124.3 to 67.8 sheets per episode — a 45.5% reduction, short of 50% because odd page counts round up and the booklet is already double-sided — and cuts the steady-state archive to 3,130 m² and 4.88 billion HUF, **releasing 4.09 billion HUF of property value** (105.5 million HUF at departmental scale). But it leaves the number of *printed pages* untouched, so it saves nothing on toner: consumable spend falls only from 94.5 to 81.9 million HUF nationally, a **13.4% reduction** (327,000 HUF departmentally). It leaves handling time untouched for the same reason. Duplex is an archive intervention, not a printing-cost or a workforce intervention, and should be argued as one. A caveat is operational rather than economic: any form carrying a signature field on its reverse cannot be duplexed without redesign.
 
@@ -154,15 +208,15 @@ The second is space. The 5,751 m² the national archive occupies at steady state
 
 **A paperless pathway (S3)**, retaining only the patient-held booklet, reduces printed output to zero and the archive to 338 m² and 0.53 billion HUF. It is not free: the booklets themselves still cost 70 HUF per episode, 5.4 million HUF a year nationally, which is the irreducible floor of this pathway as long as the patient-held record stays on paper. The residual is the booklet, and it is deliberate: a patient-held record that works offline has a function no electronic system replaces.
 
-### 3.7 Environmental burden
+## Environmental burden
 
 As an illustrative secondary outcome, national annual consumption under current practice corresponds to approximately 63 tonnes CO₂e, 721 m³ of water and 115 tonnes of wood, falling to 34 tonnes CO₂e under duplex and 14 under electronic result delivery. These figures use generic cradle-to-gate factors for uncoated woodfree paper and should be read as an order of magnitude, not an estimate; they are reported because environmental reporting increasingly requires them, not because our data constrain them.
 
 ---
 
-## 4. Discussion
+# DISCUSSION
 
-### 4.1 Principal findings
+## Principal findings
 
 An obstetric care episode generates about 131 printed pages on 124 sheets, and roughly six in ten of those pages are printed copies of diagnostic reports that already exist in a national electronic exchange. The pathway's paper is therefore not, in the main, a record of clinical work. It is a physical rendering of data that has been captured electronically, printed once, filed once, and then stored for three to five decades at a cost dominated by real estate rather than stationery.
 
@@ -170,19 +224,19 @@ Four numbers carry the argument, and all are scale-invariant, so they transfer t
 
 The fixed 4:1 amplification gives the finding an unusually clean policy handle. Because every referral deterministically produces five printed pages, paper volume is a linear function of referral count, and any intervention that changes how *reports* are delivered scales directly with the number of investigations ordered. This is why S2 releases 1.7 times as much property value as S1 despite being conceptually the smaller change, and five times as much recurrent cost, and why the gap would widen further in any setting that orders more investigations.
 
-### 4.2 Comparison with existing work
+## Comparison with existing work
 
 Direct comparators are scarce, and this is itself a finding: we could not identify a published bottom-up page count for an obstetric care pathway. The adjacent literature has concentrated on documentation as a claim on clinician *time* inside electronic systems [1,2], and on the design of paper records where they remain in use [6,7]. Our result is complementary rather than contradictory — it prices the artefact rather than the labour — but it also suggests the two literatures have been measuring opposite ends of the same problem and missing the middle.
 
 Our count is roughly double the working assumption of 64 pages per birth used in earlier planning for this project. The gap is explained by scope: the lower figure covers the delivery hospital chart, whereas our count spans the whole antenatal and delivery pathway including the diagnostic traffic that dominates it. The discrepancy is worth stating plainly, because it is precisely the kind of scope difference that makes unmeasured assumptions unsafe.
 
-### 4.3 The other side of the ledger
+## The other side of the ledger
 
 A paper that argues for digitisation owes the reader the risks it creates. Long-term *digital* preservation is not a solved problem: format obsolescence, migration obligations, and above all the maintenance of authenticated electronic signatures and timestamps across a 50-year retention period all require active, funded curation from the first day of a project rather than as an afterthought. Cyber risk is real and its failure mode is a forced reversion to exactly the paper process being replaced, as documented in a solo practice that spent three months on paper after a ransomware attack [8]. And usability is not a soft consideration: hospitals with poorer electronic record usability show significantly higher odds of nurse burnout (OR 1.41, 95% CI 1.21–1.64) and of surgical inpatient mortality (OR 1.21, 95% CI 1.09–1.35) [3]. A badly implemented paperless pathway can plausibly cost more, in the currency that matters, than the paper it removes.
 
 The corollary is not that digitisation should wait, but that the two interventions answer different questions and should be argued separately. Duplex printing releases 4.09 billion HUF of property value nationally — 105.5 million HUF for a single 2,000-delivery department — requires no investment, no legal change and no new system, and carries none of the risks above; it should be done immediately, and defended on archive space rather than on a printing-cost saving it does not deliver. Electronic report delivery is the only lever that moves the recurrent cost, the staff time and the space at once — and it is also the one that carries the risks above, so it is the one that needs the careful implementation. The 17.1 FTE it addresses is worth stating in workforce terms precisely because it is *not* money: this time is not paid to anyone as a documentation post, it is taken a few seconds at a time from clinicians, midwives and administrators who are doing something else. That is why it never appears in a budget, and why it is nonetheless real. In a system with an obstetric and midwifery staffing shortage, seventeen full-time equivalents of displaced clinical capacity spent printing and filing copies of electronic documents is the more consequential of the two findings.
 
-### 4.4 Strengths and limitations
+## Strengths and limitations
 
 The principal strength is that the primary outcome is counted rather than assumed, at the level of the individual document type, with an internal cross-check that reconciled perfectly across all 100 episodes; and that both monetary unit costs are official published prices rather than estimates.
 
@@ -192,7 +246,7 @@ The limitations are substantial and we state them in order of severity.
 
 *Single centre, single country.* One institution's forms, one country's retention law and one procurement price. The physical constants and the structure of the model transfer; the absolute figures do not.
 
-*Sampling frame unspecified.* ⟦Pending author input — see §2.1.⟧ Until it is stated, the 100 episodes cannot be claimed to be representative of the department's case mix.
+*Sampling frame unspecified.* ⟦Pending author input — see Design and setting.⟧ Until it is stated, the 100 episodes cannot be claimed to be representative of the department's case mix.
 
 *Staff time is quantified but not costed.* Handling time is absorbed into existing duties rather than paid as a distinct post, so we report it as displaced capacity and not as money. This is a deliberate choice, but it means the monetary totals — **94.5 million HUF of annual consumables and 8.97 billion HUF of immobilised property nationally, 2.44 million and 231.5 million departmentally** — are floors, and are not comparable with analyses that do monetise staff time.
 
@@ -208,7 +262,7 @@ The limitations are substantial and we state them in order of severity.
 
 *Environmental figures are illustrative.* Generic emission factors, not a life-cycle assessment.
 
-### 4.5 Implications and further work
+## Implications and further work
 
 Three things follow. First, duplex printing and duplex-ready form design are an immediate, investment-free intervention, subject only to keeping signature fields off reverse sides. Second, the target of any digitisation effort in this pathway is *report delivery*, not clinical charting — the reports are where the paper is. Third, the retention policy is a distinct economic decision from the printing policy, and the two should not be bundled: a health system can pay for retention in archivist labour or in building, and it should choose knowingly.
 
@@ -216,57 +270,70 @@ Three studies would materially strengthen this line of work: a time-and-motion m
 
 ---
 
-## 5. Conclusion
+# CONCLUSION
 
 An obstetric care episode generates about 131 printed pages, and about six in ten of them are printed copies of results that already exist electronically. The cost of that practice is not mainly the 1,220 HUF of consumables per episode — 94.5 million HUF a year nationally, 2.44 million HUF for a 2,000-delivery department, and two-thirds of it toner rather than paper — but the 115,772 HUF of property per episode immobilised by holding the output for three to five decades, 8.97 billion HUF nationally. Both figures exclude archivist labour, so both are floors. Nor is money the largest item: printing and filing those documents takes an estimated 22.8 minutes per episode, 17.1 full-time equivalents nationally, and the archive occupies 5,751 m² of hospital floor — 320 consulting rooms' worth — withdrawn from clinical use. Double-sided printing releases 46% of the capital immediately and for nothing, though it saves only 13% of the recurrent cost and no staff time at all, because toner and handling are charged by the page and by the document. Delivering diagnostic reports electronically releases 75% of the capital, 70% of the recurrent cost and 10.5 FTE. Neither requires a new hospital information system; both require deciding that a printed copy of an electronic result is not a record worth keeping for fifty years.
 
----
-
-## Declarations
-
-**Ethics approval** ⟦Insert IRB reference or exemption determination.⟧
-**Consent for publication** Not applicable; no individual patient data.
-**Data availability** The per-episode page-count dataset, the analysis script and the parameter file are available ⟦repository / on request⟧. Every number in this paper is regenerated by `analysis/analysis.py` from the dataset and `analysis/params.yaml`.
-**Competing interests** ⟦Declare.⟧
-**Funding** ⟦Declare, or "None."⟧
-**Author contributions** ⟦ICMJE-conformant statement.⟧
 
 ---
 
-## References
+# ACKNOWLEDGEMENTS
 
-1. Moy AJ, Schwartz JM, Elias J, Imran S, Lucas E, Cato KD, Rossetti SC. Time-motion examination of electronic health record utilization and clinician workflows indicate frequent task switching and documentation burden. *AMIA Annu Symp Proc.* 2021;2020:886–895.
-2. Schwartz J, Elias J, Slater C, Cato K, Rossetti SC. An interprofessional approach to clinical workflow evaluation focused on the electronic health record using time-motion study methods. *AMIA Annu Symp Proc.* 2020;2019:1187–1196.
-3. Kutney-Lee A, Brooks Carthon M, Sloane DM, Bowles KH, McHugh MD, Aiken LH. Electronic health record usability: associations with nurse and patient outcomes in hospitals. *Med Care.* 2021;59(7):625–631. doi:[10.1097/MLR.0000000000001536](https://doi.org/10.1097/MLR.0000000000001536)
-4. Špacírová Z, Epstein D, García-Mochón L, Rovira J, Olry de Labry Lima A, Espín J. A general framework for classifying costing methods for economic evaluation of health care. *Eur J Health Econ.* 2020;21(4):529–542. doi:[10.1007/s10198-019-01157-9](https://doi.org/10.1007/s10198-019-01157-9)
-5. Jacobs JC, Barnett PG. Emergent challenges in determining costs for economic evaluations. *Pharmacoeconomics.* 2017;35(2):129–139. doi:[10.1007/s40273-016-0465-1](https://doi.org/10.1007/s40273-016-0465-1)
-6. Muinga N, Abejirinde IO, Paton C, English M, Zweekhorst M. Designing paper-based records to improve the quality of nursing documentation in hospitals: a scoping review. *J Clin Nurs.* 2021;30(1–2):56–71. doi:[10.1111/jocn.15545](https://doi.org/10.1111/jocn.15545)
-7. Avila-Alvarez A, Ruiz Campillo CW, Zeballos-Sarrato G, Iriondo-Sanz M, Thio M. Time to improve documentation of neonatal resuscitation: a narrative review. *Minerva Pediatr (Torino).* 2022. doi:[10.23736/S2724-5276.22.06914-2](https://doi.org/10.23736/S2724-5276.22.06914-2)
-8. Bujold E. You have been hacked! *Ann Fam Med.* 2023;21(1):85–87. doi:[10.1370/afm.2906](https://doi.org/10.1370/afm.2906)
-9. Hungarian Central Statistical Office (KSH). Live births, total fertility rate. Budapest: KSH; 2025. ⟦Add access date and stadat table URL.⟧
-10. Közbeszerzési és Ellátási Főigazgatóság (KEF). Framework agreement price list, A4 80 g/m² copier paper (500-sheet ream, net 1,430–1,460 HUF; gross 1,815–1,855 HUF at 27% VAT). Available from: https://www.parlament.hu/documents/d/guest/10_2023_megrendelo and https://kereso-core.kozbeszerzes.hu/csatolmany/letoltes/dokumentumtar/2024/3c86812a-fbb4-4785-8ea7-f799d5dfa857/91f49eeb-896e-448d-a9cc-9b40b1c14959.pdf ⟦Add access date.⟧
-11. Nemzeti Adó- és Vámhivatal (NAV). Property valuation for the archive site, 1,560,000 HUF/m². ⟦Add valuation reference and date.⟧
+⟦Insert, or delete this heading. If any part of this work has been presented at a scientific meeting, state that here and cite any published conference abstract.⟧
 
-⟦**Reference gap to close before submission:** national retention-period legislation (30/50/70 years) is asserted in §2.5 and must be cited to the governing Hungarian decree. The Hungarian HTA discount rate of 3.7% in §2.6 needs its guideline citation.⟧
+# CONTRIBUTORS
 
----
+⟦ICMJE-conformant statement naming each author's contribution and the guarantor.⟧
 
-## Tables
+# FUNDING
 
-**Table 1.** Printed pages per care episode by document type (n = 100). — `tables/table1_documents.md`
+⟦State the funder and grant number, or: "This research received no specific grant from any funding agency in the public, commercial or not-for-profit sectors."⟧
 
-**Table 2.** Physical and cost burden by scenario, at departmental and national scale. — `tables/table2_scenarios.md`
+# COMPETING INTERESTS
 
-**Table 3.** One-way sensitivity analysis of steady-state immobilised property value. — `tables/table3_sensitivity.md`
+⟦Declare, or: "None declared."⟧
 
-**Table 4.** Cost, staff time and space summary by scenario, departmental and national scale, including cost and handling time per care episode. — `tables/table4_costs.md`
+# PATIENT CONSENT FOR PUBLICATION
 
-## Figure legends
+Not applicable. The dataset contains document counts only, with no clinical, demographic or identifying patient information.
+
+# ETHICS APPROVAL
+
+⟦Insert the institutional review board reference and determination, or the formal exemption.⟧
+
+# DATA AVAILABILITY STATEMENT
+
+Data are available ⟦on reasonable request / in a public repository⟧. The per-episode page-count dataset, the analysis script and the parameter file that drives it are available ⟦repository or contact⟧; every number reported here is regenerated from the dataset and the parameter file by the supplied script.
+
+# REFERENCES
+
+1. Moy AJ, Schwartz JM, Elias J, et al. Time-motion examination of electronic health record utilization and clinician workflows indicate frequent task switching and documentation burden. AMIA Annu Symp Proc 2021;2020:886-95.
+2. Schwartz J, Elias J, Slater C, et al. An interprofessional approach to clinical workflow evaluation focused on the electronic health record using time motion study methods. AMIA Annu Symp Proc 2020;2019:1187-96.
+3. Kutney-Lee A, Brooks Carthon M, Sloane DM, et al. Electronic health record usability: associations with nurse and patient outcomes in hospitals. Med Care 2021;59:625-31. doi:10.1097/MLR.0000000000001536
+4. Špacírová Z, Epstein D, García-Mochón L, et al. A general framework for classifying costing methods for economic evaluation of health care. Eur J Health Econ 2020;21:529-42. doi:10.1007/s10198-019-01157-9
+5. Jacobs JC, Barnett PG. Emergent challenges in determining costs for economic evaluations. Pharmacoeconomics 2017;35:129-39. doi:10.1007/s40273-016-0465-1
+6. Muinga N, Abejirinde IO, Paton C, et al. Designing paper-based records to improve the quality of nursing documentation in hospitals: a scoping review. J Clin Nurs 2021;30:56-71. doi:10.1111/jocn.15545
+7. Avila-Alvarez A, Ruiz Campillo CW, Zeballos-Sarrato G, et al. Time to improve documentation of neonatal resuscitation: a narrative review. Minerva Pediatr (Torino) 2022. doi:10.23736/S2724-5276.22.06914-2
+8. Bujold E. You have been hacked! Ann Fam Med 2023;21:85-7. doi:10.1370/afm.2906
+9. Hungarian Central Statistical Office. Live births, total fertility rate. Budapest: KSH 2025. ⟦Add stadat table URL and accessed date.⟧
+10. Közbeszerzési és Ellátási Főigazgatóság. Framework agreement price list, A4 80 g/m2 copier paper, 500-sheet ream. https://www.parlament.hu/documents/d/guest/10_2023_megrendelo ⟦Add accessed date.⟧
+11. Nemzeti Adó- és Vámhivatal. Property valuation for the archive site, 1 560 000 HUF/m2. ⟦Add valuation reference and date.⟧
+
+⟦**References still to add:** the Hungarian decree governing the 30/50/70-year retention periods, and the national health technology assessment guideline specifying the 3.7% discount rate.⟧
+
+# FIGURE LEGENDS
 
 **Figure 1.** Mean printed pages per care episode by document family, split by document role. Diagnostic reports (solid fill) account for 61.7% of all pages; referrals (hatched) for 13.4%; clinical records (dotted) for 24.9%. Each diagnostic referral generates exactly four report pages.
 
 **Figure 2.** Distribution of total printed pages per care episode (n = 100). Dashed line, mean 131.3 pages. The distribution is symmetric and narrow (IQR 124–138), indicating that documentation volume behaves as a near-fixed cost of the care pathway.
 
-**Figure 3.** Annual national paper consumption by scenario, at 77,500 care episodes per year. Percentages are reductions relative to current practice. At departmental scale (2,000 episodes/year) the same scenarios correspond to 1.24, 0.68, 0.27 and 0.08 tonnes per year. Note that the mass reduction under duplex printing does not carry through to consumable cost, because toner is charged per printed page (Table 4).
+**Figure 3.** Annual national paper consumption by scenario, at 77,500 care episodes per year. Percentages are reductions relative to current practice. At departmental scale (2,000 episodes/year) the same scenarios correspond to 1.24, 0.68, 0.27 and 0.08 tonnes per year. Note that the mass reduction under duplex printing does not carry through to consumable cost, because toner is charged per printed page (Table 2).
 
 **Figure 4.** Cumulative national archive floor area by scenario, at constant annual volume, before any retention period expires. Slopes are 963, 525, 210 and 62 linear metres of shelving per year respectively.
+
+---
+
+# SUPPLEMENTARY MATERIAL
+
+**Supplementary table S1.** Full cost, staff-time and space breakdown by scenario, at departmental and national scale. Cited in Results.
+
