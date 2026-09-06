@@ -76,8 +76,13 @@ documents:
     preprinted_duplex: true
     unit_price: 70                       # status: firm - author-supplied, HUF per booklet
     # Purchased as a finished booklet, not printed by the institution: it incurs
-    # no paper or toner cost here, but it still occupies archive space.
+    # no paper or toner cost here.
     purchased: true
+    # ARCHIVE ASSUMPTION, AUTHOR TO CONFIRM: retention_years above puts the
+    # booklet in the INSTITUTIONAL archive. In Hungarian practice the booklet is
+    # patient-held, and if no institutional copy is retained this should be 0.
+    # It is 5.9% of the steady-state holding: 8.97 bn -> 8.44 bn, 5,751 -> 5,413
+    # m2, and the S3 residual archive falls to zero.
   - key: ward
     label: Ward documentation
     column: "Osztályos dokumentáció"
@@ -101,6 +106,15 @@ scale:
   national_episodes_low: 70000           # status: assumed - sensitivity, continued decline
   national_episodes_high: 85000          # status: assumed - sensitivity, 2022 level
   national_label: "Hungary"
+  # Transferability of the observed per-episode page count to the national
+  # estate. The count comes from one university department; antenatal care
+  # nationally is largely community-based and presumably less diagnostically
+  # intensive, so the true national mean is more likely below the observed value
+  # than above it. This range is an illustrative assumption, NOT a measurement,
+  # and it scales self-printed output only - the booklet is one per pregnancy
+  # whatever the diagnostic intensity.
+  pages_per_episode_factor_low: 0.75     # status: assumed - sensitivity only
+  pages_per_episode_factor_high: 1.25
 
 # ---------------------------------------------------------------------------
 # Physical constants of A4 80 g/m2 office paper
@@ -224,21 +238,33 @@ environment:
 # ---------------------------------------------------------------------------
 scenarios:
   - key: S0
+    short_label: "Current practice"   # used on figure axes, where the full label will not fit
     label: "Current practice"
     note: "Single-sided printing of all self-printed output; the antenatal booklet is a purchased, pre-printed double-sided item"
     duplex: false
     drop: []
   - key: S1
+    short_label: "Duplex"   # used on figure axes, where the full label will not fit
     label: "Duplex printing"
     note: "No investment; the pre-printed antenatal booklet is already double-sided"
     duplex: true
     drop: []
-  - key: S2
+  - key: S2a
+    short_label: "Electronic reports"   # used on figure axes, where the full label will not fit
     label: "Electronic result delivery"
-    note: "Diagnostic reports retrieved from the national exchange, referrals still printed"
+    note: "Diagnostic reports retrieved from the national exchange, referrals still printed single-sided; isolates the effect of electronic delivery from that of duplex"
+    duplex: false
+    drop: [lab_res, abo_res, mic_res, usg_res]
+  - key: S2
+    short_label: "Electronic + duplex"   # used on figure axes, where the full label will not fit
+    label: "Electronic result delivery with duplex"
+    # S2 is a COMBINATION of two interventions. Compare it with S1 only as a
+    # bundle; S2a above is the like-for-like comparator for S1.
+    note: "Diagnostic reports retrieved from the national exchange and the remaining output printed double-sided"
     duplex: true
     drop: [lab_res, abo_res, mic_res, usg_res]
   - key: S3
+    short_label: "Paperless"   # used on figure axes, where the full label will not fit
     label: "Paperless pathway"
     note: "Only the patient-held antenatal booklet remains on paper"
     duplex: false

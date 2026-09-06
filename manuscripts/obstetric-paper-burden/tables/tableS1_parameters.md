@@ -17,5 +17,6 @@
 | Antenatal consulting room, m² | 18 | — | Typical room area |
 | Care episodes per year, departmental | 2,000 | — | Departmental delivery volume |
 | Care episodes per year, national | 77,500 | 70,000 to 85,000 | KSH, live births 2024 |
+| Printed pages per episode, transferability factor | 1.00 | 0.75 to 1.25 | Assumed; scales the observed self-printed count to the national estate, not a measurement |
 
 Retention periods were 30 years for outpatient antenatal documentation and 50 years for inpatient ward and delivery documentation. Every value above is held in the analysis parameter file; changing one and re-running regenerates all tables and figures.

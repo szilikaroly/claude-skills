@@ -1,4 +1,6 @@
-// Build the BMJ-format submission .docx from manuscript.md.
+// Build a BMJ-format .docx from a markdown source.
+//   node build_docx.js [source.md] [output.docx]
+// Defaults to manuscript.md -> BMJ-HCI-submission.docx.
 // Heading hierarchy per BMJ: level 1 BOLD CAPS, level 2 bold lower case, body plain.
 const fs = require('fs');
 const {
@@ -7,7 +9,9 @@ const {
 } = require('/tmp/claude-0/-home-user-claude-skills/f0395eb1-844b-5266-b0a2-4502744a3f0e/scratchpad/node_modules/docx');
 
 const PAGE_DXA = 9026;                       // A4 content width at 1" margins
-const md = fs.readFileSync('manuscript.md', 'utf8').split('\n');
+const SRC = process.argv[2] || 'manuscript.md';
+const OUT = process.argv[3] || 'BMJ-HCI-submission.docx';
+const md = fs.readFileSync(SRC, 'utf8').split('\n');
 
 // --- inline markdown (**bold**, *italic*, `code`) -> TextRun[] -------------
 function runs(text, base = {}) {
@@ -134,6 +138,6 @@ const doc = new Document({
 });
 
 Packer.toBuffer(doc).then(b => {
-  fs.writeFileSync('BMJ-HCI-submission.docx', b);
-  console.log('wrote BMJ-HCI-submission.docx', b.length, 'bytes');
+  fs.writeFileSync(OUT, b);
+  console.log('wrote', OUT, b.length, 'bytes');
 });

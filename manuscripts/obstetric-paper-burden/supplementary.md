@@ -12,7 +12,11 @@ Each recorded page is one printed A4 side. Sheets are derived from pages by scen
 
 ## Retention and the steady-state archive
 
-Documents were assigned statutory retention periods by type: 30 years for outpatient antenatal documentation and 50 years for inpatient ward and delivery documentation. At steady state — constant annual volume, each cohort discarded on expiry — the archive holds, for each document type, its annual page volume multiplied by its retention period. This steady-state stock, not the annual flow, determines the floor area a health system must own, and it is what the reported property value prices.
+Documents were assigned statutory retention periods by type: 30 years for outpatient antenatal documentation and 50 years for inpatient ward and delivery documentation. At steady state — constant annual volume, each cohort discarded on expiry — the archive holds, for each document type, its annual page volume multiplied by its retention period. This steady-state stock, not the annual flow, determines the floor area a health system must own, and it is what the reported property value prices. The property value is a capital stock and is not directly comparable with an annual flow, so it is also reported as an annualised opportunity cost at the 3.7% discount rate: 8.97 billion HUF becomes 332 million HUF a year, against 94.5 million of consumables. The antenatal booklet is included in the stock on the assumption that an institutional copy is retained; if it is patient-held with no copy archived, the national holding falls to 5,413 m² and 8.44 billion HUF and the paperless pathway's residual archive falls to zero.
+
+## Scenario arms
+
+Five arms are reported. S0 prints all self-generated output single-sided; S1 prints it double-sided; S2a retrieves the diagnostic reports from the national exchange and prints what remains single-sided; S2 does both; S3 removes all self-printed output. S2 is a **combination** of two interventions, so comparing it with S1 compares a bundle with a single measure and overstates what electronic delivery does on its own: of the 6.77 billion HUF of property value S2 releases nationally, 5.34 billion is electronic delivery (S2a) and 1.43 billion the duplex component. S2a is therefore the like-for-like comparator for S1, and both are reported.
 
 ## The four quantities
 
@@ -20,7 +24,7 @@ Printing is charged per printed page, paper per physical sheet, storage per arch
 
 ## Handling time
 
-One document is counted for each referral and each diagnostic report, irrespective of page count: a referral is one document, a paired report is one document per referral, and ultrasound reports are counted at one page per report. Ward and delivery documentation are excluded, being written during care rather than printed on demand. Time is reported in hours and full-time equivalents and is deliberately not monetised, for the reasons given in the main text.
+One document is counted for each referral and each diagnostic report, irrespective of page count: a referral is one document, a paired report is one document per referral, and ultrasound reports are counted at one page per report — an assumption that supplies 10.3 of the 45.6 documents per episode, so at two pages per ultrasound report the national figure would fall from 17.1 to 15.2 full-time equivalents. Ward and delivery documentation are excluded, being written during care rather than printed on demand. Time is reported in hours and full-time equivalents and is deliberately not monetised, for the reasons given in the main text.
 
 ## Environmental conversion
 
@@ -28,7 +32,7 @@ Greenhouse-gas emissions use a cradle-to-gate factor of 950 kg CO2e per tonne of
 
 ## Statistical and computational methods
 
-Confidence intervals for the mean are from Student's *t* and were corroborated by a 10,000-replicate non-parametric bootstrap with a fixed seed. Scenario outputs are deterministic functions of the observed sample mean and the parameters in supplementary table S1, so uncertainty is expressed as one-way sensitivity analysis rather than probabilistic simulation. Analyses were performed in Python 3. The analysis script and the parameter file are provided; substituting a local unit price and re-running regenerates every table and figure in this paper.
+Confidence intervals for the mean are from Student's *t* and were corroborated by a 10,000-replicate non-parametric bootstrap with a fixed seed. Scenario outputs are deterministic functions of the observed sample mean and the parameters in supplementary table S1, so uncertainty is expressed as one-way sensitivity analysis rather than probabilistic simulation. One-way analysis varies each parameter alone and therefore does not bound the joint uncertainty: with the physical and price parameters simultaneously at their favourable ends the national property value falls to 4.08 billion HUF, and at their adverse ends rises to 20.60 billion, against a base case of 8.97 billion and a one-way span of 6.86 to 12.34 billion. The 10-year discounted spend sums undiscounted first-year costs with nine subsequent years discounted at 3.7%. Analyses were performed in Python 3. The analysis script and the parameter file are provided; substituting a local unit price and re-running regenerates every table and figure in this paper.
 
 ---
 
@@ -55,6 +59,7 @@ Model parameters, base-case values, sensitivity ranges and sources.
 | Antenatal consulting room, m² | 18 | — | Typical room area |
 | Care episodes per year, departmental | 2,000 | — | Departmental delivery volume |
 | Care episodes per year, national | 77,500 | 70,000 to 85,000 | KSH, live births 2024 |
+| Printed pages per episode, transferability factor | 1.00 | 0.75 to 1.25 | Assumed; scales the observed self-printed count to the national estate, not a measurement |
 
 Retention periods were 30 years for outpatient antenatal documentation and 50 years for inpatient ward and delivery documentation. Every value above is held in the analysis parameter file; changing one and re-running regenerates all tables and figures.
 
@@ -108,6 +113,26 @@ Full cost, staff-time, space and environmental breakdown by scenario, at departm
 | Water, litres per care episode | 490 | 490 |
 | **Electronic result delivery** | | |
 | Printing (toner, device), per year | 494.62k | 19.17 M |
+| Paper, per year | 204.21k | 7.91 M |
+| Purchased antenatal booklets, per year | 140.00k | 5.42 M |
+| Consumables, per year (net) | 838.83k | 32.50 M |
+| Consumables, per year (gross, incl. VAT) | 1.07 M | 41.28 M |
+| Consumables, 10 y discounted (net) | 7.16 M | 277.52 M |
+| Consumables, per care episode (net) | 419 | 419 |
+| Archive property value at steady state | 93.80 M | 3.63 bn |
+| Property value per care episode | 46,899 | 46,899 |
+| Archive floor area (steady state) | 60 m² | 2,330 m² |
+| — as antenatal consulting rooms | 3 | 129 |
+| Documents printed and filed, per year | 35,300 | 1,367,875 |
+| Handling time, hours per year | 294 | 11,399 |
+| Handling time, FTE | 0.17 (0.11–0.34) | 6.6 (4.4–13.3) |
+| Handling time, minutes per care episode | 8.8 | 8.8 |
+| Greenhouse gas, t CO2e per year | 0.41 (0.26–0.86) | 15.9 (10.2–33.1) |
+| Greenhouse gas, kg CO2e per care episode | 0.21 | 0.21 |
+| Water, m³ per year | 627 (130–1,124) | 24,295 (5,027–43,564) |
+| Water, litres per care episode | 313 | 313 |
+| **Electronic result delivery with duplex** | | |
+| Printing (toner, device), per year | 494.62k | 19.17 M |
 | Paper, per year | 110.28k | 4.27 M |
 | Purchased antenatal booklets, per year | 140.00k | 5.42 M |
 | Consumables, per year (net) | 744.90k | 28.86 M |
@@ -147,4 +172,4 @@ Full cost, staff-time, space and environmental breakdown by scenario, at departm
 | Water, m³ per year | 116 (24–208) | 4,486 (928–8,043) |
 | Water, litres per care episode | 58 | 58 |
 
-All figures 2024 HUF. Printing 7 HUF per printed page (a double-sided sheet costs 14 HUF); paper 2.89 HUF per sheet; antenatal booklet purchased at its unit price and carrying neither printing nor paper charge. Archivist labour and clinician handling time are quantified but not costed, so all monetary totals are floors.
+All figures 2024 HUF. Printing 7 HUF per printed page (a double-sided sheet costs 14 HUF); paper 2.89 HUF per sheet; antenatal booklet purchased at its unit price and carrying neither printing nor paper charge. Clinician and administrative handling time is quantified but not costed, so all monetary totals are floors.

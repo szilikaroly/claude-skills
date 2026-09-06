@@ -242,7 +242,7 @@ def fig_distribution(totals, out):
 
 def fig_scenarios(rows, out):
     fig, ax = plt.subplots(figsize=(6.6, 3.0), dpi=300)
-    labs = [r["label"] for r in rows]
+    labs = [r.get("short_label", r["label"]) for r in rows]
     vals = [r["national"]["mass_t"] for r in rows]
     x = range(len(rows))
     ax.bar(list(x), vals, width=.55, color=[SERIES[0]] + [SERIES[2]] * (len(rows) - 1),
@@ -265,7 +265,7 @@ def fig_environment(rows, params, out):
     rather than one chart with two y-axes. Bars carry the published factor
     range, which is the dominant uncertainty in both.
     """
-    labs = [r["label"] for r in rows][::-1]
+    labs = [r.get("short_label", r["label"]) for r in rows][::-1]
     y = range(len(labs))
     panels = [("Greenhouse gas\n(tonnes CO\u2082e per year, national)", SERIES[0],
                [r["national"]["co2e_t"] for r in rows][::-1],
@@ -295,8 +295,9 @@ def fig_accrual(rows, params, out):
     fig, ax = plt.subplots(figsize=(6.6, 3.0), dpi=300)
     for i, r in enumerate(rows):
         per_yr = r["national"]["floor_m2"]
-        ax.plot(yrs, [per_yr * y for y in yrs], lw=2, color=hue(i), label=r["label"])
-        ax.text(30.4, per_yr * 30, f" {r['label']}", fontsize=7.5, va="center",
+        lab = r.get("short_label", r["label"])
+        ax.plot(yrs, [per_yr * y for y in yrs], lw=2, color=hue(i), label=lab)
+        ax.text(30.4, per_yr * 30, f" {lab}", fontsize=7.5, va="center",
                 color=hue(i))
     style(ax); ax.set_xlim(0, 30); ax.margins(x=0)
     ax.set_xlabel("Years of accrual at constant volume", fontsize=8.5, color=INK_2)
@@ -366,7 +367,9 @@ def main():
         buy_case = [sum(docs[d["key"]][i] * d["unit_price"] for d in bought) for i in range(n)]
         per_case, own_case, page_case = scenario_quantities(params, cols, n, sc)
         stt = describe(per_case)
-        row = {"key": sc["key"], "label": sc["label"], "note": sc.get("note", ""),
+        row = {"key": sc["key"], "label": sc["label"],
+               "short_label": sc.get("short_label", sc["label"]),
+               "note": sc.get("note", ""),
                "sheets_per_episode": stt,
                "self_printed_sheets_per_episode": describe(own_case),
                "printed_pages_per_episode": describe(page_case),
@@ -449,7 +452,16 @@ def main():
     base = sc_rows[0]
     ph, sens = params["physical"], []
     stock = base["national"]["steady_state"]["sheets"]
+    # Purchased pre-printed items are one per episode whatever the diagnostic
+    # intensity, so they do not scale with the per-episode page count.
+    fixed_stock = sum(
+        st.mean([sheets_of(d, v, params["scenarios"][0]) for v in cols[d["key"]]])
+        * params["scale"]["national_episodes_per_year"] * d["retention_years"]
+        for d in params["documents"] if d.get("purchased"))
     for name, lo_, hi_, kind in [
+            ("Printed pages per episode (transferability)",
+             params["scale"]["pages_per_episode_factor_low"],
+             params["scale"]["pages_per_episode_factor_high"], "pages"),
             ("Sheets per linear metre", ph["sheets_per_linear_metre_low"],
              ph["sheets_per_linear_metre_high"], "density"),
             ("Linear metres per m² floor", ph["linear_metres_per_m2_floor_low"],
@@ -465,6 +477,7 @@ def main():
             if kind == "density": spl = v
             elif kind == "shelving": lpm = v
             elif kind == "value": val = v
+            elif kind == "pages": s = fixed_stock + (stock - fixed_stock) * v
             else: s = stock * v / params["scale"]["national_episodes_per_year"]
             vals.append(s / spl / lpm * val)
         sens.append({"parameter": name, "low": min(vals), "high": max(vals)})
@@ -517,7 +530,7 @@ def write_tables(R, params, tdir):
     t2 = ["| Scenario | Pages printed / episode | Sheets / episode | "
           "Paper (t/y) | CO2e (t/y) | Consumables (HUF/y, net) | Handling (FTE) | "
           "Archive floor (m²) | Property value (HUF) |",
-          "|---|---|---|---|---|---|---|---|"]
+          "|---|---|---|---|---|---|---|---|---|"]
     for lvl in ("local", "national"):
         lab = params["scale"][f"{lvl}_label"]
         eps = params["scale"][f"{lvl}_episodes_per_year"]
@@ -535,13 +548,16 @@ def write_tables(R, params, tdir):
                f"saves no toner. Handling time covers referrals and diagnostic reports at "
                f"{params['time']['seconds_per_document']} s per document and is reported as "
                f"displaced capacity, not costed; documents handled per episode and handling "
-               f"hours are given in supplementary table S1. Greenhouse-gas emissions are "
+               f"hours are given in supplementary table S2. Greenhouse-gas emissions are "
                f"cradle-to-gate for "
                f"paper manufacture at {params['environment']['co2e_kg_per_t']} kg CO2e per tonne "
                f"and exclude printing energy and end-of-life disposal. Property value is the "
                f"capital immobilised by "
                f"the archive at steady state under statutory retention, not an annual rent. "
-               f"Full cost components are given in supplementary table S1."]
+               f"Electronic result delivery is reported both single-sided, which isolates it "
+               f"from the printing policy, and combined with duplex printing; only the "
+               f"single-sided arm is a like-for-like comparator for duplex printing alone. "
+               f"Full cost components are given in supplementary table S2."]
     (tdir / "table2_scenarios.md").write_text("\n".join(t2) + "\n")
 
     # Table 3 (main): one-way sensitivity
@@ -552,7 +568,12 @@ def write_tables(R, params, tdir):
                   f"{huf(r['high']-r['low'])} |")
     t3 += ["", f"National steady-state immobilised property value; base case "
                f"{huf(s['base'])} HUF. Each parameter is varied alone across the range given "
-               f"in the parameter file, with all others held at base case."]
+               f"in the parameter file, with all others held at base case, so the table is "
+               f"not a joint uncertainty interval. The transferability row scales the "
+               f"self-printed page count observed in one department to the national estate "
+               f"across an assumed range, not a measured one, and it applies to self-printed "
+               f"output only; the purchased booklet is one per pregnancy at any diagnostic "
+               f"intensity."]
     (tdir / "table3_sensitivity.md").write_text("\n".join(t3) + "\n")
 
     # Supplementary S1: full cost breakdown, both scales
@@ -637,6 +658,8 @@ def write_tables(R, params, tdir):
         "rate": "National health technology assessment guidance",
         "vat_rate": "Hungarian standard rate",
         "antenatal_consulting_room_m2": "Typical room area",
+        "pages_per_episode_factor": "Assumed; scales the observed self-printed count "
+                                    "to the national estate, not a measurement",
     }
     ph, c, tm, env = (params["physical"], params["costs"], params["time"],
                       params["environment"])
@@ -681,6 +704,10 @@ def write_tables(R, params, tdir):
         ("Care episodes per year, national",
          f"{params['scale']['national_episodes_per_year']:,}",
          rng(params["scale"], "national_episodes"), "national_episodes_per_year"),
+        ("Printed pages per episode, transferability factor", "1.00",
+         f"{params['scale']['pages_per_episode_factor_low']:.2f} to "
+         f"{params['scale']['pages_per_episode_factor_high']:.2f}",
+         "pages_per_episode_factor"),
     ]
     sp = ["| Parameter | Base case | Sensitivity range | Source |", "|---|---|---|---|"]
     sp += [f"| {lab} | {val} | {r} | {SRC.get(k, '')} |" for lab, val, r, k in rows]

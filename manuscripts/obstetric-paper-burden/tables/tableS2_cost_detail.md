@@ -42,6 +42,26 @@
 | Water, litres per care episode | 490 | 490 |
 | **Electronic result delivery** | | |
 | Printing (toner, device), per year | 494.62k | 19.17 M |
+| Paper, per year | 204.21k | 7.91 M |
+| Purchased antenatal booklets, per year | 140.00k | 5.42 M |
+| Consumables, per year (net) | 838.83k | 32.50 M |
+| Consumables, per year (gross, incl. VAT) | 1.07 M | 41.28 M |
+| Consumables, 10 y discounted (net) | 7.16 M | 277.52 M |
+| Consumables, per care episode (net) | 419 | 419 |
+| Archive property value at steady state | 93.80 M | 3.63 bn |
+| Property value per care episode | 46,899 | 46,899 |
+| Archive floor area (steady state) | 60 m² | 2,330 m² |
+| — as antenatal consulting rooms | 3 | 129 |
+| Documents printed and filed, per year | 35,300 | 1,367,875 |
+| Handling time, hours per year | 294 | 11,399 |
+| Handling time, FTE | 0.17 (0.11–0.34) | 6.6 (4.4–13.3) |
+| Handling time, minutes per care episode | 8.8 | 8.8 |
+| Greenhouse gas, t CO2e per year | 0.41 (0.26–0.86) | 15.9 (10.2–33.1) |
+| Greenhouse gas, kg CO2e per care episode | 0.21 | 0.21 |
+| Water, m³ per year | 627 (130–1,124) | 24,295 (5,027–43,564) |
+| Water, litres per care episode | 313 | 313 |
+| **Electronic result delivery with duplex** | | |
+| Printing (toner, device), per year | 494.62k | 19.17 M |
 | Paper, per year | 110.28k | 4.27 M |
 | Purchased antenatal booklets, per year | 140.00k | 5.42 M |
 | Consumables, per year (net) | 744.90k | 28.86 M |
@@ -81,4 +101,4 @@
 | Water, m³ per year | 116 (24–208) | 4,486 (928–8,043) |
 | Water, litres per care episode | 58 | 58 |
 
-All figures 2024 HUF. Printing 7 HUF per printed page (a double-sided sheet costs 14 HUF); paper 2.89 HUF per sheet; antenatal booklet purchased at its unit price and carrying neither printing nor paper charge. Archivist labour and clinician handling time are quantified but not costed, so all monetary totals are floors.
+All figures 2024 HUF. Printing 7 HUF per printed page (a double-sided sheet costs 14 HUF); paper 2.89 HUF per sheet; antenatal booklet purchased at its unit price and carrying neither printing nor paper charge. Clinician and administrative handling time is quantified but not costed, so all monetary totals are floors.
