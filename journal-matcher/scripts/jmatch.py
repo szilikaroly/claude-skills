@@ -567,10 +567,15 @@ def score_one(p: dict, ctx: dict) -> dict:
         # and the deals are quota-capped.
         apc = apc * 0.25
         p["apc_effective_usd"] = round(apc)
-    if budget is None:
-        parts["access"] = WEIGHTS["access"] * (1.0 if not apc else 0.7)
+    # A missing apc_usd means *unknown*, not free — OpenAlex omits it for a great many
+    # journals. The signal that there is genuinely nothing for the author to pay is a
+    # subscription journal (is_oa False), not an absent price.
+    if p.get("is_oa") is False and not apc:
+        parts["access"] = WEIGHTS["access"]                    # nothing to pay
     elif apc is None:
-        parts["access"] = WEIGHTS["access"] * 0.7
+        parts["access"] = WEIGHTS["access"] * 0.5              # unknown: neutral
+    elif budget is None:
+        parts["access"] = WEIGHTS["access"] * 0.7              # charges, but no stated ceiling
     elif apc <= budget:
         parts["access"] = WEIGHTS["access"] * (1.0 - 0.3 * apc / max(budget, 1))
     else:

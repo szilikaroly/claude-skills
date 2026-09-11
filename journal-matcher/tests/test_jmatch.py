@@ -296,6 +296,20 @@ def t_scoring(tmp):
     check("unknown turnaround is neutral, not zero",
           J.rank([unk])[0]["score_parts"]["speed"] == J.WEIGHTS["speed"] * 0.5)
 
+    # A missing apc_usd means unknown, not free. Regression: it used to score full marks,
+    # which silently inflated every journal OpenAlex has no price for.
+    apc_unknown = {k: v for k, v in good.items() if k != "is_oa"}
+    apc_unknown.update(journal="APC unknown", apc_usd=None)
+    check("unknown APC is neutral, not full marks",
+          J.rank([apc_unknown])[0]["score_parts"]["access"] == J.WEIGHTS["access"] * 0.5,
+          str(J.rank([apc_unknown])[0]["score_parts"]["access"]))
+    check("subscription journal with no APC scores full access marks",
+          J.rank([dict(good, journal="Subscription", is_oa=False, apc_usd=None)])[0]
+          ["score_parts"]["access"] == J.WEIGHTS["access"])
+    check("an OA journal that charges scores below a free one, with no budget stated",
+          J.rank([dict(good, journal="Charges", is_oa=True, apc_usd=2000)])[0]
+          ["score_parts"]["access"] < J.WEIGHTS["access"])
+
     eisz = dict(good, journal="EISZ", is_oa=True, apc_usd=3000, publisher="Wiley")
     eisz.update(refdata.eisz_lookup("Wiley", "EISZ"))
     scored = J.rank([eisz], apc_budget=1000)[0]
